@@ -23,7 +23,11 @@ test 결과서에는 실행한 명령, 통과·실패 건수, 확인하지 못�
 
 ## 범용성
 
-3종 agent는 Workfluence 전용이 아니라 범용이다. 코어는 타겟 설정(token, spec URL)과 Inference agent의 요청 API를 기반으로 하고, 타겟은 `targetId`로 구분해 등록·선택·전환한다. Workfluence 고유 값(URL·태그·채팅 API 등)을 코어에 넣지 않고 설정이나 선택 어댑터로 둔다.
+과제 범위의 타겟은 Workfluence 하나지만, 타겟 추가를 전제로 범용성을 고려한다.
+
+- 코어와 타겟을 분리한다. Workfluence 고유 값(URL·태그·채팅 API 등)은 코어에 넣지 않고 타겟 설정이나 타겟 어댑터로 둔다.
+- 타겟 설정은 타겟별 환경변수(`.env`)로 받는다. 산출물은 `targetId`로 묶는다.
+- Workfluence 조건에 해당하는 경우만 구현한다. 다른 타겟을 위한 경우는 interface만 만들고 구현은 비워 둔다.
 
 ## 비밀 관리
 
