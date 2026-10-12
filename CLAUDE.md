@@ -26,6 +26,7 @@ test 결과서에는 실행한 명령, 통과·실패 건수, 확인하지 못�
 ## 실행 환경
 
 - 빌드·테스트·실행 등 모든 작업은 container 안에서 한다. host에는 Python이나 의존 패키지를 설치하지 않는다.
+- 이 host는 proxy(`HTTP_PROXY`·`HTTPS_PROXY` 환경변수)를 거쳐 인터넷에 나간다. Python 패키지는 인터넷(PyPI)에서 받는다. `docker build`에는 host의 proxy 환경변수를 `--build-arg`로 넘기고, proxy 주소를 Dockerfile·코드에 박지 않는다. 내부 주소(`wf.internal` 등)는 `NO_PROXY`에 넣는다. 상세는 `docs/시스템아키텍처.md` 7.1.1절.
 - 실행 구성은 `docker-compose.yml` 하나다.
 - image build는 compose와 독립한다. compose에 `build:`를 두지 않고 `image:`로 참조만 한다. 이미지 이름·태그는 환경변수로 받는다.
 
