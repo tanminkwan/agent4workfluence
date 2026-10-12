@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-detection"
+version = "0.1.0"
+description = "agent4workfluence Detection agent (명세 수집·버전 보관·변경 식별)"
+requires-python = ">=3.12"
+dependencies = ["a4w-core", "fastapi", "uvicorn", "httpx", "pyyaml"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"a4w_detection.storage" = ["schema.sql"]

@@ -1,1 +1,13 @@
+# 비밀·환경별 설정
 .env
+config/secrets/*.env
+config/targets/*.env
+config/targets/*.pem
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+build/
+dist/

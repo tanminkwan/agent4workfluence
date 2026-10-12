@@ -1,0 +1,5 @@
+# 실행 의존성 (고정 버전). 로컬 패키지는 Dockerfile에서 --no-deps로 설치한다.
+fastapi==0.143.0
+uvicorn==0.54.0
+httpx==0.28.1
+pyyaml==6.0.3

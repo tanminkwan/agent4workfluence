@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-target-workfluence"
+version = "0.1.0"
+description = "agent4workfluence Workfluence 타겟 어댑터"
+requires-python = ">=3.12"
+dependencies = ["a4w-core"]
+
+# 새 타겟은 이 entry point만 등록하면 코어를 고치지 않고 붙는다 (OCP)
+[project.entry-points."a4w.targets"]
+workfluence = "a4w_target_workfluence:register"
+
+[tool.setuptools.packages.find]
+where = ["src"]

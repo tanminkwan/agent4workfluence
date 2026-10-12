@@ -1,0 +1,21 @@
+# 실행 구성 (하나뿐). 이미지는 scripts/build.sh로 먼저 만든다. build: 를 두지 않는다.
+services:
+  detection:
+    image: ${DETECTION_IMAGE}:${DETECTION_TAG}
+    env_file: .env
+    extra_hosts:
+      - "${TARGET_HOST_ALIAS}"
+    ports:
+      - "${DETECTION_PORT}:${DETECTION_PORT}"
+    volumes:
+      - spec-store:${DETECTION_SPEC_STORE_PATH}
+      - ./config/targets:${DETECTION_TARGETS_DIR}:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/health' % os.environ['DETECTION_PORT'], timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+volumes:
+  spec-store:

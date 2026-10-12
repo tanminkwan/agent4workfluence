@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-core"
+version = "0.1.0"
+description = "agent4workfluence 공통 코어 (타겟 무관 interface·모델·OpenAPI 처리)"
+requires-python = ">=3.12"
+dependencies = ["httpx", "pyyaml"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

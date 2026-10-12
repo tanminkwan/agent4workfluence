@@ -30,6 +30,18 @@ test 결과서에는 실행한 명령, 통과·실패 건수, 확인하지 못�
 - 실행 구성은 `docker-compose.yml` 하나다.
 - image build는 compose와 독립한다. compose에 `build:`를 두지 않고 `image:`로 참조만 한다. 이미지 이름·태그는 환경변수로 받는다.
 
+## 빌드·시험·실행 명령
+
+```bash
+scripts/build.sh detection test        # 시험 이미지 (compose와 독립)
+scripts/test.sh detection              # 이미지 안 코드로 전체 시험
+scripts/test.sh detection --src -q …   # 작업 트리를 붙여 container 안에서 반복 (TDD)
+A4W_LIVE_TESTS=1 scripts/test.sh detection   # 시험 스택 실호출 포함
+scripts/build.sh detection runtime && docker compose up -d detection
+```
+
+- 설정: `.env`(서비스), `config/targets/<targetId>.env`(타겟), `config/secrets/<targetId>.env`(비밀). 모두 Git 제외이고 `*.example`만 올린다.
+
 ## 범용성
 
 과제 범위의 타겟은 Workfluence 하나지만, 타겟 추가를 전제로 범용성을 고려한다.
