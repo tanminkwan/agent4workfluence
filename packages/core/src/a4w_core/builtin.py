@@ -9,6 +9,7 @@ import httpx
 from .config import TargetConfig
 from .normalizers import CanonicalNormalizer, IdentityNormalizer
 from .registry import Registry
+from .scopes import ConfigScopeProvider
 from .spec_parsers import JsonSpecParser, YamlSpecParser
 from .spec_sources import HashUrlSpecSource, NoHashSpecSource
 
@@ -38,3 +39,4 @@ def register_builtins(registry: Registry) -> None:
     registry.register("spec_parser", "json", lambda cfg: JsonSpecParser())
     registry.register("spec_normalizer", "identity", lambda cfg: IdentityNormalizer())
     registry.register("spec_normalizer", "canonical", lambda cfg: CanonicalNormalizer())
+    registry.register("scope_provider", "config", ConfigScopeProvider.from_config)

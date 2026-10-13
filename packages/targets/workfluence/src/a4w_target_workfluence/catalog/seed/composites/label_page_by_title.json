@@ -1,0 +1,72 @@
+{
+  "description": "기본 스페이스에서 제목으로 페이지를 하나 찾아 라벨(태그)을 붙인다. 없는 라벨이면 만든다. 여러 개가 맞으면 AMBIGUOUS와 후보 목록이 오니, 더 정확한 제목으로 다시 하거나 후보의 pageId로 add_page_label을 쓴다.",
+  "group": "authoring",
+  "index": {
+    "examples": [
+      "회의록 페이지에 긴급 라벨 붙여줘",
+      "보안 정책 문서에 검토중 태그 달아줘",
+      "배포 가이드에 운영 라벨 추가해줘"
+    ],
+    "summary": "제목으로 찾은 위키 페이지에 라벨(태그)을 붙인다"
+  },
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "label": {
+        "description": "붙일 라벨 이름 (40자까지)",
+        "type": "string"
+      },
+      "title": {
+        "description": "라벨을 붙일 페이지 제목 (요청 글에 나온 그대로)",
+        "type": "string"
+      }
+    },
+    "required": [
+      "title",
+      "label"
+    ],
+    "type": "object"
+  },
+  "kind": "composite",
+  "name": "label_page_by_title",
+  "origin": "seed",
+  "output": {
+    "$step": "label"
+  },
+  "revision": "r-6d79df0d9a1b",
+  "risk": "write",
+  "schema": "a4w.tool/v1",
+  "scopes": [
+    "read",
+    "write"
+  ],
+  "steps": [
+    {
+      "args": {
+        "q": {
+          "$input": "title"
+        }
+      },
+      "expect": {
+        "count": "one",
+        "pointer": "/items"
+      },
+      "id": "find",
+      "tool": "search_pages"
+    },
+    {
+      "args": {
+        "name": {
+          "$input": "label"
+        },
+        "pageId": {
+          "$step": "find",
+          "pointer": "/items/0/pageId"
+        }
+      },
+      "id": "label",
+      "tool": "add_page_label"
+    }
+  ],
+  "title": "제목으로 페이지 찾아 라벨 붙이기"
+}

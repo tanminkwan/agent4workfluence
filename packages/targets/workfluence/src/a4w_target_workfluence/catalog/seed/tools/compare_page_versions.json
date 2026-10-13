@@ -1,0 +1,93 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "compare_page_versions",
+  "title": "두 버전 비교",
+  "description": "페이지의 앞 버전(a)에서 뒤 버전(b)으로 무엇이 바뀌었는지 추가·삭제·수정 수와 블록별 차이로 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "a": {
+        "maximum": 2147483647,
+        "minimum": 1,
+        "type": "integer",
+        "description": "앞 버전 번호 — list_page_versions 결과의 versionNo"
+      },
+      "b": {
+        "maximum": 2147483647,
+        "minimum": 1,
+        "type": "integer",
+        "description": "뒤 버전 번호 — list_page_versions 결과의 versionNo"
+      }
+    },
+    "required": [
+      "id",
+      "a",
+      "b"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{id}/versions/{a}/diff/{b}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "a",
+        "in": "path",
+        "name": "a"
+      },
+      {
+        "input": "b",
+        "in": "path",
+        "name": "b"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "titleChanged",
+      "diff.added",
+      "diff.removed",
+      "diff.modified",
+      "diff.blocks"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "history",
+  "index": {
+    "summary": "페이지의 두 버전 사이에 바뀐 내용을 비교한다",
+    "examples": [
+      "이전 버전이랑 뭐가 달라졌어?",
+      "두 버전 차이 비교해줘",
+      "최근 수정에서 바뀐 부분 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.diff",
+    "method": "GET",
+    "path": "/pages/{id}/versions/{a}/diff/{b}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "c1eca298f7b86c9da9a567d2623e5b9ed7379fea74f400017a59cb6c1070b66a",
+    "structureSha256": "cfe0e920bb4f8986f2a112a1680a23d16d6b3e228a588cbc4bbcd69c7df3427f"
+  },
+  "origin": "seed",
+  "revision": "r-92d000b2774d"
+}

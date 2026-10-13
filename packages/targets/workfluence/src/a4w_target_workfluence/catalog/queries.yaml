@@ -1,0 +1,70 @@
+# 색인 평가용 예시 질의 (Phase 2 설계 14.5절, FR-296). 사람이 쓴 요청이고, tool의 index.examples와 겹치지 않게 썼다.
+# expect: 맞는 tool (여럿이면 하나만 상위 N에 들어도 정답). danger: 위험 동작 묶음을 켰을 때만 평가한다.
+queries:
+  # 탐색·읽기
+  - {query: "위키에 공간이 몇 개나 있는지 궁금해", expect: [list_spaces]}
+  - {query: "마케팅이라는 이름이 들어간 스페이스 있나?", expect: [list_spaces]}
+  - {query: "이 스페이스에서 내 권한이 뭐야", expect: [get_space]}
+  - {query: "스페이스 소개 글 좀 봐줘", expect: [get_space]}
+  - {query: "문서들이 어떤 계층으로 정리돼 있는지 보여줘", expect: [list_pages]}
+  - {query: "전체 페이지 제목들 쭉 나열해줘", expect: [list_pages]}
+  - {query: "그 문서 본문 좀 가져와", expect: [read_page, read_page_by_title]}
+  - {query: "온보딩 안내 페이지를 열어서 내용 알려줘", expect: [read_page_by_title, read_page]}
+  - {query: "장애 대응 관련 문서가 있는지 찾아봐", expect: [search_pages]}
+  - {query: "비밀번호 정책이 언급된 글 검색", expect: [search_pages]}
+  - {query: "지금 쓰이고 있는 태그 이름들 알려줘", expect: [list_labels]}
+  - {query: "라벨 종류가 뭐가 있지", expect: [list_labels]}
+  - {query: "검토필요 태그가 달린 문서들 모아줘", expect: [list_pages_by_label]}
+  - {query: "릴리스 라벨이 붙은 글 목록", expect: [list_pages_by_label]}
+  - {query: "이 글에 달린 태그가 뭐야", expect: [list_page_labels]}
+  - {query: "페이지가 어떤 라벨로 분류돼 있는지 봐줘", expect: [list_page_labels]}
+  - {query: "스페이스들을 어떤 카테고리로 나눠 놨어?", expect: [list_categories]}
+  - {query: "분류 체계 보여줘", expect: [list_categories]}
+  - {query: "주간보고 양식 있어?", expect: [list_templates]}
+  - {query: "새 문서 쓸 때 쓰는 틀 목록", expect: [list_templates]}
+  - {query: "이 페이지에 올라간 파일들 보여줘", expect: [list_attachments]}
+  - {query: "문서에 붙어 있는 첨부 이름 알려줘", expect: [list_attachments]}
+  - {query: "첨부된 텍스트 파일 내용 읽어줘", expect: [download_attachment]}
+  - {query: "붙어 있는 파일 열어서 보여줘", expect: [download_attachment]}
+  # 이력
+  - {query: "이 문서 수정한 사람들 목록", expect: [list_page_versions]}
+  - {query: "몇 번이나 고쳐졌는지 이력 보여줘", expect: [list_page_versions]}
+  - {query: "두 번째 버전 본문 보여줘", expect: [read_page_version]}
+  - {query: "수정 전 원래 내용 읽어줘", expect: [read_page_version]}
+  - {query: "1판이랑 3판 차이 알려줘", expect: [compare_page_versions]}
+  - {query: "최근에 어떤 부분이 바뀌었는지 비교해줘", expect: [compare_page_versions]}
+  # 소통
+  - {query: "이 문서에 사람들이 남긴 피드백 보여줘", expect: [list_comments]}
+  - {query: "댓글 달린 거 있는지 확인해줘", expect: [list_comments]}
+  - {query: "이 글에 좋다고 한마디 남겨줘", expect: [add_comment, comment_on_page_by_title]}
+  - {query: "문서에 검토 완료라고 코멘트 남겨", expect: [add_comment, comment_on_page_by_title]}
+  - {query: "주간회의록 페이지에 참석했다고 댓글 남겨줘", expect: [comment_on_page_by_title, add_comment]}
+  - {query: "방금 단 코멘트 문구 바꿔줘", expect: [edit_comment]}
+  - {query: "댓글 내용 수정해", expect: [edit_comment]}
+  - {query: "내가 남긴 코멘트 삭제", expect: [delete_comment]}
+  - {query: "그 의견 댓글 지워버려", expect: [delete_comment]}
+  - {query: "최근 받은 알림 확인해줘", expect: [list_notifications]}
+  - {query: "누가 나를 언급했는지 봐줘", expect: [list_notifications]}
+  - {query: "읽지 않은 알림 개수", expect: [count_unread_notifications]}
+  - {query: "안 본 알림이 남아 있어?", expect: [count_unread_notifications, list_notifications]}
+  - {query: "이 알림 확인했다고 표시해", expect: [mark_notification_read]}
+  - {query: "알림 하나만 읽은 걸로 처리해줘", expect: [mark_notification_read]}
+  - {query: "알림 전부 확인 처리해줘", expect: [mark_all_notifications_read]}
+  - {query: "쌓인 알림 한 번에 다 읽음으로", expect: [mark_all_notifications_read]}
+  # 작성
+  - {query: "오늘 회의 내용으로 새 문서 하나 써줘", expect: [create_page]}
+  - {query: "위키에 장애 보고서 페이지 생성", expect: [create_page]}
+  - {query: "문서 본문에 한 줄 덧붙여줘", expect: [update_page]}
+  - {query: "페이지 내용을 새로 갈아끼워줘", expect: [update_page]}
+  - {query: "이 글에 중요 태그 달아", expect: [add_page_label, label_page_by_title]}
+  - {query: "주간회의록 문서에 완료 라벨 붙여줘", expect: [label_page_by_title, add_page_label]}
+  - {query: "이 문서의 임시 태그 떼어내", expect: [remove_page_label]}
+  - {query: "라벨 하나 제거해줘", expect: [remove_page_label]}
+  # 위험 동작 (켰을 때만)
+  - {query: "이 문서 삭제해", expect: [delete_page], danger: true}
+  - {query: "문서를 다른 페이지 밑으로 이동", expect: [move_page], danger: true}
+  - {query: "지난 버전으로 복구해줘", expect: [restore_page_version], danger: true}
+  - {query: "이 내용 txt 파일로 만들어서 붙여줘", expect: [upload_attachment], danger: true}
+  - {query: "첨부 파일 하나 지워줘", expect: [delete_attachment], danger: true}
+  - {query: "지운 문서 목록 보여줘", expect: [list_trashed_pages], danger: true}
+  - {query: "휴지통에서 꺼내줘", expect: [restore_trashed_page], danger: true}

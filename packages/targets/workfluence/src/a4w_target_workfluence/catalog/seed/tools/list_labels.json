@@ -1,0 +1,54 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_labels",
+  "title": "라벨 목록 보기",
+  "description": "위키에서 쓰이는 라벨(태그) 이름 목록을 본다. 기본 100개까지 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/labels",
+    "bindings": [],
+    "fixed": [],
+    "omitted": [
+      "limit"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].name"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "위키에 쓰이는 라벨(태그) 목록을 본다",
+    "examples": [
+      "어떤 라벨들이 있어?",
+      "태그 목록 보여줘",
+      "쓰이는 분류 라벨 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "labels.list",
+    "method": "GET",
+    "path": "/labels",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "ae83e8fcc5f2d2367ebd3aff6c436ac792b160f6b7236ad0aa5911919c0a0158",
+    "structureSha256": "07450c275e4955f577a7cb28d5c7d310875acb816d2fdf85f74bad859c9d2f1f"
+  },
+  "origin": "seed",
+  "revision": "r-1d18c183a759"
+}

@@ -1,0 +1,70 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "get_space",
+  "title": "스페이스 정보 보기",
+  "description": "스페이스 하나의 이름·설명·상태와 내 역할(myRole), 쓸 수 있는지(canWrite)를 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — list_spaces 결과의 items[].id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/spaces/{id}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "name",
+      "description",
+      "status",
+      "myRole",
+      "canWrite"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "스페이스 하나의 정보와 내 권한을 본다",
+    "examples": [
+      "이 스페이스 설명 알려줘",
+      "내가 이 공간에 글을 쓸 수 있어?",
+      "스페이스 상태 확인해줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.get",
+    "method": "GET",
+    "path": "/spaces/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "33ef154f42e669241d1e49637738af3637ae4356b3c1b93482d0c37347f8d3fd",
+    "structureSha256": "623e5ef0164b9841a53b6c54600c3bb37b7ba2e021a2fa865020e0e985401106"
+  },
+  "origin": "seed",
+  "revision": "r-5e5416ac08e7"
+}

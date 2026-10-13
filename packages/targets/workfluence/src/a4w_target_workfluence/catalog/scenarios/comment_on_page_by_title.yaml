@@ -1,0 +1,2 @@
+call: {args: {title: "${sandbox.pageTitle}", body: "제목으로 단 검증 댓글"}}
+expect: {ok: true, fields: [id]}

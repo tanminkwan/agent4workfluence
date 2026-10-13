@@ -1,0 +1,2 @@
+call: {args: {pageId: "${sandbox.pageId}", body: "검증 댓글 ${run.id}"}}
+expect: {ok: true, fields: [id]}

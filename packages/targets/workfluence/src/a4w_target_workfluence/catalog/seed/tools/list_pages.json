@@ -1,0 +1,64 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_pages",
+  "title": "기본 스페이스의 페이지 목록 보기",
+  "description": "agent의 기본 스페이스에 있는 페이지를 본문 없이 제목·부모(parentId)와 함께 본다. 트리는 parentId로 그린다. 많으면 잘리고 truncated가 true다(total은 전체 수). 본문은 read_page로 읽는다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages",
+    "bindings": [],
+    "fixed": [
+      {
+        "in": "query",
+        "name": "space",
+        "context": "homeSpace"
+      }
+    ],
+    "omitted": [
+      "limit"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].id",
+      "items[].title",
+      "items[].parentId",
+      "total",
+      "truncated"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "기본 스페이스의 페이지 목록(트리)을 보여 준다",
+    "examples": [
+      "우리 위키에 어떤 페이지가 있어?",
+      "페이지 목록 보여줘",
+      "문서 구조 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.tree",
+    "method": "GET",
+    "path": "/pages",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "3376f3167d55274934bd316848a1f4f150f2b7169be3a15b21c93cff7d049f2e",
+    "structureSha256": "0f28ec61fbbcc90ed5b7c12891880a2affe80e6fa3069f01b9d7dac60161af51"
+  },
+  "origin": "seed",
+  "revision": "r-22f47830917e"
+}

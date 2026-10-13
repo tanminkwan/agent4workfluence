@@ -1,0 +1,81 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "restore_page_version",
+  "title": "옛 버전으로 되돌리기",
+  "description": "페이지를 옛 버전의 내용으로 되돌린다(새 버전으로 더해지고 이력은 남는다). 누가 편집 중이면 409 PAGE_BEING_EDITED다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "no": {
+        "maximum": 2147483647,
+        "minimum": 1,
+        "type": "integer",
+        "description": "되돌릴 버전 번호 — list_page_versions 결과의 versionNo"
+      }
+    },
+    "required": [
+      "id",
+      "no"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/pages/{id}/versions/{no}/restore",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "no",
+        "in": "path",
+        "name": "no"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format"
+    ],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "currentVersionNo"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "danger",
+  "scopes": [
+    "write"
+  ],
+  "group": "danger",
+  "index": {
+    "summary": "페이지를 예전 버전 내용으로 되돌린다",
+    "examples": [
+      "어제 버전으로 되돌려줘",
+      "고치기 전으로 복원해줘",
+      "첫 버전 내용으로 돌려줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.restoreVersion",
+    "method": "POST",
+    "path": "/pages/{id}/versions/{no}/restore",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "3f6c0f371aa2e28081c0540adacee35caef74a7c70f8c89cc31506a4386174de",
+    "structureSha256": "0a0fc103140b53baf62c71bae9a0530762bca2597e7ad16372b91555e3f5ab17"
+  },
+  "origin": "seed",
+  "revision": "r-505beb68e97b"
+}

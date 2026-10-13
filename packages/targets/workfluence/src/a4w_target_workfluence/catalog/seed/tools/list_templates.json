@@ -1,0 +1,56 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_templates",
+  "title": "페이지 템플릿 보기",
+  "description": "새 페이지의 본문으로 쓸 틀(템플릿)을 본다. 고른 템플릿의 body를 create_page의 body로 보내면 된다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/templates",
+    "bindings": [],
+    "fixed": [],
+    "omitted": [
+      "format"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].name",
+      "items[].description",
+      "items[].body"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "새 페이지를 만들 때 쓸 템플릿을 본다",
+    "examples": [
+      "회의록 템플릿 있어?",
+      "문서 양식 보여줘",
+      "페이지 만들 틀 목록 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "templates.list",
+    "method": "GET",
+    "path": "/templates",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "b06da27856a96556c2dcdc613450a0c9d9a56678cbe1dfa9e04672cfd53f39ae",
+    "structureSha256": "c9c7771ef827bf30dd76b54f8927152ab58da55d8535785eb5dea42e87812590"
+  },
+  "origin": "seed",
+  "revision": "r-15412a907978"
+}

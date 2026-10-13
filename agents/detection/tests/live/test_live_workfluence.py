@@ -25,6 +25,8 @@ def context(tmp_path):
         "DETECTION_SPEC_STORE_PATH": str(tmp_path / "store"),
         "DETECTION_TARGETS_DIR": str(TARGETS_DIR),
         "DETECTION_TEXT_DIFF_CONTEXT_LINES": "3", "TARGETS": "workfluence",
+        "DETECTION_SECRETS_DIR": os.environ.get("DETECTION_SECRETS_DIR", str(tmp_path / "no-secrets")),
+        "DETECTION_VERIFY_MAX_TOOLS": "100", "DETECTION_VERIFY_RESULT_DAYS": "30",
     })
 
 

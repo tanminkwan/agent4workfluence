@@ -44,3 +44,10 @@ class ReviewPolicy(ABC):
         operations: Sequence[OperationChange],
         document_changes: Sequence[DocumentChange],
     ) -> ReviewResult: ...
+
+
+class ScopeProvider(ABC):
+    """타겟 token이 가진 scope를 알려 준다 (타겟별 방식). 알 수 없으면 ScopeUnknown."""
+
+    @abstractmethod
+    def scopes(self, token: str | None) -> frozenset[str]: ...

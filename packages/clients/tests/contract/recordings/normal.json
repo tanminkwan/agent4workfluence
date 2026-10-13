@@ -1,0 +1,57 @@
+{
+ "case": "normal",
+ "model": "zai-org/GLM-5.2",
+ "responses": [
+  {
+   "status": 200,
+   "headers": {
+    "content-type": "application/json"
+   },
+   "body": {
+    "id": "chatcmpl-2b4def86fed7deba8938419edb12be15",
+    "object": "chat.completion",
+    "created": 1791881288,
+    "model": "zai-org/GLM-5.2",
+    "choices": [
+     {
+      "index": 0,
+      "message": {
+       "role": "assistant",
+       "content": "{\"name\": \"add_page_comment\"}",
+       "refusal": null,
+       "annotations": null,
+       "audio": null,
+       "function_call": null
+      },
+      "logprobs": null,
+      "finish_reason": "stop",
+      "stop_reason": 154827,
+      "token_ids": null,
+      "routed_experts": null
+     }
+    ],
+    "service_tier": null,
+    "system_fingerprint": null,
+    "usage": {
+     "prompt_tokens": 100,
+     "total_tokens": 343,
+     "completion_tokens": 243,
+     "prompt_tokens_details": {
+      "cached_tokens": 0,
+      "created_cache_tokens": 64,
+      "multimodal_tokens": null
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 233
+     }
+    },
+    "prompt_logprobs": null,
+    "prompt_token_ids": null,
+    "prompt_text": null,
+    "kv_transfer_params": null,
+    "ec_transfer_params": null,
+    "metrics": null
+   }
+  }
+ ]
+}

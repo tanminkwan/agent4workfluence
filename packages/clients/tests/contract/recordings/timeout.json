@@ -1,0 +1,6 @@
+{
+ "case": "timeout",
+ "model": "zai-org/GLM-5.2",
+ "responses": [],
+ "note": "응답 없음 (클라이언트 시간 초과)"
+}

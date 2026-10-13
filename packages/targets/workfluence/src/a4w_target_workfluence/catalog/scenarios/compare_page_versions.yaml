@@ -1,0 +1,10 @@
+# 자기 페이지를 만들고 한 번 고쳐 버전 1·2를 만든 뒤 비교한다 (바탕 페이지의 버전을 건드리지 않게)
+setup:
+  - tool: create_page
+    args: {title: "비교 검증 ${run.id}", body: "첫 본문"}
+    save: {pid: /id, v1: /currentVersionNo}
+  - tool: update_page
+    args: {id: "${saved.pid}", baseVersionNo: "${saved.v1}", body: "둘째 본문"}
+    save: {v2: /currentVersionNo}
+call: {args: {id: "${saved.pid}", a: "${saved.v1}", b: "${saved.v2}"}}
+expect: {ok: true}

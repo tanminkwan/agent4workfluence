@@ -1,0 +1,84 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "read_page_version",
+  "title": "옛 버전 읽기",
+  "description": "페이지의 옛 버전 하나의 본문을 읽는다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "no": {
+        "maximum": 2147483647,
+        "minimum": 1,
+        "type": "integer",
+        "description": "버전 번호 — list_page_versions 결과의 versionNo"
+      }
+    },
+    "required": [
+      "id",
+      "no"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{id}/versions/{no}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "no",
+        "in": "path",
+        "name": "no"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "versionNo",
+      "title",
+      "body",
+      "createdByName",
+      "createdAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "history",
+  "index": {
+    "summary": "페이지의 예전 버전 본문을 읽는다",
+    "examples": [
+      "이 문서 예전 버전 보여줘",
+      "첫 번째 버전 내용 읽어줘",
+      "고치기 전 내용 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.version",
+    "method": "GET",
+    "path": "/pages/{id}/versions/{no}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "74296fd404bdeb357052699079e1dad374666f75fb6d8308554948a268bf0589",
+    "structureSha256": "bc11eb5a7a2d432a2682e1a5af829f84df88d4a5c18ba032b2e00987e4df706d"
+  },
+  "origin": "seed",
+  "revision": "r-68816622a480"
+}

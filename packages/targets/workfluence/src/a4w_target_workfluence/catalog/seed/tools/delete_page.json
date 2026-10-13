@@ -1,0 +1,62 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "delete_page",
+  "title": "페이지 지우기 (휴지통으로)",
+  "description": "페이지를 휴지통으로 보낸다. 보존 기간 안에는 restore_trashed_page로 되살린다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "지울 페이지 id — search_pages 결과의 items[].pageId"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "DELETE",
+    "path": "/pages/{id}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "maxChars": 8000
+  },
+  "risk": "danger",
+  "scopes": [
+    "write"
+  ],
+  "group": "danger",
+  "index": {
+    "summary": "위키 페이지를 휴지통으로 지운다",
+    "examples": [
+      "이 페이지 지워줘",
+      "필요 없는 초안 삭제해줘",
+      "문서 휴지통에 버려줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.delete",
+    "method": "DELETE",
+    "path": "/pages/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "9b1f076d0d3bb57154b6b0e49792eb8ac8faeb4ed1a7602807fe0f929edd506e",
+    "structureSha256": "37d061152a588a250a52edd76ee7d16286cece191d627eb9e7e751f6ca557d95"
+  },
+  "origin": "seed",
+  "revision": "r-b0bb13320e06"
+}

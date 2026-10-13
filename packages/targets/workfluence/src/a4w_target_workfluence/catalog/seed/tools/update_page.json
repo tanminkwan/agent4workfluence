@@ -1,0 +1,103 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "update_page",
+  "title": "페이지 고치기",
+  "description": "페이지의 제목이나 본문을 고친다. 보낸 것만 바뀌고 본문은 통째로 바뀐다(부분 수정 없음). 먼저 read_page로 읽고 받은 currentVersionNo를 baseVersionNo로 꼭 보낸다. 그 사이 다른 저장이 있으면 409 VERSION_CONFLICT, 누가 편집 중이면 409 PAGE_BEING_EDITED다 — 다시 읽고 합쳐서 고친다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "고칠 페이지 id — read_page 결과의 id"
+      },
+      "baseVersionNo": {
+        "description": "기준 버전 — read_page 결과의 currentVersionNo를 그대로",
+        "maximum": 2147483647,
+        "minimum": 1,
+        "type": "integer"
+      },
+      "body": {
+        "description": "새 본문 전체 (마크다운 글). 고치지 않으면 비운다"
+      },
+      "title": {
+        "description": "새 제목. 고치지 않으면 비운다",
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "baseVersionNo"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "PATCH",
+    "path": "/pages/{id}",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "baseVersionNo",
+        "in": "body",
+        "pointer": "/baseVersionNo"
+      },
+      {
+        "input": "body",
+        "in": "body",
+        "pointer": "/body"
+      },
+      {
+        "input": "title",
+        "in": "body",
+        "pointer": "/title"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format",
+      "body_format"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "title",
+      "currentVersionNo"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "위키 페이지의 제목이나 본문을 고친다",
+    "examples": [
+      "이 문서 내용 고쳐줘",
+      "회의록에 결정 사항 추가해줘",
+      "페이지 제목 바꿔줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.update",
+    "method": "PATCH",
+    "path": "/pages/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "ec3db192e0df52cecd4149215f4c37cbcf8b3c04c88ceeffef6204e7bbf553f5",
+    "structureSha256": "63efcea300f736dc093c8877cbe344b765e8a300d527e64d6995cb16e5adfd26"
+  },
+  "origin": "seed",
+  "revision": "r-50bea004f164"
+}

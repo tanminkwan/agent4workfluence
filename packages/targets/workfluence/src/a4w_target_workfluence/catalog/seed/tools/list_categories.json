@@ -1,0 +1,52 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_categories",
+  "title": "분류 목록 보기",
+  "description": "스페이스를 묶는 분류의 목록을 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/categories",
+    "bindings": [],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].id",
+      "[].name"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "스페이스를 묶는 분류 목록을 본다",
+    "examples": [
+      "스페이스 분류 뭐 있어?",
+      "카테고리 목록 보여줘",
+      "공간 분류 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "categories.list",
+    "method": "GET",
+    "path": "/categories",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "30180f5f5139cda9c6a200eec18c4504b5833f710ca0091424afc45905e61ee2",
+    "structureSha256": "04083995148dd643f80a3ad5a342aa01691b62a7aed9a569a1ec4ed2141c9f11"
+  },
+  "origin": "seed",
+  "revision": "r-c82108b2ba2c"
+}

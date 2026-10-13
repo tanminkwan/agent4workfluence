@@ -1,0 +1,59 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_notifications",
+  "title": "내 알림 보기",
+  "description": "agent 자신에게 온 알림(멘션·댓글 등)을 본다. 남의 알림은 볼 수 없다. 기본 100개까지 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/notifications",
+    "bindings": [],
+    "fixed": [],
+    "omitted": [
+      "limit"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].id",
+      "items[].kind",
+      "items[].pageTitle",
+      "items[].actorName",
+      "items[].createdAt",
+      "items[].readAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "나에게 온 알림(멘션·댓글)을 본다",
+    "examples": [
+      "나한테 온 알림 있어?",
+      "누가 나를 멘션했어?",
+      "새 알림 보여줘"
+    ]
+  },
+  "source": {
+    "operationId": "notifications.list",
+    "method": "GET",
+    "path": "/notifications",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "2fe5a960309a838749d1adb4157327c3970c9d0b67b28560d14e9f460a3b09d0",
+    "structureSha256": "a5545596b8d49534a80da7df69acc7e9879805a073916e417d58b5464c462222"
+  },
+  "origin": "seed",
+  "revision": "r-212f13119053"
+}

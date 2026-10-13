@@ -1,0 +1,79 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "add_page_label",
+  "title": "페이지에 라벨 붙이기",
+  "description": "페이지에 라벨(태그)을 붙인다. 없는 라벨이면 만든다. 이름은 소문자로 저장된다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "pageId": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "name": {
+        "description": "라벨 이름 — 40자까지",
+        "maxLength": 40,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "pageId",
+      "name"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/pages/{pageId}/labels",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "pageId",
+        "in": "path",
+        "name": "pageId"
+      },
+      {
+        "input": "name",
+        "in": "body",
+        "pointer": "/name"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "name"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "페이지에 라벨(태그)을 붙인다",
+    "examples": [
+      "이 문서에 긴급 라벨 붙여줘",
+      "회의록 태그 달아줘",
+      "페이지에 보안 라벨 추가해줘"
+    ]
+  },
+  "source": {
+    "operationId": "labels.attach",
+    "method": "POST",
+    "path": "/pages/{pageId}/labels",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "bf578a56f326b8d9d6cec5b778ab5924130c55b44c06bf00f947631e2b744e9b",
+    "structureSha256": "f60c82a6cc9e9265e5155d19e80d64ce76c554c1b1bb0c62375783da431990af"
+  },
+  "origin": "seed",
+  "revision": "r-2801387e53d5"
+}

@@ -1,0 +1,27 @@
+# Workfluence 오류 코드별 안내문 (작은 모델이 다음에 할 일).
+# 코드 목록은 명세 info.description의 "오류 코드" 문단과 동작별 409 설명에서 옮겼다.
+codes:
+  TOKEN_MISSING: &token "사람이 token을 새로 주거나 풀어야 한다. 다시 하지 말고 멈춰라"
+  TOKEN_INVALID: *token
+  TOKEN_UNKNOWN: *token
+  TOKEN_EXPIRED: *token
+  TOKEN_REVOKED: *token
+  ACCOUNT_INACTIVE: *token
+  PASSWORD_CHANGE_REQUIRED: "token 주인이 화면에서 비밀번호를 바꿔야 한다. 다시 하지 말고 멈춰라"
+  INSUFFICIENT_SCOPE: "이 tool에 필요한 권한이 token에 없다. 다른 방법을 찾거나 멈춰라"
+  FORBIDDEN: "이 자료에 권한이 없다. 다른 스페이스·페이지인지 확인하라"
+  INVALID_REQUEST: "message가 말하는 칸을 고쳐 다시 하라"
+  INVALID_JSON: "요청 본문 형식을 고쳐 다시 하라"
+  NOT_FOUND: "id가 맞는지 목록·검색으로 다시 찾아라"
+  SPACE_NOT_FOUND: "스페이스 이름·id를 목록으로 다시 찾아라"
+  SPACE_AMBIGUOUS: "이름이 같은 스페이스가 여럿이다. details.candidates의 id로 다시 하라"
+  VERSION_CONFLICT: "그 사이 다른 저장이 있었다. 페이지를 다시 읽어 currentVersionNo를 baseVersionNo로 넣고, 바뀐 내용을 합쳐 다시 고쳐라"
+  PAGE_BEING_EDITED: "누가 지금 화면에서 편집 중이다. 잠시 뒤 다시 하라"
+  PAYLOAD_TOO_LARGE: "본문이 너무 크다. 줄여서 다시 하라"
+  TOO_LARGE_FOR_JSON: "JSON으로 받기에 너무 크다. 다른 형식이나 범위를 좁혀 다시 하라"
+  RATE_LIMITED: "호출 한도에 걸렸다. Retry-After 초 뒤에 다시 하라"
+  API_DISABLED: "서버가 공개 API를 꺼 두었다. 다시 하지 말고 멈춰라"
+  INTERNAL: "서버 오류다. requestId를 운영자에게 알려라"
+status:
+  "409": "충돌이다. 대상을 다시 읽고 다시 하라"
+  "413": "본문이 너무 크다. 줄여서 다시 하라"

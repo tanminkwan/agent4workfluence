@@ -1,0 +1,68 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "download_attachment",
+  "title": "첨부 내용 받기",
+  "description": "첨부 파일 하나의 내용을 JSON으로 받는다. 글 파일은 utf8 글로, 이진 파일은 base64로 온다. 1000000바이트(기본값)를 넘으면 413이다. 받은 일은 감사로그에 남는다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "첨부 id — list_attachments 결과의 items[].id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/attachments/{id}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [
+      {
+        "in": "query",
+        "name": "format",
+        "value": "json"
+      }
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "첨부 파일의 내용을 받아 읽는다",
+    "examples": [
+      "첨부된 문서 내용 읽어줘",
+      "그 파일 열어봐줘",
+      "첨부 파일 내용 보여줘"
+    ]
+  },
+  "source": {
+    "operationId": "attachments.download",
+    "method": "GET",
+    "path": "/attachments/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "8e1718af027b9d4f7251c4e443f006da91377abd6370b26881e5b519d2247cfa",
+    "structureSha256": "f18e68b858597852294c64158155994327c0427d4a7a928bc86db783a496830f"
+  },
+  "origin": "seed",
+  "revision": "r-eff57077b367"
+}

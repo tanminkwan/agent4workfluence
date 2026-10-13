@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-manufacture"
+version = "0.1.0"
+description = "agent4workfluence Manufacture (변경 반영: tool 생성·검사·검증 요청·보관·색인). 타겟을 직접 부르지 않는다"
+requires-python = ">=3.12"
+dependencies = ["a4w-core", "a4w-tools", "a4w-clients", "fastapi", "uvicorn", "httpx", "pyyaml", "jsonschema"]
+
+[project.scripts]
+a4w-seedtool = "a4w_manufacture.seedtool:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"a4w_manufacture.storage" = ["schema.sql"]

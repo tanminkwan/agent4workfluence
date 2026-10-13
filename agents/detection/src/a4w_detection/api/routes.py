@@ -7,11 +7,14 @@ import hmac
 from fastapi import APIRouter, Depends, Query, Request
 from fastapi.responses import JSONResponse
 
-from a4w_core.errors import StorageError
+from a4w_core.errors import StorageError, UnsupportedSandbox
 
 from . import serialize
 from .errors import Unauthorized
-from .schemas import ChangeSetBody, DetectChanged, DetectRequest, DetectUnchanged, ErrorBody, Health
+from .schemas import (
+    ChangeSetBody, DetectChanged, DetectRequest, DetectUnchanged, ErrorBody, Health, ProfileBody, VerificationAccepted,
+    VerificationBody, VerificationRequest,
+)
 
 ERRORS = {s: {"model": ErrorBody} for s in (400, 401, 404, 409, 500, 501, 502)}
 
@@ -55,6 +58,53 @@ def get_changeset(
 ):
     cs = request.app.state.ctx.query.get(targetId, changeSetId)
     return JSONResponse(serialize.changeset(cs, include_text_diff=includeTextDiff))
+
+
+def _verify(request: Request):
+    svc = request.app.state.ctx.verify
+    if svc is None:
+        raise UnsupportedSandbox("검증이 설정되지 않았다")
+    return svc
+
+
+@v1.get(
+    "/targets/{targetId}/profile",
+    summary="타겟 정보",
+    description="타겟 token의 scope와 검증 환경 사용 가능 여부. token 값은 내주지 않는다.",
+    responses={200: {"model": ProfileBody}, **ERRORS},
+)
+def target_profile(targetId: str, request: Request):
+    profile = request.app.state.ctx.profile
+    if profile is None:
+        raise UnsupportedSandbox("타겟 정보가 설정되지 않았다")
+    return JSONResponse(profile.profile(targetId))
+
+
+@v1.post(
+    "/verifications",
+    summary="실호출 검증 접수",
+    description="tool 정의와 시나리오를 받아 시험 환경에서 실행한다. 비동기다(202 뒤 조회). "
+    "같은 verificationId로 다시 보내면 새로 실행하지 않고 그 상태를 돌려준다(200).",
+    status_code=202,
+    responses={202: {"model": VerificationAccepted}, 200: {"model": VerificationBody}, **ERRORS},
+)
+def submit_verification(body: VerificationRequest, request: Request):
+    record, created = _verify(request).submit(body.model_dump())
+    if created:
+        return JSONResponse(
+            {"verificationId": record["verificationId"], "targetId": record["targetId"], "status": "running"},
+            status_code=202,
+        )
+    return JSONResponse(record, status_code=200)
+
+
+@v1.get(
+    "/verifications/{verificationId}",
+    summary="실호출 검증 조회",
+    responses={200: {"model": VerificationBody}, **ERRORS},
+)
+def get_verification(verificationId: str, request: Request, targetId: str = Query(description="검증의 타겟 ID")):
+    return JSONResponse(_verify(request).get(targetId, verificationId))
 
 
 @public.get("/health", summary="상태 확인", responses={200: {"model": Health}, 503: {"model": Health}})

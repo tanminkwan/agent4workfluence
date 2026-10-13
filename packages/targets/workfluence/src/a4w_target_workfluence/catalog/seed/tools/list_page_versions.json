@@ -1,0 +1,68 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_page_versions",
+  "title": "페이지 버전 이력 보기",
+  "description": "페이지의 버전 번호·제목·고친 사람·시각 목록을 본문 없이 본다. 버전 본문은 read_page_version으로, 두 버전 차이는 compare_page_versions로 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{id}/versions",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].versionNo",
+      "[].title",
+      "[].createdByName",
+      "[].createdAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "history",
+  "index": {
+    "summary": "페이지가 언제 누가 고쳤는지 버전 이력을 본다",
+    "examples": [
+      "이 문서 누가 언제 고쳤어?",
+      "페이지 수정 이력 보여줘",
+      "버전 기록 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.versions",
+    "method": "GET",
+    "path": "/pages/{id}/versions",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "ebb9099d7f526522063896fe2591717237992674ecd26a711db607cc08b7647e",
+    "structureSha256": "d98a6b47367ff44abba839b4d5abf871d726ab18acdd1d630a6577f048920ff2"
+  },
+  "origin": "seed",
+  "revision": "r-be31ee4cb948"
+}

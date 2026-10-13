@@ -1,0 +1,8 @@
+setup:
+  - tool: create_page
+    args: {title: "되살릴 검증 페이지 ${run.id}", body: "x"}
+    save: {pid: /id}
+  - tool: delete_page
+    args: {id: "${saved.pid}"}
+call: {args: {id: "${saved.pid}"}}
+expect: {ok: true}

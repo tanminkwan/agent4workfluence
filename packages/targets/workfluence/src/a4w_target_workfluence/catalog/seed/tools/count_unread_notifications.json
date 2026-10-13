@@ -1,0 +1,51 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "count_unread_notifications",
+  "title": "안 읽은 알림 수 보기",
+  "description": "agent 자신의 안 읽은 알림 수를 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/notifications/unread-count",
+    "bindings": [],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "count"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "안 읽은 알림이 몇 개인지 본다",
+    "examples": [
+      "안 읽은 알림 몇 개야?",
+      "새 알림 수 알려줘",
+      "확인 안 한 알림 있어?"
+    ]
+  },
+  "source": {
+    "operationId": "notifications.unreadCount",
+    "method": "GET",
+    "path": "/notifications/unread-count",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "0d65f13eb132b64afc6cff3d133d0d9819bfd4a06dcd9bc549866bf93559d632",
+    "structureSha256": "0859ccaba7804393a7ab9420fc07190d8cbb38b266a1c80552dda5e7f358a352"
+  },
+  "origin": "seed",
+  "revision": "r-28480f5f0e36"
+}

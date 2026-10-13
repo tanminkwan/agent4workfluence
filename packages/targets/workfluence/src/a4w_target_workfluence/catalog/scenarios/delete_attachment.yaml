@@ -1,0 +1,6 @@
+setup:
+  - tool: upload_attachment
+    args: {pageId: "${sandbox.pageId}", filename: "a4w-delete.txt", content: "지울 첨부"}
+    save: {aid: /id}
+call: {args: {id: "${saved.aid}"}}
+expect: {ok: true}

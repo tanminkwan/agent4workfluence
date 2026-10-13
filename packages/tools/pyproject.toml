@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-tools"
+version = "0.1.0"
+description = "agent4workfluence tool 정의 형식과 공통 tool 실행기 (웹·MCP 무관 라이브러리)"
+requires-python = ">=3.12"
+dependencies = ["a4w-core", "httpx", "jsonschema"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"a4w_tools" = ["schemas/*.json"]

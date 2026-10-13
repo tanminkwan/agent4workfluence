@@ -22,9 +22,26 @@ def test_unknown_name_fails_with_config_error():
         Registry().create("spec_parser", "nope", None)
 
 
-def test_unknown_kind_fails():
+def test_new_kind_is_created_on_register():
+    """서비스마다 다른 종류(LLM, RAG, 검증 환경 등)를 core 수정 없이 더한다 (Phase 2 설계 2.1절)."""
+    reg = Registry()
+    reg.register("llm_client", "fake", lambda cfg: "llm")
+    assert reg.create("llm_client", "fake", None) == "llm"
+    assert reg.names("llm_client") == ["fake"]
+
+
+def test_unknown_kind_on_create_fails_with_config_error():
+    with pytest.raises(ConfigError):
+        Registry().create("bogus", "x", None)
+
+
+def test_names_of_unknown_kind_is_empty():
+    assert Registry().names("bogus") == []
+
+
+def test_kind_name_format_is_checked():
     with pytest.raises(ValueError):
-        Registry().register("bogus", "x", lambda cfg: None)
+        Registry().register("Bad Kind", "x", lambda cfg: None)
 
 
 def test_builtins_are_registered():

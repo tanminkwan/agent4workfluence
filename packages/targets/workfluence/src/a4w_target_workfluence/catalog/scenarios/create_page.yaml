@@ -1,0 +1,2 @@
+call: {args: {title: "검증 페이지 ${run.id}", body: "검증 본문"}}
+expect: {ok: true, fields: [id, currentVersionNo]}

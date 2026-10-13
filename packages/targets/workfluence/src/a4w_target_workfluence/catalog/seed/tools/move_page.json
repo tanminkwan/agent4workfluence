@@ -1,0 +1,90 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "move_page",
+  "title": "페이지 옮기기",
+  "description": "페이지를 다른 부모 페이지 아래로 옮긴다. 형제의 맨 끝에 놓인다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "옮길 페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "parentId": {
+        "anyOf": [
+          {
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "새 부모 페이지 id — search_pages 결과의 pageId. 맨 위로 옮기려면 null"
+      }
+    },
+    "required": [
+      "id",
+      "parentId"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "PATCH",
+    "path": "/pages/{id}/move",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "parentId",
+        "in": "body",
+        "pointer": "/parentId"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "position"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "parentId",
+      "title"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "danger",
+  "scopes": [
+    "write"
+  ],
+  "group": "danger",
+  "index": {
+    "summary": "페이지를 다른 페이지 아래로 옮긴다",
+    "examples": [
+      "이 문서를 회의록 아래로 옮겨줘",
+      "페이지 위치 바꿔줘",
+      "맨 위로 옮겨줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.move",
+    "method": "PATCH",
+    "path": "/pages/{id}/move",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "0f4e01765310ff40cccafb71b0490b3e381d76290d4d3a956071ff3a46fd10e7",
+    "structureSha256": "0b2b221f9b5abea7802e133e78a6cd781ce15de2b86055d24741de36b42d6d49"
+  },
+  "origin": "seed",
+  "revision": "r-d0ae413ac299"
+}

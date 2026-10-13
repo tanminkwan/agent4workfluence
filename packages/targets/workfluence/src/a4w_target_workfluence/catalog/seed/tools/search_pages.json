@@ -1,0 +1,78 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "search_pages",
+  "title": "페이지 검색",
+  "description": "기본 스페이스에서 제목과 본문으로 페이지를 찾는다. 검색어는 두 글자부터 된다. 결과의 pageId로 다른 tool을 부른다. 기본 20개까지 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "검색어 — 요청 글의 핵심 낱말. 두 글자 이상, 200자까지"
+      }
+    },
+    "required": [
+      "q"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/search",
+    "bindings": [
+      {
+        "input": "q",
+        "in": "query",
+        "name": "q"
+      }
+    ],
+    "fixed": [
+      {
+        "in": "query",
+        "name": "space",
+        "context": "homeSpace"
+      }
+    ],
+    "omitted": [
+      "limit"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].pageId",
+      "items[].title",
+      "items[].snippet",
+      "items[].updatedAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "제목·본문으로 위키 페이지를 검색한다",
+    "examples": [
+      "보안 정책 문서 찾아줘",
+      "지난주 회의록 검색해줘",
+      "배포 절차가 적힌 페이지 있어?"
+    ]
+  },
+  "source": {
+    "operationId": "search.find",
+    "method": "GET",
+    "path": "/search",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "a0852912449ae528553831943aacc657b9b894894bf0b70718a72c3333ccfe49",
+    "structureSha256": "4e74a6d9bb5ece7930fcec5503ed19997c9d264e436cef13077f8e5663bf5367"
+  },
+  "origin": "seed",
+  "revision": "r-feb86a5c02ec"
+}

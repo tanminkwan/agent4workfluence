@@ -1,0 +1,2 @@
+call: {args: {id: "${sandbox.attachmentId}"}}
+expect: {ok: true}

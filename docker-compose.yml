@@ -10,6 +10,8 @@ services:
     volumes:
       - spec-store:${DETECTION_SPEC_STORE_PATH}
       - ./config/targets:${DETECTION_TARGETS_DIR}:ro
+      # 타겟 비밀은 Detection(타겟 창구)에만 붙인다. 다른 서비스 비밀(LLM key 등)은 보이지 않는다
+      - ./config/secrets/targets:${DETECTION_SECRETS_DIR}:ro
     healthcheck:
       test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/health' % os.environ['DETECTION_PORT'], timeout=5)"]
       interval: 30s
@@ -17,5 +19,27 @@ services:
       retries: 3
     restart: unless-stopped
 
+  manufacture:
+    image: ${MANUFACTURE_IMAGE}:${MANUFACTURE_TAG}
+    # 타겟 비밀·타겟 주소는 붙이지 않는다 (타겟 창구는 Detection, Phase 2 설계 1절)
+    env_file:
+      - .env
+      - ./config/secrets/manufacture-llm.env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"   # AI Pro Plus (host 포트)
+    ports:
+      - "${MANUFACTURE_PORT}:${MANUFACTURE_PORT}"
+    volumes:
+      - tool-store:${MANUFACTURE_TOOL_STORE_PATH}
+      - ./config/targets:${MANUFACTURE_TARGETS_DIR}:ro
+    depends_on: [detection]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/health' % os.environ['MANUFACTURE_PORT'], timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
 volumes:
   spec-store:
+  tool-store:

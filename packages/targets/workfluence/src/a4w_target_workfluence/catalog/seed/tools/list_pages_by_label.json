@@ -1,0 +1,70 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_pages_by_label",
+  "title": "라벨이 붙은 페이지 보기",
+  "description": "라벨 하나가 붙은, 내가 읽을 수 있는 페이지 목록을 본다. 기본 100개까지 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "라벨 이름 — 요청 글에 있는 라벨이나 list_labels 결과의 name"
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/labels/{name}/pages",
+    "bindings": [
+      {
+        "input": "name",
+        "in": "path",
+        "name": "name"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "limit"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].pageId",
+      "items[].title",
+      "items[].spaceName",
+      "items[].updatedAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "특정 라벨(태그)이 붙은 페이지를 찾는다",
+    "examples": [
+      "긴급 라벨 붙은 문서 보여줘",
+      "회의록 태그 달린 페이지 목록",
+      "보안 라벨 페이지들 찾아줘"
+    ]
+  },
+  "source": {
+    "operationId": "labels.pages",
+    "method": "GET",
+    "path": "/labels/{name}/pages",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "c2ebf0ef32c54a70aa9319def5918448c7e456ee610ea09209a6c9a544feae8e",
+    "structureSha256": "4d32d25ca4ad5659403f46f2b797752085cd5cb3406d4654dde3d3a55d728f5e"
+  },
+  "origin": "seed",
+  "revision": "r-a1e235e83388"
+}

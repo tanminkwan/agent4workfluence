@@ -1,29 +1,35 @@
-"""이름 → 구현 factory 등록부. 새 구현은 등록만 하면 된다 (OCP)."""
+"""이름 → 구현 factory 등록부. 새 구현은 등록만 하면 된다 (OCP).
+
+종류(kind)는 고정 목록이 아니다. 처음 등록할 때 생긴다. 서비스마다 다른 종류
+(LLM, RAG, 검증 환경 등)를 core를 고치지 않고 더하기 위해서다.
+"""
 
 from __future__ import annotations
 
+import re
 from collections.abc import Callable
 from importlib.metadata import entry_points
 from typing import Any
 
 from .errors import ConfigError
 
-KINDS = ("spec_source", "spec_parser", "spec_normalizer", "review_policy")
 ENTRY_POINT_GROUP = "a4w.targets"
+_KIND = re.compile(r"^[a-z][a-z0-9_]*$")
 
 Factory = Callable[[Any], Any]
 
 
 class Registry:
     def __init__(self) -> None:
-        self._items: dict[str, dict[str, Factory]] = {k: {} for k in KINDS}
+        self._items: dict[str, dict[str, Factory]] = {}
 
     def register(self, kind: str, name: str, factory: Factory) -> None:
-        if kind not in self._items:
-            raise ValueError(f"알 수 없는 종류: {kind}")
-        if name in self._items[kind]:
+        if not _KIND.match(kind):
+            raise ValueError(f"종류 이름 형식이 아니다: {kind!r}")
+        names = self._items.setdefault(kind, {})
+        if name in names:
             raise ValueError(f"이미 등록됨: {kind}/{name}")
-        self._items[kind][name] = factory
+        names[name] = factory
 
     def create(self, kind: str, name: str, config: Any) -> Any:
         try:
@@ -33,7 +39,7 @@ class Registry:
         return factory(config)
 
     def names(self, kind: str) -> list[str]:
-        return sorted(self._items[kind])
+        return sorted(self._items.get(kind, {}))
 
 
 def load_target_plugins(registry: Registry) -> list[str]:

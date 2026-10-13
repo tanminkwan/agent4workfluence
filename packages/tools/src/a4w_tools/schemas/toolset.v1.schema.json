@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a4w.local/schemas/toolset.v1.schema.json",
+  "title": "a4w tool 묶음 manifest v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "targetId", "toolVersion", "parent", "specVersion", "changeSetId", "createdAt", "tools"],
+  "properties": {
+    "schema": {"const": "a4w.toolset/v1"},
+    "targetId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,62}$"},
+    "toolVersion": {"$ref": "#/$defs/toolVersion"},
+    "parent": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/toolVersion"}]},
+    "specVersion": {"type": "string", "minLength": 1},
+    "changeSetId": {"type": ["string", "null"]},
+    "createdAt": {"type": "string", "minLength": 1},
+    "tools": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "kind", "file", "revision", "risk", "scopes", "operationId", "verified"],
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z][a-z0-9_]{2,63}$"},
+          "kind": {"enum": ["operation", "composite", "handler"]},
+          "file": {"type": "string", "pattern": "^tools/[a-z][a-z0-9_]{2,63}\\.json$"},
+          "revision": {"type": "string", "pattern": "^r-[0-9a-f]{12}$"},
+          "risk": {"enum": ["read", "write", "danger"]},
+          "scopes": {"type": "array", "items": {"type": "string"}},
+          "operationId": {"type": ["string", "null"]},
+          "verified": {"enum": ["passed", "unverified"]}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "toolVersion": {"type": "string", "pattern": "^tv-[0-9]{6}-[0-9a-f]{8}$"}
+  }
+}

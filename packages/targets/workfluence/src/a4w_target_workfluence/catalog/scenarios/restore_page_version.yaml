@@ -1,0 +1,8 @@
+setup:
+  - tool: create_page
+    args: {title: "되돌릴 검증 페이지 ${run.id}", body: "첫 본문"}
+    save: {pid: /id, v1: /currentVersionNo}
+  - tool: update_page
+    args: {id: "${saved.pid}", baseVersionNo: "${saved.v1}", body: "둘째 본문"}
+call: {args: {id: "${saved.pid}", "no": "${saved.v1}"}}
+expect: {ok: true, fields: [currentVersionNo]}

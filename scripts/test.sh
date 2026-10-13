@@ -16,14 +16,30 @@ REF="$IMAGE:$TAG-test"
 RUN=(docker run --rm)
 if [ "${1:-}" = "--src" ]; then
   shift
-  RUN+=(-v "$ROOT:/src:ro" -e PYTHONPATH="$(cd "$ROOT" && printf '/src/%s:' packages/core/src packages/targets/*/src agents/"$SERVICE"/src)"
+  # 공유 패키지(packages/*, packages/targets/*)는 모두 붙인다 (패키지를 더해도 이 파일을 고치지 않는다)
+  RUN+=(-v "$ROOT:/src:ro" -e PYTHONPATH="$(cd "$ROOT" && printf '/src/%s:' packages/*/src packages/targets/*/src agents/"$SERVICE"/src)"
         -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_ADDOPTS="-p no:cacheprovider")
 fi
-# live 시험: A4W_LIVE_TESTS=1 이면 실행 설정(.env의 proxy·NO_PROXY)과 타겟 설정을 붙인다
+env_value() { grep -E "^$1=" "$ENV_FILE" | tail -n1 | cut -d= -f2-; }
+# live 시험: A4W_LIVE_TESTS=1 이면 실행 설정(.env의 proxy·NO_PROXY), 타겟 설정, 서비스별 비밀을 붙인다
 if [ "${A4W_LIVE_TESTS:-}" = "1" ]; then
-  ALIAS="$(grep -E '^TARGET_HOST_ALIAS=' "$ENV_FILE" | tail -n1 | cut -d= -f2-)"
-  RUN+=(--env-file "$ENV_FILE" -e A4W_LIVE_TESTS=1 -v "$ROOT/config/targets:$(grep -E '^DETECTION_TARGETS_DIR=' "$ENV_FILE" | tail -n1 | cut -d= -f2-):ro")
+  RUN+=(--env-file "$ENV_FILE" -e A4W_LIVE_TESTS=1)
+  TARGETS_DIR="$(env_value "${PREFIX}_TARGETS_DIR")"
+  if [ -n "$TARGETS_DIR" ]; then RUN+=(-v "$ROOT/config/targets:$TARGETS_DIR:ro"); fi
+  # <SERVICE>_TEST_SECRETS: config/secrets 아래 디렉터리(→ <SERVICE>_SECRETS_DIR) 또는 .env 파일(→ --env-file)
+  for item in $(env_value "${PREFIX}_TEST_SECRETS" | tr ',' ' '); do
+    if [ -d "$ROOT/config/secrets/$item" ]; then
+      RUN+=(-v "$ROOT/config/secrets/$item:$(env_value "${PREFIX}_SECRETS_DIR"):ro")
+    elif [ -f "$ROOT/config/secrets/$item" ]; then
+      RUN+=(--env-file "$ROOT/config/secrets/$item")
+    else
+      echo "비밀이 없다: config/secrets/$item" >&2; exit 1
+    fi
+  done
+  ALIAS="$(env_value TARGET_HOST_ALIAS)"
   if [ -n "$ALIAS" ]; then RUN+=(--add-host "$ALIAS"); fi
+  # 서비스별로 더 닿아야 하는 이름 (쉼표 구분 "이름:IP" 또는 "이름:host-gateway", 예: AI Pro Plus)
+  for alias in $(env_value "${PREFIX}_TEST_HOSTS" | tr ',' ' '); do RUN+=(--add-host "$alias"); done
 fi
 if [ "$#" -gt 0 ]; then
   "${RUN[@]}" "$REF" python -m pytest "$@"

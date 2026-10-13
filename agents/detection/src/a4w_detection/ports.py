@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from contextlib import AbstractContextManager
 
+from a4w_core.locking import TargetLock as _CoreTargetLock
 from a4w_core.models import ChangeSet, SpecVersion
 
 
@@ -41,10 +41,8 @@ class DetectionStore(ABC):
         """보관소에 접근할 수 있는지 확인한다. 안 되면 StorageError."""
 
 
-class TargetLock(ABC):
-    @abstractmethod
-    def hold(self, target_id: str) -> AbstractContextManager[None]:
-        """잠금을 잡는다. 이미 잡혀 있으면 바로 DetectInProgress."""
+# 잠금 interface는 core에 있다 (Manufacture도 같이 쓴다)
+TargetLock = _CoreTargetLock
 
 
 class Clock(ABC):

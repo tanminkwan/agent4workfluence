@@ -1,0 +1,62 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "delete_comment",
+  "title": "댓글 지우기",
+  "description": "댓글 하나를 지운다. 쓴 사람이나 그 페이지를 지울 권한이 있는 사람만 지운다. 답글은 함께 지워지지 않는다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "지울 댓글 id — list_comments 결과의 items[].id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "DELETE",
+    "path": "/comments/{id}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "페이지의 댓글을 지운다",
+    "examples": [
+      "내 댓글 지워줘",
+      "잘못 단 댓글 삭제해줘",
+      "그 댓글 없애줘"
+    ]
+  },
+  "source": {
+    "operationId": "comments.delete",
+    "method": "DELETE",
+    "path": "/comments/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "b85bad11f5ce526d734de7907133cc674bc7057c7ecec1da6eaef4ad13f55423",
+    "structureSha256": "6a70d17be64dd40d19e9292729f9a679edd8f8523559e5f1cbb5aa184f43a4b5"
+  },
+  "origin": "seed",
+  "revision": "r-8da5580e101f"
+}

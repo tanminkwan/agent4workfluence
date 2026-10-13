@@ -1,0 +1,73 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "read_page",
+  "title": "페이지 읽기",
+  "description": "페이지 하나를 본문(마크다운)과 함께 읽는다. 지금 버전 번호(currentVersionNo)가 함께 온다 — 이 페이지를 고칠 때 update_page의 baseVersionNo로 그대로 쓴다. 제목만 알면 read_page_by_title을 쓴다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId나 list_pages 결과의 items[].id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{id}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "title",
+      "body",
+      "currentVersionNo",
+      "ancestors[].title",
+      "updatedAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "위키 페이지 하나의 본문을 읽는다",
+    "examples": [
+      "이 페이지 내용 보여줘",
+      "회의록 본문 읽어줘",
+      "문서 열어서 읽어줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.get",
+    "method": "GET",
+    "path": "/pages/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "4cf0088cb4060074f626b5060bccd795b45bf0b66b1b7cc489c87880536c6cec",
+    "structureSha256": "e0272aabfb60929038d37c5acc9175df39e97fdd66edca9889dafd279d5e0437"
+  },
+  "origin": "seed",
+  "revision": "r-da869d631ce5"
+}

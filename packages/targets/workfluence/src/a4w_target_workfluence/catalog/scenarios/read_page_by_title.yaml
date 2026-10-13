@@ -1,0 +1,2 @@
+call: {args: {title: "${sandbox.pageTitle}"}}
+expect: {ok: true, fields: [id, body]}

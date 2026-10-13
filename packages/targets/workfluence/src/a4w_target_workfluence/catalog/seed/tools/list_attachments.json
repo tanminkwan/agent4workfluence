@@ -1,0 +1,68 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_attachments",
+  "title": "페이지의 첨부 보기",
+  "description": "페이지에 올린 첨부 파일 목록을 이름·크기와 함께 본다. href를 본문에 [이름](주소)로 넣으면 사람이 눌러 받는다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "pageId": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      }
+    },
+    "required": [
+      "pageId"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{pageId}/attachments",
+    "bindings": [
+      {
+        "input": "pageId",
+        "in": "path",
+        "name": "pageId"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].id",
+      "items[].filename",
+      "items[].size",
+      "items[].href"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "페이지에 붙은 첨부 파일 목록을 본다",
+    "examples": [
+      "이 페이지에 첨부된 파일 뭐야?",
+      "첨부 목록 보여줘",
+      "회의록에 올린 파일 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "attachments.list",
+    "method": "GET",
+    "path": "/pages/{pageId}/attachments",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "3e0d4b9bf717b4f173eab390761230911229f6a94fe37db35f7b5e1ae426704c",
+    "structureSha256": "dda1f0daba1fa783894cb211b0ffeb51e7c277e90dcb1c02a9e5c1a156d695fb"
+  },
+  "origin": "seed",
+  "revision": "r-f81978e8dff8"
+}

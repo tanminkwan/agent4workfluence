@@ -1,0 +1,81 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "add_comment",
+  "title": "페이지에 댓글 달기",
+  "description": "페이지에 새 댓글을 단다. 본문은 마크다운이고 원시 HTML·그림은 400이다. 본문의 @사용자는 멘션이 되어 알림이 간다. 제목만 알면 comment_on_page_by_title을 쓴다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "pageId": {
+        "format": "uuid",
+        "type": "string",
+        "description": "댓글을 달 페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "body": {
+        "description": "댓글 본문 (마크다운 글)"
+      }
+    },
+    "required": [
+      "pageId",
+      "body"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/pages/{pageId}/comments",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "pageId",
+        "in": "path",
+        "name": "pageId"
+      },
+      {
+        "input": "body",
+        "in": "body",
+        "pointer": "/body"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format",
+      "body_format",
+      "parentId"
+    ],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "createdAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "위키 페이지에 댓글을 남긴다",
+    "examples": [
+      "이 문서에 확인했다고 댓글 달아줘",
+      "회의록에 의견 남겨줘",
+      "페이지에 질문 댓글 써줘"
+    ]
+  },
+  "source": {
+    "operationId": "comments.create",
+    "method": "POST",
+    "path": "/pages/{pageId}/comments",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "397c34b9fe232e53a4bc1edfe5cd38b34421e8cee4cfa02dbf6a7fbee574c621",
+    "structureSha256": "c626f7a78808577465711d103559677abf08fff2e8cb3b708a960dc0eaee1730"
+  },
+  "origin": "seed",
+  "revision": "r-26de2be39ca7"
+}

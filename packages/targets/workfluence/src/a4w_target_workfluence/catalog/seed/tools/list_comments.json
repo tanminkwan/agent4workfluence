@@ -1,0 +1,72 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_comments",
+  "title": "페이지의 댓글 보기",
+  "description": "페이지에 달린 댓글과 답글을 시간순으로 본다. 답글은 parentId가 상위 댓글 id다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "pageId": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      }
+    },
+    "required": [
+      "pageId"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{pageId}/comments",
+    "bindings": [
+      {
+        "input": "pageId",
+        "in": "path",
+        "name": "pageId"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].id",
+      "items[].author",
+      "items[].body",
+      "items[].parentId",
+      "items[].createdAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "페이지에 달린 댓글과 답글을 본다",
+    "examples": [
+      "이 문서에 달린 댓글 보여줘",
+      "사람들이 무슨 의견 남겼어?",
+      "회의록 댓글 읽어줘"
+    ]
+  },
+  "source": {
+    "operationId": "comments.list",
+    "method": "GET",
+    "path": "/pages/{pageId}/comments",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "154f29d2369fb11e179b01ea65cef91693b2f972f81d484066945188f4c83d87",
+    "structureSha256": "0e9c538a13903002b97703d3c2ec8fb919d681850d84319b396281a5e07b8c63"
+  },
+  "origin": "seed",
+  "revision": "r-1c87a078842d"
+}

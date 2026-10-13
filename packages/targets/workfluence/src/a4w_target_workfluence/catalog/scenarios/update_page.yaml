@@ -1,0 +1,2 @@
+call: {args: {id: "${sandbox.pageId}", baseVersionNo: "${sandbox.currentVersionNo}", body: "검증으로 고친 본문 ${run.id}"}}
+expect: {ok: true, fields: [currentVersionNo]}

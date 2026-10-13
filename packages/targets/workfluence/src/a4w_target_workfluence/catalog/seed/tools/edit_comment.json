@@ -1,0 +1,80 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "edit_comment",
+  "title": "댓글 고치기",
+  "description": "내가 쓴 댓글의 본문을 고친다. 남의 댓글은 고칠 수 없다. 본문은 마크다운이다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "고칠 댓글 id — list_comments 결과의 items[].id"
+      },
+      "body": {
+        "description": "새 댓글 본문 (마크다운 글)"
+      }
+    },
+    "required": [
+      "id",
+      "body"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "PATCH",
+    "path": "/comments/{id}",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "body",
+        "in": "body",
+        "pointer": "/body"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "format",
+      "body_format"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "updatedAt"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "내가 쓴 댓글 내용을 고친다",
+    "examples": [
+      "내 댓글 내용 고쳐줘",
+      "아까 단 댓글 수정해줘",
+      "댓글 오타 고쳐줘"
+    ]
+  },
+  "source": {
+    "operationId": "comments.update",
+    "method": "PATCH",
+    "path": "/comments/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "37557b2695d0da4791722782421f961b2887fc7b850ae3475ae217630d14a813",
+    "structureSha256": "ee3789dcd23c41933aa03afa80cec3ac774636dc1b73c8b458edd74dcc44ea22"
+  },
+  "origin": "seed",
+  "revision": "r-9da7c25dc0e9"
+}

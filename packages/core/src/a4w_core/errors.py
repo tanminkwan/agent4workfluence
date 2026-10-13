@@ -46,3 +46,34 @@ class SpecInvalid(A4WError):
 
 class StorageError(A4WError):
     code = "STORAGE_ERROR"
+
+
+# ── Phase 2: 타겟 창구 (Detection 보강)
+
+
+class ScopeUnknown(A4WError):
+    code = "SCOPE_UNKNOWN"
+
+
+class SandboxUnavailable(A4WError):
+    code = "SANDBOX_UNAVAILABLE"
+
+
+class UnsupportedSandbox(A4WError):
+    code = "UNSUPPORTED_SANDBOX"
+
+
+class VerifyInProgress(A4WError):
+    code = "VERIFY_IN_PROGRESS"
+
+
+class VerificationNotFound(A4WError):
+    code = "VERIFICATION_NOT_FOUND"
+
+
+class VerifyRequestInvalid(A4WError):
+    code = "VERIFY_REQUEST_INVALID"
+
+    def __init__(self, message: str, details=None):
+        super().__init__(message)
+        self.details = details

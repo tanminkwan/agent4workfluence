@@ -1,0 +1,2 @@
+call: {args: {pageId: "${sandbox.pageId}", name: "a4w-verify-add"}}
+expect: {ok: true, fields: [name]}

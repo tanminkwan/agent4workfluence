@@ -26,11 +26,20 @@ CODE_STATUS = {
     "STORAGE_ERROR": 500,
     "CONFIG_ERROR": 500,
     "INTERNAL_ERROR": 500,
+    # Phase 2 보강
+    "VERIFY_REQUEST_INVALID": 400,
+    "VERIFICATION_NOT_FOUND": 404,
+    "VERIFY_IN_PROGRESS": 409,
+    "UNSUPPORTED_SANDBOX": 501,
+    "SCOPE_UNKNOWN": 502,
 }
 
 
-def error_response(code: str, message: str, status: int | None = None) -> JSONResponse:
-    return JSONResponse({"error": {"code": code, "message": message}}, status_code=status or CODE_STATUS.get(code, 500))
+def error_response(code: str, message: str, status: int | None = None, details=None) -> JSONResponse:
+    error = {"code": code, "message": message}
+    if details is not None:
+        error["details"] = details
+    return JSONResponse({"error": error}, status_code=status or CODE_STATUS.get(code, 500))
 
 
 class Unauthorized(A4WError):
@@ -42,7 +51,7 @@ def install(app: FastAPI) -> None:
     async def _a4w(request: Request, exc: A4WError):
         if CODE_STATUS.get(exc.code, 500) >= 500:
             log.warning("request failed: code=%s path=%s", exc.code, request.url.path)
-        return error_response(exc.code, exc.message)
+        return error_response(exc.code, exc.message, details=getattr(exc, "details", None))
 
     @app.exception_handler(RequestValidationError)
     async def _validation(request: Request, exc: RequestValidationError):

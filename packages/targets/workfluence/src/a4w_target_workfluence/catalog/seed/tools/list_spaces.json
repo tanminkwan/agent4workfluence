@@ -1,0 +1,70 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_spaces",
+  "title": "스페이스 목록 보기",
+  "description": "내가 볼 수 있는 스페이스 목록을 이름·설명·쓰기 가능 여부와 함께 본다. 이름 일부로 좁힐 수 있다. 많으면 잘리고 truncated가 true다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "q": {
+        "maxLength": 100,
+        "type": "string",
+        "description": "찾을 스페이스 이름의 일부 — 요청 글에 스페이스 이름이 있을 때만 넣는다. 대소문자 무시"
+      }
+    },
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/spaces",
+    "bindings": [
+      {
+        "input": "q",
+        "in": "query",
+        "name": "q"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "limit"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "items[].id",
+      "items[].name",
+      "items[].description",
+      "items[].canWrite",
+      "truncated"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "위키의 스페이스(공간) 목록을 보여 준다",
+    "examples": [
+      "어떤 스페이스들이 있어?",
+      "개발팀 스페이스 찾아줘",
+      "내가 쓸 수 있는 공간 목록 보여줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.list",
+    "method": "GET",
+    "path": "/spaces",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "b2d21136574daf29d2c48b2fbcd92aedc02cce43f485e1a3b8b2af8afcdde818",
+    "structureSha256": "f9b3888b3e01f8baea0b88a9cead4db772fcc873845b92be9e4b4a0f45dc845f"
+  },
+  "origin": "seed",
+  "revision": "r-a5723c5adfac"
+}

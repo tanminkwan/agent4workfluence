@@ -1,0 +1,63 @@
+{
+  "description": "기본 스페이스에서 제목으로 페이지를 하나 찾아 본문을 읽는다. 여러 개가 맞으면 AMBIGUOUS와 후보 목록이 오니, 더 정확한 제목으로 다시 하거나 후보의 pageId로 read_page를 쓴다.",
+  "group": "read",
+  "index": {
+    "examples": [
+      "회의록 페이지 읽어줘",
+      "보안 정책 문서 내용 보여줘",
+      "배포 가이드 열어서 읽어줘"
+    ],
+    "summary": "제목으로 위키 페이지를 찾아 본문을 읽는다"
+  },
+  "inputSchema": {
+    "additionalProperties": false,
+    "properties": {
+      "title": {
+        "description": "찾을 페이지 제목 (요청 글에 나온 그대로, 두 글자 이상)",
+        "type": "string"
+      }
+    },
+    "required": [
+      "title"
+    ],
+    "type": "object"
+  },
+  "kind": "composite",
+  "name": "read_page_by_title",
+  "origin": "seed",
+  "output": {
+    "$step": "read"
+  },
+  "revision": "r-91591a9069a1",
+  "risk": "read",
+  "schema": "a4w.tool/v1",
+  "scopes": [
+    "read"
+  ],
+  "steps": [
+    {
+      "args": {
+        "q": {
+          "$input": "title"
+        }
+      },
+      "expect": {
+        "count": "one",
+        "pointer": "/items"
+      },
+      "id": "find",
+      "tool": "search_pages"
+    },
+    {
+      "args": {
+        "id": {
+          "$step": "find",
+          "pointer": "/items/0/pageId"
+        }
+      },
+      "id": "read",
+      "tool": "read_page"
+    }
+  ],
+  "title": "제목으로 페이지 찾아 읽기"
+}

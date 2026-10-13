@@ -1,0 +1,2 @@
+call: {args: {title: "${sandbox.pageTitle}", label: "a4w-verify-title"}}
+expect: {ok: true, fields: [name]}

@@ -1,0 +1,65 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_page_labels",
+  "title": "페이지의 라벨 보기",
+  "description": "페이지 하나에 붙은 라벨을 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "pageId": {
+        "format": "uuid",
+        "type": "string",
+        "description": "페이지 id — search_pages 결과의 items[].pageId"
+      }
+    },
+    "required": [
+      "pageId"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/pages/{pageId}/labels",
+    "bindings": [
+      {
+        "input": "pageId",
+        "in": "path",
+        "name": "pageId"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].name"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "페이지 하나에 붙은 라벨(태그)을 본다",
+    "examples": [
+      "이 문서에 어떤 태그가 붙었어?",
+      "페이지 라벨 확인해줘",
+      "이 글의 분류 라벨 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "labels.forPage",
+    "method": "GET",
+    "path": "/pages/{pageId}/labels",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "855cbd94281d878970b3de8ed76b06a6dd566914fa0d104c4e6aaf463c2022cc",
+    "structureSha256": "47ac48b15e5c1165ce277c96218b75eaeb8cf9ff30cf2e97ce5a036b4194b067"
+  },
+  "origin": "seed",
+  "revision": "r-f05a2ca42e4a"
+}

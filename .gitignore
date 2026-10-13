@@ -1,6 +1,6 @@
 # 비밀·환경별 설정
 .env
-config/secrets/*.env
+config/secrets/**/*.env
 config/targets/*.env
 config/targets/*.pem
 

@@ -1,0 +1,6 @@
+setup:
+  - tool: create_page
+    args: {title: "옮길 검증 페이지 ${run.id}", body: "x"}
+    save: {pid: /id}
+call: {args: {id: "${saved.pid}", parentId: "${sandbox.pageId}"}}
+expect: {ok: true, fields: [parentId]}

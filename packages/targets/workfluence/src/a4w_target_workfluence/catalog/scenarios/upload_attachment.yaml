@@ -1,0 +1,2 @@
+call: {args: {pageId: "${sandbox.pageId}", filename: "a4w-upload.txt", content: "검증 첨부 ${run.id}"}}
+expect: {ok: true, fields: [id]}

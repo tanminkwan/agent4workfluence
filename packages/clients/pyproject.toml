@@ -1,0 +1,13 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-clients"
+version = "0.1.0"
+description = "agent4workfluence 외부 시스템 클라이언트 (LLM, RAG). manufacture와 Phase 4 inference가 쓴다"
+requires-python = ">=3.12"
+dependencies = ["a4w-core", "httpx", "jsonschema"]
+
+[tool.setuptools.packages.find]
+where = ["src"]

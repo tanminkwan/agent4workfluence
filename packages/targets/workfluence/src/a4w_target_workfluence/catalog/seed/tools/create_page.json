@@ -1,0 +1,89 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "create_page",
+  "title": "새 페이지 만들기",
+  "description": "agent의 기본 스페이스 맨 위에 새 페이지를 만든다. 본문은 마크다운이고 원시 HTML·그림·허용 밖 링크는 400이다. 만들기는 실패해도 만들어졌을 수 있으니 다시 하기 전에 search_pages로 확인한다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "body": {
+        "description": "본문 (마크다운 글). 템플릿을 쓰면 list_templates 결과의 body"
+      },
+      "title": {
+        "description": "페이지 제목 — 300자까지",
+        "maxLength": 300,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "body",
+      "title"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/pages",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "body",
+        "in": "body",
+        "pointer": "/body"
+      },
+      {
+        "input": "title",
+        "in": "body",
+        "pointer": "/title"
+      }
+    ],
+    "fixed": [
+      {
+        "in": "body",
+        "pointer": "/space",
+        "context": "homeSpace"
+      }
+    ],
+    "omitted": [
+      "format",
+      "body_format",
+      "parentId"
+    ],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "title",
+      "currentVersionNo"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "위키에 새 페이지(문서)를 만든다",
+    "examples": [
+      "회의록 페이지 새로 만들어줘",
+      "오늘 작업 내용을 문서로 올려줘",
+      "새 위키 페이지 작성해줘"
+    ]
+  },
+  "source": {
+    "operationId": "pages.create",
+    "method": "POST",
+    "path": "/pages",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "47440b9394dd864d039c26bcae5a2eed8fb023e374e2639c432830fc582729f9",
+    "structureSha256": "5a3a89924c4c7eedcf542ef275bd8c2ea3e95c191031cd9c61f14be74d1d9509"
+  },
+  "origin": "seed",
+  "revision": "r-0a931dae757f"
+}

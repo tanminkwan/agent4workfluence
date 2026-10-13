@@ -1,0 +1,66 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "restore_trashed_page",
+  "title": "지운 페이지 되살리기",
+  "description": "휴지통의 페이지를 되살린다. 부모가 없어졌으면 맨 위로 되살리고 movedToRoot가 참이다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "되살릴 페이지 id — list_trashed_pages 결과의 items[].id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/trash/pages/{id}/restore",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "ok",
+      "movedToRoot"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "danger",
+  "scopes": [
+    "write"
+  ],
+  "group": "danger",
+  "index": {
+    "summary": "휴지통에서 지운 페이지를 되살린다",
+    "examples": [
+      "지운 문서 되살려줘",
+      "휴지통에서 페이지 복구해줘",
+      "실수로 지운 페이지 살려줘"
+    ]
+  },
+  "source": {
+    "operationId": "trash.restorePage",
+    "method": "POST",
+    "path": "/trash/pages/{id}/restore",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "f2076450d333b6577cc884a7baeaa0b14b8cdf1686e9fd33fdc84d0b19b4dd7e",
+    "structureSha256": "bc61d3a9482bffe240a1bf1eba4cf13e49738362a382a77f684497a907d8b76c"
+  },
+  "origin": "seed",
+  "revision": "r-aa679ab227f7"
+}

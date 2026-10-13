@@ -1,0 +1,51 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "mark_all_notifications_read",
+  "title": "알림 모두 읽음 표시",
+  "description": "agent 자신의 알림을 모두 읽음으로 표시하고 바뀐 수를 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {},
+    "required": [],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/notifications/read-all",
+    "bindings": [],
+    "fixed": [],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "count"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "communication",
+  "index": {
+    "summary": "내 알림을 모두 읽음으로 표시한다",
+    "examples": [
+      "알림 다 읽음으로 해줘",
+      "알림 모두 확인 처리",
+      "쌓인 알림 정리해줘"
+    ]
+  },
+  "source": {
+    "operationId": "notifications.readAll",
+    "method": "POST",
+    "path": "/notifications/read-all",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "4750733b6b4b0e4d20a7f34228a6d85fba01bd5f054ea17fa3bfe7527ebe84be",
+    "structureSha256": "cca4d0ba0ef0030475fdc0aa302b726adbc2e3777d0fb8b85ddb3166d7d35b2f"
+  },
+  "origin": "seed",
+  "revision": "r-e98a1696b303"
+}
