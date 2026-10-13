@@ -84,7 +84,7 @@ def build_context(environ: Mapping[str, str]) -> AppContext:
     # ── Phase 2 보강: 타겟 창구 (타겟 비밀이 있는 타겟만 검증·scope 확인을 켠다)
     secrets_dir = Path(env.require("DETECTION_SECRETS_DIR"))
     verify_runtimes = {
-        tid: _verify_runtime(registry, cfg, secrets)
+        tid: _verify_runtime(registry, cfg, secrets, secrets_dir)
         for tid, cfg in configs.items()
         if (secrets := _load_secrets(secrets_dir, tid)) is not None
     }
@@ -124,7 +124,7 @@ def _load_secrets(secrets_dir: Path, target_id: str) -> Settings | None:
     return Settings(parse_env_text(path.read_text(encoding="utf-8")), origin=f"secrets {target_id}")
 
 
-def _verify_runtime(registry: Registry, cfg: TargetConfig, secrets: Settings) -> VerifyRuntime:
+def _verify_runtime(registry: Registry, cfg: TargetConfig, secrets: Settings, secrets_dir: Path) -> VerifyRuntime:
     http = TargetHttpClient.from_settings(cfg, secrets)
     policy = ConfigCallPolicy.from_settings(cfg)
     executor = ToolExecutor(
@@ -132,7 +132,8 @@ def _verify_runtime(registry: Registry, cfg: TargetConfig, secrets: Settings) ->
         interpreter=registry.create("error_interpreter", cfg.require("CALL_ERROR_INTERPRETER"), cfg),
     )
     sandbox_name = cfg.require("VERIFY_SANDBOX")
-    sandbox = registry.create("verify_sandbox", sandbox_name, cfg)
+    # 시험 환경은 타겟 비밀 디렉터리에서 검증 상대 계정(peer) 비밀을 찾을 수 있다 (설계 11.6.1)
+    sandbox = registry.create("verify_sandbox", sandbox_name, (cfg, secrets_dir))
     return VerifyRuntime(
         runner=VerificationRunner(executor=executor, caller=RawCaller(http, policy), sandbox=sandbox),
         scope_provider=registry.create("scope_provider", cfg.require("TARGET_SCOPE_PROVIDER"), cfg),

@@ -9,8 +9,8 @@
 
 | # | 명령 | 결과 |
 |---|---|---|
-| 1 | `scripts/build.sh detection test && scripts/test.sh detection` | **363 passed**, 9 skipped(live), 0 failed |
-| 2 | `scripts/build.sh manufacture test && scripts/test.sh manufacture` | **366 passed**, 9 skipped(live), 0 failed |
+| 1 | `scripts/build.sh detection test && scripts/test.sh detection` | **368 passed**, 9 skipped(live), 0 failed (8.2절 peer 반영 뒤) |
+| 2 | `scripts/build.sh manufacture test && scripts/test.sh manufacture` | **371 passed**, 9 skipped(live), 0 failed (8.2절 peer 반영 뒤) |
 | 3 | `A4W_LIVE_TESTS=1 scripts/test.sh detection -q agents/detection/tests/live` | **5 passed** (Phase 1 실호출 2 + 검증 API 실호출 3) |
 | 4 | `A4W_LIVE_TESTS=1 scripts/test.sh manufacture --src -q -s agents/manufacture/tests/live/test_live_llm.py` | **3 passed** (313.8초, LLM 실호출) |
 | 5 | `A4W_LIVE_TESTS=1 scripts/test.sh manufacture --src -q -s agents/manufacture/tests/live/test_live_added_api.py` | **1 passed** (56.0초, LLM + Detection 검증 + AI Pro Plus) |
@@ -156,10 +156,26 @@ ApplyService에 실제 LLM(GLM-5.2), 실행 중인 Detection(인증 없음 = 시
 | compose 스택 정리 반영 (`POST /v1/apply {"targetId"}`) | `applied`, `tv-000002-8a2b35b1`: 보류였던 알림 tool 2개를 다시 검증해 passed, 색인 2 → 서빙 30개 전부 실검증 |
 | 색인 평가 (명령 7) | **1.0** (55/55), 상위 1 0.745, 적중 점수 최소 0.597·평균 0.792 |
 
-- 알림 tool 2개: 이전에는 검증 token이 사용자 본인 계정이라 시나리오를 두지 않았다(I17). agent 계정이 되어 시나리오를 넣었다. `mark_all_notifications_read`는 성공 경로로 검증한다. `mark_notification_read`는 검증 때 aiagent에게 온 알림을 만들 수 없다(자기 멘션은 알림이 생기지 않고, 다른 계정이 없다). 그래서 명세의 실패 경로(알림이 아닌 id → 404 `NOT_FOUND`)로 검증했다. **이 tool의 성공 경로는 확인하지 못했다.**
+- 알림 tool 2개: 이전에는 검증 token이 사용자 본인 계정이라 시나리오를 두지 않았다(I17). agent 계정이 되어 시나리오를 넣었다. `mark_all_notifications_read`는 성공 경로로 검증한다. `mark_notification_read`는 검증 때 aiagent에게 온 알림을 만들 수 없다(자기 멘션은 알림이 생기지 않고, 다른 계정이 없다). 그래서 명세의 실패 경로(알림이 아닌 id → 404 `NOT_FOUND`)로 검증했다. 이 tool의 성공 경로는 8.2절에서 확인했다.
 
 ### 8.1 정정
 
 앞선 판(커밋 `1d775eb`)은 "agent token으로 모든 연결 반영 1 passed(238.6초, 검증 passed 28)를 다시 확인했다"고 적었다. 이것은 틀렸다. 그 시험은 반영 id를 `ap-live-1`로 고정해 두어 검증 id(`vf-ap-live-1`)가 앞선 실행과 같았고, Detection은 멱등 규칙대로 새로 검증하지 않고 root token 때의 기록을 돌려주었다. 그래서 그 결과는 agent token 확인이 아니었다.
 - 고친 것: live 시험의 반영 id를 실행마다 유일하게 했다(설계 22절 I27). Detection은 같은 검증 id로 **내용이 다른** 요청이 오면 옛 결과를 돌려주지 않고 거절한다(I25). 위 8절 표는 고친 뒤 다시 돌린 결과다.
 - 운영의 반영 id는 시각 + 난수라 이 일이 생기지 않는다.
+
+### 8.2 검증 상대 계정(peer)으로 알림 성공 경로 확인 (2026-10-13)
+
+workf가 두 번째 계정 `aiagent-peer`(member, read·write, 만료 2027-10-13)를 발급했다. 비밀은 `config/secrets/targets/workfluence.peer.env`(600)에 있고 Detection에만 붙는다. 시험 환경 준비 단계는 다음과 같다(설계 11.6.1, I29). 시험 스페이스에 peer를 editor로 넣는다. peer가 검증 계정을 `@aiagent`로 멘션하는 댓글을 단다. 검증 계정의 `GET /notifications`에서 그 댓글의 알림 id를 찾아 `notificationId`로 넘긴다. 정리할 때는 peer를 먼저 빼고 스페이스를 지운다(다른 멤버가 있으면 owner도 삭제가 403이다). `mark_notification_read` 시나리오는 `${sandbox.notificationId}`로 성공(`ok: true`)을 기대하게 바꿨다.
+
+| 확인 | 결과 |
+|---|---|
+| 단위 (`scripts/test.sh detection`, 이미지 재빌드 뒤) | 368 passed (peer 준비·정리, peer 없을 때 기존 동작, 알림을 못 찾을 때 시험 추가) |
+| 단위 (`scripts/test.sh manufacture`, 이미지 재빌드 뒤) | 371 passed |
+| Detection runtime 재빌드·재시작 후 37개 전부 검증 API로 실호출 (일회성) | **37 passed**, `prepared: true`, `cleanup: ok`. 로그: `POST /spaces/{id}/members` 201 → `POST /notifications/5fca6d75…/read` 201 → `DELETE /spaces/{id}/members/aiagent-peer` 200 → 스페이스 삭제 |
+| Detection live | 5 passed |
+| 모든 연결 반영 (명령 10) | 1 passed (136.9초) |
+
+- 이제 `mark_notification_read`도 성공 경로로 검증된다. 실패 경로(404)는 시나리오에서 뺐다.
+- peer 비밀이 없으면 준비 단계는 예전처럼 동작한다. 이때는 `notificationId` 값이 없어서 이 시나리오가 `failed`(`SCENARIO_INVALID`)가 되고, 이 tool은 묶음에 들어가지 않는다. 이 경우는 실호출로 돌려 보지 않았다(코드 확인만).
+- 시험 스택에 남는 것: peer의 멘션 댓글은 시험 스페이스와 함께 휴지통으로 간다. 검증 계정의 알림 기록은 남는다.
