@@ -150,6 +150,8 @@ def test_record_keeps_names_not_definitions(tmp_path):
     svc.submit(payload(tools=[read_page(), add_comment()]))
     starter.run_all()
     rec = svc.get("wf", "vf-1")
+    fp = rec["request"].pop("fingerprint")
+    assert len(fp) == 64
     assert rec["request"] == {"tools": [{"name": "read_page", "revision": "r-" + "0" * 12},
                                         {"name": "add_comment", "revision": "r-" + "0" * 12}],
                               "references": [], "scenarios": []}
@@ -171,3 +173,25 @@ def test_profile_scope_unknown(tmp_path):
     _, _, profile = make(tmp_path, scopes=Scopes(fail=True))
     with pytest.raises(ScopeUnknown):
         profile.profile("wf")
+
+
+def test_same_id_with_different_request_is_rejected(tmp_path):
+    """같은 verificationId로 다른 내용을 보내면 옛 결과를 돌려주지 않고 거절한다 (조용히 낡은 결과를 쓰지 않게)."""
+    svc, starter, _ = make(tmp_path)
+    svc.submit(payload())
+    starter.run_all()
+    changed = read_page()
+    changed["title"] = "다른 정의"
+    with pytest.raises(VerifyRequestInvalid) as e:
+        svc.submit(payload(tools=[dict(changed, revision="r-" + "1" * 12)]))
+    assert "다른 요청" in e.value.message
+    rec, created = svc.submit(payload())  # 같은 내용이면 그대로 앞선 기록
+    assert not created
+
+
+def test_same_id_with_different_scenarios_is_rejected(tmp_path):
+    svc, starter, _ = make(tmp_path)
+    svc.submit(payload())
+    starter.run_all()
+    with pytest.raises(VerifyRequestInvalid):
+        svc.submit(payload(scenarios={"read_page": {"call": {"args": {"pageId": "${sandbox.pageId}"}}}}))

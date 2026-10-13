@@ -9,8 +9,8 @@
 
 | # | 명령 | 결과 |
 |---|---|---|
-| 1 | `scripts/build.sh detection test && scripts/test.sh detection` | **361 passed**, 9 skipped(live), 0 failed |
-| 2 | `scripts/build.sh manufacture test && scripts/test.sh manufacture` | **365 passed**, 9 skipped(live), 0 failed |
+| 1 | `scripts/build.sh detection test && scripts/test.sh detection` | **363 passed**, 9 skipped(live), 0 failed |
+| 2 | `scripts/build.sh manufacture test && scripts/test.sh manufacture` | **366 passed**, 9 skipped(live), 0 failed |
 | 3 | `A4W_LIVE_TESTS=1 scripts/test.sh detection -q agents/detection/tests/live` | **5 passed** (Phase 1 실호출 2 + 검증 API 실호출 3) |
 | 4 | `A4W_LIVE_TESTS=1 scripts/test.sh manufacture --src -q -s agents/manufacture/tests/live/test_live_llm.py` | **3 passed** (313.8초, LLM 실호출) |
 | 5 | `A4W_LIVE_TESTS=1 scripts/test.sh manufacture --src -q -s agents/manufacture/tests/live/test_live_added_api.py` | **1 passed** (56.0초, LLM + Detection 검증 + AI Pro Plus) |
@@ -136,10 +136,30 @@ ApplyService에 실제 LLM(GLM-5.2), 실행 중인 Detection(인증 없음 = 시
 | AI Pro Plus 운영 | 시험 서버(nobody)만 썼다 |
 | 상위 tool 제안(`LLM_PROPOSE_COMPOSITES`) | 구현하지 않았다. 설정은 false로만 있다(설계 22절 I19) |
 | 66 → 75 전환의 container 재현 | Phase 1에서 남은 항목. 이번에도 고정 자료로만 확인했다 |
-| 검증 token | (해결) 처음에는 root 계정 token(read·write·admin)으로 시험했고, 뒤에 agent 전용 계정 `aiagent`(member)의 read·write token(만료 2027-10-13)으로 바꿨다. root token은 폐기됐다(2026-10-13). agent token으로 Detection live 5 passed, 모든 연결 반영(명령 10) 1 passed(238.6초, 검증 passed 28·failed 0)를 다시 확인했다. 타겟 정보의 scope는 `read, write`다 |
+| 검증 token | (해결) 처음에는 root 계정 token(read·write·admin)으로 시험했고, 뒤에 agent 전용 계정 `aiagent`(member)의 read·write token(만료 2027-10-13)으로 바꿨다. root token은 폐기됐다(2026-10-13). agent token 결과는 8절 |
 
 ## 7. 시험 스택·외부에 남은 것
 
 - Workfluence 시험 스택: 검증마다 만든 시험 스페이스(`aiagent-manufacture-vf-…`)는 지웠고 휴지통에 30일 남는다(공개 API에 완전 삭제가 없다). 감사로그에 검증 호출이 남는다.
 - AI Pro Plus: 컬렉션 `a4w_tools_workfluence`와 도메인 `a4w-tools-workfluence`를 만들었고, tool 28건이 올라가 있다. live 시험이 올린 시험용 문서(`livetest/…`)는 지웠다. 명령 10이 시험용 컬렉션 `a4w_tools_livetest`·도메인 `a4w-tools-livetest`를 만들었다(문서는 지워 비어 있다. 컬렉션 삭제는 구현하지 않았다).
 - compose: `detection`, `manufacture`가 떠 있다. `spec-store` 볼륨의 파일 소유자를 새 실행 uid(1001)로 바꿨다(설계 22절 I3).
+
+## 8. agent token으로 다시 확인 (2026-10-13)
+
+검증 token을 agent 전용 계정 `aiagent`(member, read·write)로 바꾼 뒤 다시 돌렸다. Detection 타겟 정보의 scope는 `read, write`(admin 없음)다.
+
+| 확인 | 결과 |
+|---|---|
+| Detection live (`A4W_LIVE_TESTS=1 scripts/test.sh detection --src -q agents/detection/tests/live`) | 5 passed |
+| seed 34 + 상위 3 = 37개 전부 Detection 검증 API로 실호출 (일회성) | **37 passed**, 시험 스페이스 정리 ok |
+| 모든 연결 반영 (명령 10, 반영 id를 실행마다 유일하게 고친 뒤) | 1 passed (96.8초): 첫 반영 `applied`, added 30, 검증 passed 30·unverified 0, 색인 30, LLM create 2. 바뀐 동작 반영: LLM update 1, 검증 passed, 보류 `SPEC_REVIEW` |
+| compose 스택 정리 반영 (`POST /v1/apply {"targetId"}`) | `applied`, `tv-000002-8a2b35b1`: 보류였던 알림 tool 2개를 다시 검증해 passed, 색인 2 → 서빙 30개 전부 실검증 |
+| 색인 평가 (명령 7) | **1.0** (55/55), 상위 1 0.745, 적중 점수 최소 0.597·평균 0.792 |
+
+- 알림 tool 2개: 이전에는 검증 token이 사용자 본인 계정이라 시나리오를 두지 않았다(I17). agent 계정이 되어 시나리오를 넣었다. `mark_all_notifications_read`는 성공 경로로 검증한다. `mark_notification_read`는 검증 때 aiagent에게 온 알림을 만들 수 없다(자기 멘션은 알림이 생기지 않고, 다른 계정이 없다). 그래서 명세의 실패 경로(알림이 아닌 id → 404 `NOT_FOUND`)로 검증했다. **이 tool의 성공 경로는 확인하지 못했다.**
+
+### 8.1 정정
+
+앞선 판(커밋 `1d775eb`)은 "agent token으로 모든 연결 반영 1 passed(238.6초, 검증 passed 28)를 다시 확인했다"고 적었다. 이것은 틀렸다. 그 시험은 반영 id를 `ap-live-1`로 고정해 두어 검증 id(`vf-ap-live-1`)가 앞선 실행과 같았고, Detection은 멱등 규칙대로 새로 검증하지 않고 root token 때의 기록을 돌려주었다. 그래서 그 결과는 agent token 확인이 아니었다.
+- 고친 것: live 시험의 반영 id를 실행마다 유일하게 했다(설계 22절 I27). Detection은 같은 검증 id로 **내용이 다른** 요청이 오면 옛 결과를 돌려주지 않고 거절한다(I25). 위 8절 표는 고친 뒤 다시 돌린 결과다.
+- 운영의 반영 id는 시각 + 난수라 이 일이 생기지 않는다.

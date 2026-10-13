@@ -261,9 +261,11 @@ class ApplyService:
         if rejected is not None and rejected.get("fragmentSha256") == fsha:
             p.outcome = "rejected"
             return p
-        if pending is not None and pending.get("fragmentSha256") == fsha:
+        if (pending is not None and pending.get("fragmentSha256") == fsha
+                and pending.get("reasons") != ["UNVERIFIED"]):
             p.outcome, p.keep_review = "pending", pending
             return p
+        # 검증 안 됨만으로 보류된 항목은 다시 만들고 다시 검증한다 (시나리오가 생겼을 수 있다). 이전 보류는 superseded
 
         # ── 새로 만들기
         frag = rec.fragment
@@ -451,6 +453,8 @@ class ApplyService:
             for i, p in enumerate(plans):
                 if p.approved is not None:
                     tx.set_review_status(p.approved["reviewId"], "applied", applied_in=version)
+                elif p.key is not None and p.outcome in ("added", "updated"):
+                    tx.supersede_reviews(target_id, p.key[0], p.key[1])  # 다시 만들어 들어갔으니 옛 보류는 끝
                 if p.outcome == "pending" and p.keep_review is None and p.reasons:
                     if p.key is not None:
                         tx.supersede_reviews(target_id, p.key[0], p.key[1])

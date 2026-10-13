@@ -13,6 +13,7 @@ import hashlib
 import json
 import os
 import shutil
+import uuid
 from datetime import UTC, datetime
 
 import httpx
@@ -97,11 +98,14 @@ def test_full_apply_with_real_llm_detection_and_rag(stack):
     cs = det.changeset("workfluence", cs_id)
 
     # ── 1. 첫 반영: seed 26개 + LLM create 2개
-    r1 = run(svc, db, cs, "ap-live-1")
+    # 반영 id는 실행마다 유일해야 한다: 검증 id(vf-<applyId>)가 같으면 Detection이 앞선 검증 기록을 돌려준다(멱등)
+    run_id = uuid.uuid4().hex[:8]
+    r1 = run(svc, db, cs, f"ap-live-{run_id}-1")
     for name, op in DROPPED.items():
         it = item(r1, op)
         assert it["outcome"] == "added" and it["origin"] == "llm", it
         assert it["verify"]["result"] == "passed", it
+    assert r1["verification"]["unverified"] == 0 and r1["summary"]["pending"] == 0  # 알림 tool도 시나리오로 검증
     assert r1["llm"]["calls"] >= 2
     assert r1["verification"]["failed"] == 0
     assert not r1["index"]["drift"] and r1["index"]["upserted"] == r1["summary"]["added"]
@@ -121,7 +125,7 @@ def test_full_apply_with_real_llm_detection_and_rag(stack):
                                                 before=target.after, after=after, changed_fields=("requestBody",),
                                                 doc_only=False),),
                     document_changes=(), review=ReviewResult(True, ("OPERATION_CHANGED",)), text_diff="")
-    r2 = run(svc, db, cs2, "ap-live-2")
+    r2 = run(svc, db, cs2, f"ap-live-{run_id}-2")
     it = item(r2, "comments.create")
     assert it["outcome"] == "pending" and it["origin"] == "llm" and it["tool"] == "add_comment", it
     assert it["verify"]["result"] == "passed", it

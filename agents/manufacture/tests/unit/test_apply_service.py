@@ -314,3 +314,17 @@ def test_scenario_setup_tools_are_sent_as_references_or_scenario_dropped(tmp_pat
     call = env.detection.verify_calls[-1]
     assert "add_comment" in call["references"]
     assert "list_comments" in call["scenarios"] and "list_page_labels" not in call["scenarios"]
+
+
+def test_unverified_pending_is_reverified_when_scenario_appears(tmp_path):
+    """검증 안 됨(UNVERIFIED)만으로 보류된 항목은 다음 반영 때 다시 검증한다 (시나리오가 생겼을 수 있다)."""
+    env = Env(tmp_path)
+    env.detection.unverified = {"search_pages"}
+    r1 = first(env)
+    assert r1["pendingReview"][0]["reasons"] == ["UNVERIFIED"]
+    env.detection.unverified = set()
+    r2 = env.apply(None, "ap-2")
+    assert outcome(r2, "search.find")["outcome"] == "added"
+    assert "search_pages" in env.served() and "comment_on_page_by_title" in env.served()
+    assert env.db.review(r1["pendingReview"][0]["reviewId"])["status"] == "superseded"
+    assert r2["pendingReview"] == []

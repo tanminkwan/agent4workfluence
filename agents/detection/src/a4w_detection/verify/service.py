@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 import threading
 from collections.abc import Callable, Collection, Mapping
@@ -14,6 +15,7 @@ from a4w_core.errors import (
 )
 from a4w_core.interfaces import ScopeProvider
 from a4w_core.locking import FileTargetLock, HeldLock
+from a4w_core.openapi.canonical import canonical_json
 
 from ..ports import Clock
 from .guard import check_request
@@ -74,14 +76,18 @@ class VerificationService:
         rt = self.runtimes.get(tid)
         if rt is None:
             raise UnsupportedSandbox(f"검증 환경이 설정되지 않은 타겟: {tid}")
+        tools, refs = list(payload["tools"]), list(payload.get("references") or [])
+        scenarios = dict(payload.get("scenarios") or {})
+        fingerprint = _fingerprint(tools, refs, scenarios)
         existing = self._store.get(vid)
         if existing is not None:
             if existing["targetId"] != tid:
                 raise VerifyRequestInvalid("다른 타겟이 쓴 verificationId다")
+            if existing["request"].get("fingerprint") != fingerprint:
+                # 같은 id에 다른 요청이면 옛 결과를 돌려주지 않는다 (조용히 낡은 결과를 쓰지 않게)
+                raise VerifyRequestInvalid("같은 verificationId로 다른 요청이 왔다. 새 verificationId를 쓴다")
             return existing, False
 
-        tools, refs = list(payload["tools"]), list(payload.get("references") or [])
-        scenarios = dict(payload.get("scenarios") or {})
         problems = check_request(
             tools=tools, references=refs, scenarios=scenarios, spec_operations=self._spec_operations(tid),
             deny_scopes=rt.deny_scopes, max_tools=self._max_tools, context_keys=set(rt.context_keys),
@@ -95,7 +101,8 @@ class VerificationService:
             self._store.purge_finished_before(_days_before(now, self._keep_days))
             record = {
                 "verificationId": vid, "targetId": tid, "status": "running", "startedAt": now, "finishedAt": None,
-                "request": {"tools": _names(tools), "references": _names(refs), "scenarios": sorted(scenarios)},
+                "request": {"tools": _names(tools), "references": _names(refs), "scenarios": sorted(scenarios),
+                            "fingerprint": fingerprint},
                 "results": [], "sandbox": None, "error": None,
             }
             self._store.create(record)
@@ -141,3 +148,9 @@ def _names(defs: list[Any]) -> list[dict[str, Any]]:
 
 def _days_before(iso: str, days: int) -> str:
     return (datetime.strptime(iso, ISO) - timedelta(days=days)).strftime(ISO)
+
+
+def _fingerprint(tools, refs, scenarios) -> str:
+    """요청 내용의 지문: tool·참조의 이름·revision과 시나리오 전문."""
+    body = {"tools": _names(tools), "references": _names(refs), "scenarios": scenarios}
+    return hashlib.sha256(canonical_json(body).encode("utf-8")).hexdigest()
