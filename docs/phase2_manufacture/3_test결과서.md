@@ -136,7 +136,7 @@ ApplyService에 실제 LLM(GLM-5.2), 실행 중인 Detection(인증 없음 = 시
 | AI Pro Plus 운영 | 시험 서버(nobody)만 썼다 |
 | 상위 tool 제안(`LLM_PROPOSE_COMPOSITES`) | 구현하지 않았다. 설정은 false로만 있다(설계 22절 I19) |
 | 66 → 75 전환의 container 재현 | Phase 1에서 남은 항목. 이번에도 고정 자료로만 확인했다 |
-| 검증 token | 사용자 root 계정 token(read·write·admin)을 썼다. agent 전용 계정·read·write token(365일)을 `workf`에 요청했으나 그 세션의 권한 검사(다른 프로젝트 비밀 파일 쓰기)에 막혀 아직 없다. 받으면 Detection 비밀만 바꾸고 live·compose 흐름을 다시 돌린다 |
+| 검증 token | (해결) 처음에는 root 계정 token(read·write·admin)으로 시험했고, 뒤에 agent 전용 계정 `aiagent`(member)의 read·write token(만료 2027-10-13)으로 바꿨다. root token은 폐기됐다(2026-10-13). agent token으로 Detection live 5 passed, 모든 연결 반영(명령 10) 1 passed(238.6초, 검증 passed 28·failed 0)를 다시 확인했다. 타겟 정보의 scope는 `read, write`다 |
 
 ## 7. 시험 스택·외부에 남은 것
 
