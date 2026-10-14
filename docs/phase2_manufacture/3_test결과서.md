@@ -177,5 +177,18 @@ workf가 두 번째 계정 `aiagent-peer`(member, read·write, 만료 2027-10-13
 | 모든 연결 반영 (명령 10) | 1 passed (136.9초) |
 
 - 이제 `mark_notification_read`도 성공 경로로 검증된다. 실패 경로(404)는 시나리오에서 뺐다.
-- peer 비밀이 없으면 준비 단계는 예전처럼 동작한다. 이때는 `notificationId` 값이 없어서 이 시나리오가 `failed`(`SCENARIO_INVALID`)가 되고, 이 tool은 묶음에 들어가지 않는다. 이 경우는 실호출로 돌려 보지 않았다(코드 확인만).
+- peer 비밀이 없으면 준비 단계는 예전처럼 동작한다. 이때는 `notificationId` 값이 없다. 처음에는 이 시나리오가 `failed`(`SCENARIO_INVALID`)였는데, 8.3절에서 `unverified`로 바꿨다.
 - 시험 스택에 남는 것: peer의 멘션 댓글은 시험 스페이스와 함께 휴지통으로 간다. 검증 계정의 알림 기록은 남는다.
+
+### 8.3 맥락 키 값이 없는 환경은 `unverified` (2026-10-14)
+
+사용자 결정으로 바꿨다(설계 I30). 시나리오가 `${sandbox.<키>}`를 쓰는데 이번 시험 환경에 그 값이 없으면 `unverified`(`SANDBOX_VALUE_MISSING`)다. 맥락 키인지는 guard가 요청 때 이미 확인한다. 그래서 값이 없다는 것은 환경이 그 값을 못 만들었다는 뜻이다(예: peer 비밀이 없음). manufacture는 `VERIFY_NO_SCENARIO`(기본 `pending`)에 따라 보류한다. `${saved.*}`·`${setup.*}` 값이 없는 것은 시나리오의 잘못이라 그대로 `failed`(`SCENARIO_INVALID`)다.
+
+| 확인 | 결과 |
+|---|---|
+| 먼저 쓴 시험 3개 (red) | 맥락 키 값 없음(call·setup) 2 failed, 저장 값 없음 1 passed |
+| `scripts/test.sh detection --src -q agents/detection/tests packages` | 371 passed, 9 skipped |
+| `scripts/test.sh manufacture --src -q agents/manufacture/tests packages` | 371 passed, 9 skipped |
+
+- 작업 트리를 붙여 container 안에서 돌렸다. 이미지는 다시 빌드하지 않았다.
+- peer 비밀을 뺀 상태로 실호출하지는 않았다. 단위 시험과 코드 확인만 했다.

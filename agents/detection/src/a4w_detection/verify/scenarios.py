@@ -14,6 +14,10 @@ class ScenarioError(ValueError):
     pass
 
 
+class SandboxValueMissing(ScenarioError):
+    """맥락 키(`${sandbox.*}`)인데 이번 시험 환경에서 값이 없다 (예: peer 비밀이 없어 notificationId가 없음)."""
+
+
 def placeholders(value: Any) -> list[tuple[str, str]]:
     """값 안의 모든 자리표시 (출처, 경로)."""
     if isinstance(value, str):
@@ -46,5 +50,6 @@ def _lookup(variables: Mapping[str, Any], source: str, path: str) -> Any:
         if isinstance(node, Mapping) and part in node:
             node = node[part]
         else:
-            raise ScenarioError(f"값이 없다: ${{{source}.{path}}}")
+            error = SandboxValueMissing if source == "sandbox" else ScenarioError
+            raise error(f"값이 없다: ${{{source}.{path}}}")
     return node

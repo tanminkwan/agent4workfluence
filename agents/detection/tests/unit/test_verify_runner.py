@@ -78,6 +78,36 @@ def test_write_without_scenario_is_unverified():
     assert target.calls == []
 
 
+def test_sandbox_value_missing_in_this_environment_is_unverified():
+    """맥락 키지만 이번 환경에서 값이 없으면(peer 비밀 없음 → notificationId 없음) 검증 못 한 것이다 (11.6.1)."""
+    r, target, _ = runner(sandbox=FakeSandbox(unfilled_keys=("notificationId",)))
+    out = r.run("vf-1", tools=[add_comment()], references=[],
+                scenarios={"add_comment": {"call": {"args": {"pageId": "${sandbox.notificationId}", "body": "x"}}}})
+    res = by_tool(out)["add_comment"]
+    assert res["result"] == "unverified" and res["reason"] == "SANDBOX_VALUE_MISSING"
+    assert "notificationId" in res["error"]["message"]
+    assert target.calls == []
+
+
+def test_sandbox_value_missing_in_setup_is_unverified():
+    r, target, _ = runner(sandbox=FakeSandbox(unfilled_keys=("notificationId",)))
+    sc = {"add_comment": {"setup": [{"tool": "read_page", "args": {"pageId": "${sandbox.notificationId}"}}],
+                          "call": {"args": {"pageId": "${sandbox.pageId}", "body": "x"}}}}
+    out = r.run("vf-1", tools=[add_comment()], references=[read_page()], scenarios=sc)
+    res = by_tool(out)["add_comment"]
+    assert res["result"] == "unverified" and res["reason"] == "SANDBOX_VALUE_MISSING"
+    assert target.calls == []
+
+
+def test_missing_saved_value_still_fails():
+    """시나리오 자체의 잘못(저장 안 한 값 참조)은 그대로 실패다."""
+    r, _, _ = runner()
+    out = r.run("vf-1", tools=[add_comment()], references=[],
+                scenarios={"add_comment": {"call": {"args": {"pageId": "${saved.nope}", "body": "x"}}}})
+    res = by_tool(out)["add_comment"]
+    assert res["result"] == "failed" and res["reason"] == "SCENARIO_INVALID"
+
+
 def test_composite_skipped_when_referenced_tool_failed():
     target_parts = make_runtime_parts()
     target = target_parts[0]

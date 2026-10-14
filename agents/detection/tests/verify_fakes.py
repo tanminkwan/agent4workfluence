@@ -83,14 +83,15 @@ CONTEXT = {"spaceId": "s1", "spaceName": "aiagent-manufacture-vf-1", "pageId": "
 
 
 class FakeSandbox(VerifySandbox):
-    def __init__(self, fail_prepare=False, fail_cleanup=False):
+    def __init__(self, fail_prepare=False, fail_cleanup=False, unfilled_keys=()):
         self.fail_prepare = fail_prepare
         self.fail_cleanup = fail_cleanup
+        self.unfilled_keys = tuple(unfilled_keys)  # 맥락 키로 알리지만 이번 환경에서 값이 없는 키 (예: peer 없는 notificationId)
         self.prepared: list[str] = []
         self.cleaned = 0
 
     def context_keys(self):
-        return list(CONTEXT)
+        return list(CONTEXT) + list(self.unfilled_keys)
 
     def prepare(self, caller, run_id):
         if self.fail_prepare:

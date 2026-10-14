@@ -12,7 +12,7 @@ from a4w_tools.request import READ_METHODS
 from a4w_tools.sandbox import RawCaller, SandboxContext, VerifySandbox
 
 from .auto import auto_scenario
-from .scenarios import ScenarioError, fill
+from .scenarios import SandboxValueMissing, ScenarioError, fill
 
 PASSED, FAILED, UNVERIFIED, SKIPPED = "passed", "failed", "unverified", "skipped"
 
@@ -75,6 +75,9 @@ class VerificationRunner:
                 for key, pointer in item.get("save", {}).items():
                     variables["saved"][key] = resolve(r.data, pointer)
             args = fill(scenario.get("call", {}).get("args", {}), variables)
+        except SandboxValueMissing as e:
+            # 맥락 키는 guard가 확인했다. 값이 없으면 이 환경이 그 값을 못 만든 것이지 tool의 잘못이 아니다 (11.6.1)
+            return done(UNVERIFIED, "SANDBOX_VALUE_MISSING", {"message": str(e)})
         except (ScenarioError, PointerMissing) as e:
             return done(FAILED, "SCENARIO_INVALID", {"message": str(e)})
 
