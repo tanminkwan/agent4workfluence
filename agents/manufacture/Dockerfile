@@ -1,4 +1,4 @@
-# Manufacture agent 이미지. 빌드 context는 저장소 루트다. manufacture와 manufacture-mcp(Phase 3)가 같은 이미지를 쓴다.
+# Manufacture agent 이미지. 빌드 context는 저장소 루트다. 변경 반영과 tool 정의 조회 API를 연다.
 # proxy는 docker의 사전 정의 빌드 인자(HTTP_PROXY 등)로만 받고 이미지에 남기지 않는다.
 ARG PYTHON_BASE_IMAGE
 FROM ${PYTHON_BASE_IMAGE} AS base

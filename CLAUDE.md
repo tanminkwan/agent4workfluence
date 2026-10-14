@@ -38,9 +38,10 @@ scripts/test.sh detection              # 이미지 안 코드로 전체 시험
 scripts/test.sh detection --src -q …   # 작업 트리를 붙여 container 안에서 반복 (TDD)
 A4W_LIVE_TESTS=1 scripts/test.sh detection   # 시험 스택 실호출 포함
 scripts/build.sh detection runtime && docker compose up -d detection
+scripts/build.sh mcp test && scripts/test.sh mcp   # 공용 MCP server (packages/mcp, 시험 이미지만)
 ```
 
-- 설정: `.env`(서비스), `config/targets/<targetId>.env`(타겟), `config/secrets/targets/<targetId>.env`(타겟 비밀, Detection에만 붙임), `config/secrets/<서비스>-*.env`(서비스 비밀, 예: `manufacture-llm.env`). 모두 Git 제외이고 `*.example`만 올린다.
+- 설정: `.env`(서비스), `config/targets/<targetId>.env`(타겟), `config/secrets/targets/<targetId>.env`(타겟 비밀, Detection에만 붙임), `config/agents/<agentId>/<targetId>.env`(agent 설정)·`config/secrets/agents/<agentId>/<targetId>.env`(agent token, 공용 MCP server만), `config/secrets/<서비스>-*.env`(서비스 비밀, 예: `manufacture-llm.env`). 모두 Git 제외이고 `*.example`만 올린다.
 
 ## 범용성
 

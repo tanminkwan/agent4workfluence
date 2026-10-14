@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-mcp"
+version = "0.1.0"
+description = "agent4workfluence 공용 MCP server: Manufacture의 tool 정의를 받아 agent 자기 token으로 실행한다 (agent마다 stdio 프로세스 하나)"
+requires-python = ">=3.12"
+dependencies = ["a4w-core", "a4w-tools", "mcp", "httpx", "anyio"]
+
+[project.scripts]
+a4w-mcp = "a4w_mcp.__main__:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

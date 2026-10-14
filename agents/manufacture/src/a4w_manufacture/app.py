@@ -13,6 +13,7 @@ from .runner import ApplyRunner
 from .service import ApplyService
 from .storage.bundles import FileToolStore
 from .storage.sqlite_db import SqliteManufactureDb
+from .toolsets import ToolsetQuery
 
 
 @dataclass(frozen=True)
@@ -22,6 +23,7 @@ class AppContext:
     service: ApplyService
     store: FileToolStore
     db: SqliteManufactureDb
+    toolsets: ToolsetQuery
     auth_mode: str  # none | bearer
     api_token: str | None
 
@@ -37,7 +39,8 @@ def create_app(ctx: AppContext | None = None) -> FastAPI:
         title="a4w Manufacture",
         version="0.1.0",
         description="Detection 변경분으로 작은 모델이 쓰기 좋은 선언형 tool을 만들고, Detection으로 실호출 검증을 받고, "
-        "tool-store와 AI Pro Plus 색인에 반영한다. 타겟을 직접 부르지 않는다. 실행은 호출로만 일어난다.",
+        "tool-store와 AI Pro Plus 색인에 반영한다. 만든 tool 정의(JSON)를 조회 API로 내준다. 타겟을 직접 부르지 않는다. "
+        "실행은 호출로만 일어난다.",
     )
     app.state.ctx = ctx
     errors.install(app)

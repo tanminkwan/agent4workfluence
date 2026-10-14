@@ -16,6 +16,7 @@ from a4w_manufacture.runner import ApplyRunner
 from a4w_manufacture.service import ApplyService, TargetRuntime
 from a4w_manufacture.storage.bundles import FileToolStore
 from a4w_manufacture.storage.sqlite_db import SqliteManufactureDb
+from a4w_manufacture.toolsets import ToolsetQuery
 from a4w_manufacture.transform.openapi3 import OpenApi3Transformer
 
 from ..apply_fakes import OPS, FakeAssistant, FakeDetection, FakeRag, changeset, frags, write_catalog
@@ -70,7 +71,7 @@ def build(tmp_path, groups=("read", "history", "communication", "authoring"), au
                          lock=FileTargetLock(tmp_path / "store" / "locks", busy=lambda k: ApplyInProgress(k)),
                          clock=clock, new_id=lambda: next(ids), starter=starter)
     ctx = AppContext(runner=runner, reviews=ReviewService(db, clock=clock), service=service, store=store, db=db,
-                     auth_mode=auth, api_token="tk" if auth == "bearer" else None)
+                     toolsets=ToolsetQuery(targets=["wf"], store=store), auth_mode=auth, api_token="tk" if auth == "bearer" else None)
     return TestClient(create_app(ctx), raise_server_exceptions=False), starter, det
 
 

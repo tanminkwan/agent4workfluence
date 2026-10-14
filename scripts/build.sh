@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # 서비스 이미지를 빌드한다. docker compose와 독립이다.
 #   사용법: scripts/build.sh <service> [runtime|test]
+#   <service>: agents/<service>/Dockerfile 또는 packages/<service>/Dockerfile
 #   이미지 이름·태그와 베이스 이미지는 .env(또는 ENV_FILE)에서 읽는다.
 #   host의 proxy 환경변수를 빌드 인자로 넘긴다.
 set -euo pipefail
@@ -21,8 +22,10 @@ PREFIX="$(printf '%s' "$SERVICE" | tr '[:lower:]-' '[:upper:]_')"
 IMAGE="$(env_value "${PREFIX}_IMAGE")"
 TAG="$(env_value "${PREFIX}_TAG")"
 BASE="$(env_value PYTHON_BASE_IMAGE)"
+# 서비스는 agents/<s>/, 서비스가 아닌 공유 패키지 시험 이미지(예: mcp)는 packages/<s>/ 에 Dockerfile이 있다
 DOCKERFILE="$ROOT/agents/$SERVICE/Dockerfile"
-[ -f "$DOCKERFILE" ] || { echo "Dockerfile 없음: $DOCKERFILE" >&2; exit 1; }
+[ -f "$DOCKERFILE" ] || DOCKERFILE="$ROOT/packages/$SERVICE/Dockerfile"
+[ -f "$DOCKERFILE" ] || { echo "Dockerfile 없음: agents/$SERVICE 또는 packages/$SERVICE" >&2; exit 1; }
 
 case "$STAGE" in
   runtime) REF="$IMAGE:$TAG" ;;

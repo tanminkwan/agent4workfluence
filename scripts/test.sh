@@ -17,7 +17,10 @@ RUN=(docker run --rm)
 if [ "${1:-}" = "--src" ]; then
   shift
   # 공유 패키지(packages/*, packages/targets/*)는 모두 붙인다 (패키지를 더해도 이 파일을 고치지 않는다)
-  RUN+=(-v "$ROOT:/src:ro" -e PYTHONPATH="$(cd "$ROOT" && printf '/src/%s:' packages/*/src packages/targets/*/src agents/"$SERVICE"/src)"
+  # 서비스 코드(agents/<s>/src)는 있을 때만 (공유 패키지 시험 이미지는 없다)
+  SRC_DIRS=(packages/*/src packages/targets/*/src)
+  if [ -d "$ROOT/agents/$SERVICE/src" ]; then SRC_DIRS+=(agents/"$SERVICE"/src); fi
+  RUN+=(-v "$ROOT:/src:ro" -e PYTHONPATH="$(cd "$ROOT" && printf '/src/%s:' "${SRC_DIRS[@]}")"
         -e PYTHONDONTWRITEBYTECODE=1 -e PYTEST_ADDOPTS="-p no:cacheprovider")
 fi
 env_value() { grep -E "^$1=" "$ENV_FILE" | tail -n1 | cut -d= -f2-; }
@@ -26,6 +29,9 @@ if [ "${A4W_LIVE_TESTS:-}" = "1" ]; then
   RUN+=(--env-file "$ENV_FILE" -e A4W_LIVE_TESTS=1)
   TARGETS_DIR="$(env_value "${PREFIX}_TARGETS_DIR")"
   if [ -n "$TARGETS_DIR" ]; then RUN+=(-v "$ROOT/config/targets:$TARGETS_DIR:ro"); fi
+  # agent 설정 (비밀 아님, Phase 3 설계 3.1절): <SERVICE>_AGENTS_DIR이 있으면 config/agents를 붙인다
+  AGENTS_DIR="$(env_value "${PREFIX}_AGENTS_DIR" || true)"
+  if [ -n "$AGENTS_DIR" ]; then RUN+=(-v "$ROOT/config/agents:$AGENTS_DIR:ro"); fi
   # <SERVICE>_TEST_SECRETS: config/secrets 아래 디렉터리(→ <SERVICE>_SECRETS_DIR) 또는 .env 파일(→ --env-file)
   for item in $(env_value "${PREFIX}_TEST_SECRETS" | tr ',' ' '); do
     if [ -d "$ROOT/config/secrets/$item" ]; then

@@ -60,3 +60,17 @@ class ErrorBody(BaseModel):
 class Health(BaseModel):
     status: Literal["ok", "error"]
     toolStore: Literal["ok", "error"]
+
+
+class ToolsetPointer(BaseModel):
+    targetId: str
+    toolVersion: str = Field(description="현재 서빙 tool 버전. ETag와 같다")
+    updatedAt: str
+
+
+class ToolsetBundle(BaseModel):
+    model_config = ConfigDict(extra="allow")
+    targetId: str
+    toolVersion: str
+    manifest: dict[str, Any] = Field(description="a4w.toolset/v1 (tool-store 파일 그대로)")
+    tools: dict[str, dict[str, Any]] = Field(description="이름 → a4w.tool/v1 정의 (tool-store 파일 그대로)")

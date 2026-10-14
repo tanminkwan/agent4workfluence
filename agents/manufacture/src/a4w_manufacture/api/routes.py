@@ -4,13 +4,23 @@ from __future__ import annotations
 
 import hmac
 
-from fastapi import APIRouter, Depends, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi import APIRouter, Depends, Path, Query, Request
+from fastapi.responses import JSONResponse, Response
 
 from a4w_core.errors import StorageError, TargetNotFound
 
 from .errors import Unauthorized
-from .schemas import ApplyAccepted, ApplyRequest, ApplyResult, DecisionRequest, ErrorBody, Health, RollbackRequest
+from .schemas import (
+    ApplyAccepted,
+    ApplyRequest,
+    ApplyResult,
+    DecisionRequest,
+    ErrorBody,
+    Health,
+    RollbackRequest,
+    ToolsetBundle,
+    ToolsetPointer,
+)
 
 ERRORS = {s: {"model": ErrorBody} for s in (400, 401, 404, 409, 500, 502)}
 
@@ -83,6 +93,46 @@ def target_state(targetId: str, request: Request):
         "currentToolVersion": ctx.store.current(targetId),
         "toolVersions": ctx.store.versions(targetId),
     }
+
+
+# ── tool 정의 조회 (Phase 3 설계 5절). 읽기만 하고 잠금을 잡지 않는다
+TOOL_VERSION = r"^tv-[0-9]{6}-[0-9a-f]{8}$"
+IMMUTABLE = "public, max-age=31536000, immutable"
+
+
+def _etag(version: str) -> str:
+    return f'"{version}"'
+
+
+@v1.get("/targets/{targetId}/toolset/current", summary="현재 tool 버전",
+        description="현재 서빙 tool 버전 id만 돌려준다. ETag가 같으면(If-None-Match) 304.",
+        responses={200: {"model": ToolsetPointer}, 304: {"description": "바뀌지 않음"}, **ERRORS})
+def toolset_current(targetId: str, request: Request):
+    pointer = request.app.state.ctx.toolsets.current(targetId)
+    etag = _etag(pointer["toolVersion"])
+    if etag in _if_none_match(request):
+        return Response(status_code=304, headers={"ETag": etag})
+    return JSONResponse(pointer, headers={"ETag": etag})
+
+
+@v1.get("/targets/{targetId}/toolset", summary="현재 tool 묶음",
+        description="현재 버전의 manifest(a4w.toolset/v1)와 tool 정의(a4w.tool/v1)를 tool-store 파일 그대로 돌려준다.",
+        responses={200: {"model": ToolsetBundle}, **ERRORS})
+def toolset(targetId: str, request: Request):
+    bundle = request.app.state.ctx.toolsets.bundle(targetId)
+    return JSONResponse(bundle, headers={"ETag": _etag(bundle["toolVersion"])})
+
+
+@v1.get("/targets/{targetId}/toolsets/{toolVersion}", summary="지정 tool 묶음",
+        description="지정한 버전의 묶음. 묶음은 바뀌지 않으므로 오래 캐시해도 된다.",
+        responses={200: {"model": ToolsetBundle}, **ERRORS})
+def toolset_version(request: Request, targetId: str, toolVersion: str = Path(pattern=TOOL_VERSION)):
+    bundle = request.app.state.ctx.toolsets.bundle(targetId, toolVersion)
+    return JSONResponse(bundle, headers={"ETag": _etag(toolVersion), "Cache-Control": IMMUTABLE})
+
+
+def _if_none_match(request: Request) -> set[str]:
+    return {t.strip() for t in request.headers.get("if-none-match", "").split(",") if t.strip()}
 
 
 @public.get("/health", summary="상태 확인", responses={200: {"model": Health}, 503: {"model": Health}})

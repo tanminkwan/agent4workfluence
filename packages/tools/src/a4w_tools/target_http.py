@@ -18,14 +18,15 @@ class TargetHttpClient:
         self._client = client
 
     @classmethod
-    def from_settings(cls, target_cfg, secrets) -> "TargetHttpClient":
-        """타겟 설정(TLS·시간 제한)과 타겟 비밀(주소·token)로 만든다."""
+    def from_settings(cls, target_cfg, secrets, *, transport: httpx.BaseTransport | None = None) -> "TargetHttpClient":
+        """타겟 설정(TLS·시간 제한)과 타겟 비밀(주소·token)로 만든다. transport는 시험용(가짜 타겟)이다."""
         verify: bool | ssl.SSLContext = target_cfg.require_bool("TLS_VERIFY")
         ca_file = target_cfg.optional("TLS_CA_FILE")
         if verify and ca_file:
             verify = ssl.create_default_context(cafile=ca_file)
         # proxy는 환경변수(HTTP_PROXY·HTTPS_PROXY·NO_PROXY)를 따른다
-        client = httpx.Client(timeout=target_cfg.require_int("CALL_TIMEOUT_SECONDS"), verify=verify, trust_env=True)
+        client = httpx.Client(timeout=target_cfg.require_int("CALL_TIMEOUT_SECONDS"), verify=verify, trust_env=True,
+                              transport=transport)
         # 명세의 경로가 붙는 앞머리 (Workfluence는 /api/v1). 앞머리가 없는 타겟은 "/"
         prefix = target_cfg.require("TARGET_API_PATH_PREFIX").strip("/")
         base = secrets.require("TARGET_API_BASE_URL").rstrip("/")

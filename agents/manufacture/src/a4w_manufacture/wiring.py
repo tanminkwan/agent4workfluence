@@ -34,6 +34,7 @@ from .runner import ApplyRunner
 from .service import ApplyService, TargetRuntime
 from .storage.bundles import FileToolStore
 from .storage.sqlite_db import SqliteManufactureDb
+from .toolsets import ToolsetQuery
 from .transform.openapi3 import OpenApi3Transformer
 
 AUTH_MODES = ("none", "bearer")
@@ -107,7 +108,7 @@ def build_context(environ: Mapping[str, str]) -> AppContext:
     logging.getLogger(__name__).info("manufacture ready: targets=%s auth=%s model=%s", ",".join(target_ids),
                                      auth_mode, env.require("LLM_MODEL"))
     return AppContext(runner=runner, reviews=ReviewService(db, clock=now_iso), service=service, store=store, db=db,
-                      auth_mode=auth_mode, api_token=api_token)
+                      toolsets=ToolsetQuery(targets=target_ids, store=store), auth_mode=auth_mode, api_token=api_token)
 
 
 def _runtime(registry: Registry, tid: str, cfg, cprefix: str, dprefix: str) -> TargetRuntime:

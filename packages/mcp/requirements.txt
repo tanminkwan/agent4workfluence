@@ -1,0 +1,6 @@
+# 실행 의존성 (고정 버전). 로컬 패키지는 Dockerfile에서 --no-deps로 설치한다.
+# MCP SDK는 2.x (사용자 지시, Phase 3 설계 4절)
+mcp==2.3.0
+httpx==0.28.1
+pyyaml==6.0.3
+jsonschema==4.25.1

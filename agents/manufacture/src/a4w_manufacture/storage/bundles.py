@@ -1,7 +1,7 @@
 """tool 묶음 파일 (Phase 2 설계 13.1절). 한 번 쓴 묶음은 바꾸지 않고, 현재 포인터만 원자적으로 바꾼다.
 
 staging/<applyId>/ 에 모두 쓰고 fsync → versions/<toolVersion>/ 로 rename → current.json은 tmp에 쓰고 os.replace.
-manufacture-mcp(Phase 3)는 a4w_tools.reader.ToolsetReader로 current.json → manifest 순서로만 읽는다.
+tool 정의 조회 API(Phase 3)도 같은 순서(current.json → manifest)로만 읽는다. staging은 보지 않는다.
 """
 
 from __future__ import annotations
@@ -35,6 +35,17 @@ class FileToolStore:
             return self._reader.current_version(target_id)
         except ToolsetNotFound:
             return None
+
+    def pointer(self, target_id: str) -> dict[str, str] | None:
+        """현재 포인터 {"toolVersion", "updatedAt"}. 없으면 None."""
+        version = self.current(target_id)
+        if version is None:
+            return None
+        raw = json.loads((self._target(target_id) / "current.json").read_text(encoding="utf-8"))
+        return {"toolVersion": version, "updatedAt": raw.get("updatedAt", "")}
+
+    def has_version(self, target_id: str, tool_version: str) -> bool:
+        return bool(_VERSION.match(tool_version)) and (self._target(target_id) / "versions" / tool_version).is_dir()
 
     def read(self, target_id: str, tool_version: str) -> Toolset:
         return self._reader.version(target_id, tool_version)

@@ -3,6 +3,7 @@
 config/secrets/**/*.env
 config/targets/*.env
 config/targets/*.pem
+config/agents/**/*.env
 
 # Python
 __pycache__/

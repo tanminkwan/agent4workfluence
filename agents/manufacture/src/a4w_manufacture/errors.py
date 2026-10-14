@@ -41,6 +41,10 @@ class ToolVersionNotFound(A4WError):
     code = "TOOL_VERSION_NOT_FOUND"
 
 
+class ToolsetNotFound(A4WError):
+    code = "TOOLSET_NOT_FOUND"
+
+
 class LlmAuthFailed(A4WError):
     code = "LLM_AUTH"
 

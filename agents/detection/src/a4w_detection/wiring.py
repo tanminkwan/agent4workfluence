@@ -12,10 +12,8 @@ from a4w_core.errors import ConfigError, VerifyInProgress
 from a4w_core.locking import FileTargetLock as CoreFileTargetLock
 from a4w_core.openapi.operations import collect_operations
 from a4w_core.registry import Registry, load_target_plugins
-from a4w_tools.call_policy import ConfigCallPolicy
-from a4w_tools.executor import ToolExecutor
+from a4w_tools.assembly import build_target_caller
 from a4w_tools.sandbox import RawCaller
-from a4w_tools.target_http import TargetHttpClient
 
 from .app import AppContext
 from .clock import SystemClock
@@ -125,17 +123,13 @@ def _load_secrets(secrets_dir: Path, target_id: str) -> Settings | None:
 
 
 def _verify_runtime(registry: Registry, cfg: TargetConfig, secrets: Settings, secrets_dir: Path) -> VerifyRuntime:
-    http = TargetHttpClient.from_settings(cfg, secrets)
-    policy = ConfigCallPolicy.from_settings(cfg)
-    executor = ToolExecutor(
-        http=http, policy=policy,
-        interpreter=registry.create("error_interpreter", cfg.require("CALL_ERROR_INTERPRETER"), cfg),
-    )
+    caller = build_target_caller(registry, cfg, secrets)
     sandbox_name = cfg.require("VERIFY_SANDBOX")
     # 시험 환경은 타겟 비밀 디렉터리에서 검증 상대 계정(peer) 비밀을 찾을 수 있다 (설계 11.6.1)
     sandbox = registry.create("verify_sandbox", sandbox_name, (cfg, secrets_dir))
     return VerifyRuntime(
-        runner=VerificationRunner(executor=executor, caller=RawCaller(http, policy), sandbox=sandbox),
+        runner=VerificationRunner(executor=caller.executor, caller=RawCaller(caller.http, caller.policy),
+                                  sandbox=sandbox),
         scope_provider=registry.create("scope_provider", cfg.require("TARGET_SCOPE_PROVIDER"), cfg),
         token=secrets.require("TARGET_API_TOKEN"),
         sandbox_name=sandbox_name,
