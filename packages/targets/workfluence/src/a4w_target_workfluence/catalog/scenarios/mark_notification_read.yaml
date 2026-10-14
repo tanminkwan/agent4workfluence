@@ -1,4 +1,4 @@
-# 검증 상대 계정(aiagent-peer)이 시험 페이지 댓글로 @aiagent를 멘션해 만든 알림을 읽음 표시한다 (설계 11.6.1).
-# peer 비밀이 없으면 notificationId가 없어 이 tool만 실패(SCENARIO_INVALID)한다.
+# 검증 상대 계정(VERIFY_PEER_USERNAME)이 시험 페이지 댓글로 검증 계정(VERIFY_AGENT_USERNAME)을 멘션해 만든 알림을 읽음 표시한다 (설계 11.6.1).
+# peer 비밀이 없으면 notificationId가 없어 이 tool만 검증 안 됨(unverified, SANDBOX_VALUE_MISSING)이다 (설계 I30).
 call: {args: {id: "${sandbox.notificationId}"}}
 expect: {ok: true}

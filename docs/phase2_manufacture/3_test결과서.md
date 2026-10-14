@@ -192,3 +192,23 @@ workf가 두 번째 계정 `aiagent-peer`(member, read·write, 만료 2027-10-13
 
 - 작업 트리를 붙여 container 안에서 돌렸다. 이미지는 다시 빌드하지 않았다.
 - peer 비밀을 뺀 상태로 실호출하지는 않았다. 단위 시험과 코드 확인만 했다.
+
+### 8.4 검증 전용 계정으로 바꿈 (2026-10-14)
+
+Detection 검증 token과 agent token이 둘 다 `aiagent` 계정의 같은 token이었다. 사용자 결정에 따라 검증 계정을 따로 두었다. workf가 `aiagent-verify` 계정(member, active)을 만들고 `read write` token을 발급했다. 만료는 2027-10-14다. 만료 없음은 안 되고 서버 최대가 365일이다.
+
+- **비밀 파일:** Detection 타겟 비밀 `config/secrets/targets/workfluence.env`(600)를 새 token으로 바꿨다. 이전 내용은 `workfluence.agent.env`와 같았으므로 잃은 것은 없다.
+- **역할 분담:** `aiagent`는 agent 전용(`workfluence.agent.env`)으로 남기고, `aiagent-peer`는 검증 상대로 그대로 쓴다.
+- **타겟 설정:** `VERIFY_AGENT_USERNAME`을 `aiagent-verify`로 바꿨다.
+- **workf 답:** 호출 한도는 token 단위다(계정당 token 최대 10개). 채팅 보내기만 사용자 단위로 분당 60이다.
+
+| 확인 | 결과 |
+|---|---|
+| Detection runtime 다시 빌드(`642d150` 포함), 다시 시작한 뒤 `GET /v1/targets/workfluence/profile` | `tokenScopes: [read, write]`, 검증 가능 |
+| `A4W_LIVE_TESTS=1 scripts/test.sh detection --src -q agents/detection/tests/live` | 5 passed |
+| seed tool 34개 전부를 새 검증 id `vf-verify-acct-20261014T010044Z`로 검증 API에 실호출 (시나리오 22개, 나머지는 자동 시나리오) | **34 passed**, `prepared: true`, `cleanup: ok` |
+
+- 로그 순서: 시험 스페이스 생성 201 → peer 멤버 추가 201 → `POST /notifications/{id}/read` 201 → peer 빼기 → 스페이스 삭제 200. 준비 단계가 검증 계정 token으로 `GET /notifications`를 불러 peer 멘션의 알림을 찾았다. 그래서 `aiagent-verify`가 멘션 알림을 받는 것도 확인됐다.
+- 정리 중 peer 빼기가 한 번 429(쓰기 한도)였다. `Retry-After`만큼 기다렸다가 다시 보내 200이 됐다. 검증 하나가 쓰기를 30번 가까이 하므로 한도에 닿을 수 있다. 계정을 나눈 지금은 agent 쪽 한도와 겹치지 않는다.
+- 확인하지 못한 것: manufacture의 모든 연결 반영(명령 10)은 다시 돌리지 않았다. 검증 API만 직접 불렀다.
+
