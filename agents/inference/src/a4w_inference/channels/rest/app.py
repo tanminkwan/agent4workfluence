@@ -31,6 +31,7 @@ class RestContext:
     api_token: str | None
     health: Callable[[], dict[str, Any]]  # agent별 MCP 상태 (바깥 시스템 상태는 넣지 않는다)
     lifecycle: Callable[[], AbstractAsyncContextManager] | None = None   # 기동·종료 때 할 일(MCP 자식, 만료 삭제)
+    chat_health: Callable[[], dict[str, Any]] | None = None              # 채팅 채널을 붙였을 때만(Phase 5). 전체 status는 내리지 않는다
 
 
 class Unauthorized(Exception):
@@ -111,7 +112,11 @@ async def get_request(requestId: str, request: Request):
 
 @public.get("/health", summary="상태 확인")
 async def health(request: Request):
-    return {"status": "ok", "agents": request.app.state.ctx.health()}
+    ctx = request.app.state.ctx
+    body = {"status": "ok", "agents": ctx.health()}
+    if ctx.chat_health is not None:
+        body["chat"] = ctx.chat_health()
+    return body
 
 
 def install_errors(app: FastAPI) -> None:

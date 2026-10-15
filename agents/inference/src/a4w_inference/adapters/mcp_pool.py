@@ -28,7 +28,7 @@ log = logging.getLogger(__name__)
 META = "a4w/"                                            # a4w_mcp의 _meta 키 앞머리 (식별 규칙)
 EXPECTED_REVISION = META + "expectedRevision"
 INVALID_PARAMS = -32602
-FORBIDDEN_PREFIXES = ("INFERENCE_", "LLM_", "RAG_")      # 서비스 비밀: 자식에게 주지 않는다
+FORBIDDEN_PREFIXES = ("INFERENCE_", "LLM_", "RAG_", "CHAT_")      # 서비스 비밀(채팅 token 포함): 자식에게 주지 않는다
 PING_TIMEOUT_SECONDS = 5.0
 
 

@@ -1,0 +1,20 @@
+# 채팅 방에 보내는 고정 문구 (Phase 5 설계 5.1절). 복사해서 chat_replies.yaml로 쓴다(Git 제외). 코드에는 문구가 없다.
+# texts의 8개 키는 모두 필요하다. 오류 코드가 필요한 것(failed)은 뒤에 " (코드)"가 붙는다.
+texts:
+  answer_empty: "답할 내용을 만들지 못했습니다."
+  limit_reached: "한도에 걸려 일부만 처리했습니다."
+  failed: "처리하지 못했습니다."
+  rejected: "요청을 받을 수 없습니다. 내용을 줄여 다시 보내 주세요."
+  busy: "지금 요청이 많아 처리하지 못했습니다. 잠시 뒤 다시 보내 주세요."
+  queue_full: "앞선 요청이 끝난 뒤 다시 보내 주세요."
+  timeout: "처리가 오래 걸려 결과를 가져오지 못했습니다."
+  interrupted: "서비스가 다시 시작되어 요청이 중단되었습니다. 필요하면 다시 요청해 주세요."
+# 한도로 끝났을 때 limit_reached 뒤에 붙일 이유 (stopReason → 문구). 없는 이유는 붙이지 않는다
+stop_labels:
+  LIMIT_STEPS: "(처리 단계 한도)"
+  LIMIT_TOOL_CALLS: "(tool 호출 한도)"
+  LIMIT_WRITE_CALLS: "(쓰기 한도)"
+  LIMIT_TIME: "(처리 시간 한도)"
+  CONTEXT_LIMIT: "(입력 크기 한도)"
+# 답이 짧은 기준(CHAT_ANSWER_MAX_CHARS)을 넘어 잘렸을 때 끝에 붙이는 안내
+truncate_notice: "나머지는 올리지 않았습니다. 필요하면 페이지에 올리라고 지시해 주세요."

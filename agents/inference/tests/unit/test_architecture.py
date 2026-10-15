@@ -58,9 +58,9 @@ def test_G6_channels_depend_on_the_runner_only_not_on_the_engine_internals():
         assert engine_internals == [], f"{path.name}가 AgentEngine을 직접 쓴다: {engine_internals}"
 
 
-def test_phase5_chat_channel_slot_exists_and_is_empty():
-    chat = SRC / "channels" / "chat"
-    assert chat.is_dir() and [p.name for p in chat.glob("*.py") if p.name != "__init__.py"] == []
+def test_phase5_chat_channel_slot_exists():
+    """Phase 4에서는 비어 있어야 했던 자리다. Phase 5부터 채널 구현이 들어온다(설계 2절)."""
+    assert (SRC / "channels" / "chat").is_dir()
 
 
 @pytest.mark.parametrize("path", [p for p in CORE_FILES], ids=lambda p: str(p.relative_to(SRC)))

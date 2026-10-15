@@ -56,6 +56,7 @@ services:
       - ./config/targets:${INFERENCE_TARGETS_DIR}:ro
       - ./config/agents:${INFERENCE_AGENTS_DIR}:ro
       - ./config/secrets/agents:${MCP_SECRETS_DIR}:ro
+      - ./config/secrets/chat:${CHAT_SECRETS_DIR}:ro       # 채팅 token: 본체만 읽는다(MCP 자식은 MCP_SECRETS_DIR 아래만)
       - ./config/prompts:/config/prompts:ro
     depends_on: [manufacture]
     healthcheck:
