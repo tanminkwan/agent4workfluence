@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "a4w-inference"
+version = "0.1.0"
+description = "agent4workfluence Inference (요청 수행: tool 검색·MCP 실행·모델 루프). 채널(REST·채팅)은 어댑터로 분리한다"
+requires-python = ">=3.12"
+dependencies = ["a4w-core", "a4w-tools", "a4w-clients", "a4w-mcp", "fastapi", "uvicorn", "httpx", "pyyaml", "jsonschema", "mcp", "anyio"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"a4w_inference.storage" = ["schema.sql"]

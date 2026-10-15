@@ -1,0 +1,8 @@
+# 실행 의존성 (고정 버전). 로컬 패키지는 Dockerfile에서 --no-deps로 설치한다.
+fastapi==0.143.0
+uvicorn==0.54.0
+httpx==0.28.1
+pyyaml==6.0.3
+jsonschema==4.25.1
+# 공용 MCP server(a4w_mcp)를 자식 프로세스로 띄우고 SDK client로 붙는다 (Phase 3 설계 4절, 2.x)
+mcp==2.3.0
