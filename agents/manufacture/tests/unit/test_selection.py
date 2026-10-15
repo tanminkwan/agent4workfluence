@@ -25,8 +25,9 @@ def test_workfluence_counts_match_design_table():
     tools = Counter(s.group for s in out.values() if s.kind == "tool")
     excluded = Counter(s.reason for s in out.values() if s.kind == "excluded")
     assert tools == {"read": 12, "history": 3, "communication": 8, "authoring": 4, "danger": 7}
-    assert excluded == {"ADMIN": 12, "STRUCTURE_CHANGE": 14, "NOT_NEEDED": 3, "SPEC_META": 3}
-    assert sum(1 for s in out.values() if s.kind == "codeOwned") == 9
+    # 채팅 9개는 tool 대상이 아니다(채팅 API는 Detection·Manufacture 대상이 아니고 어댑터 코드가 부른다). 변경을 따로 알리지도 않는다
+    assert excluded == {"ADMIN": 12, "STRUCTURE_CHANGE": 14, "NOT_NEEDED": 12, "SPEC_META": 3}
+    assert not [s for s in out.values() if s.kind == "codeOwned"]
 
 
 def test_danger_group_disabled_by_default():
@@ -76,9 +77,10 @@ def test_unknown_operation_uses_rules_then_fallback(method, group, fallback):
     assert (s.kind, s.group, s.fallback) == ("tool", group, fallback)
 
 
-def test_code_owned_rule_wins_over_scope():
-    s = Selector(rules(), enabled_groups=ALL_GROUPS, token_scopes=frozenset()).select(fragment("chat.send"))
-    assert s.kind == "codeOwned"
+def test_chat_operations_are_never_tools_whatever_the_scope_or_groups():
+    for scopes in (frozenset(), ALL_SCOPES):
+        s = Selector(rules(), enabled_groups=ALL_GROUPS, token_scopes=scopes).select(fragment("chat.send"))
+        assert (s.kind, s.reason) == ("excluded", "NOT_NEEDED")
 
 
 def test_transform_fixed_values():

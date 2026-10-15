@@ -77,9 +77,9 @@ def test_first_apply_uses_seed_without_llm(tmp_path):
                                              "verify": {"result": "passed", "calls": 1}}
     assert outcome(r, "users.list")["outcome"] == "excluded" and outcome(r, "users.list")["reason"] == "ADMIN"
     assert outcome(r, "pages.delete")["reason"] == "GROUP_DISABLED"
-    assert r["codeOwnedChanges"] == [{"operationId": "chat.send", "method": "POST",
-                                      "path": "/chat/rooms/{id}/messages", "change": "added"}]
-    assert r["summary"]["added"] == 4 and r["summary"]["excluded"] == 2 and r["summary"]["codeOwned"] == 1
+    assert outcome(r, "chat.send")["outcome"] == "excluded" and outcome(r, "chat.send")["reason"] == "NOT_NEEDED"
+    assert not r.get("codeOwnedChanges")                    # 채팅 API 변경은 따로 알리지 않는다
+    assert r["summary"]["added"] == 4 and r["summary"]["excluded"] == 3 and r["summary"]["codeOwned"] == 0
     assert r["toolVersion"] == env.store.current("wf")
     assert r["index"]["upserted"] == 4 and not r["index"]["drift"]
     call = env.detection.verify_calls[0]
@@ -171,13 +171,13 @@ def test_added_operation_is_created_by_llm(tmp_path):
         {n: t["revision"] for n, t in env.store.read("wf", r1["toolVersion"]).tools.items()}
 
 
-# ── AC-3a: 코드 소유 동작은 tool이 아니라 알림
+# ── AC-3a: 채팅 동작은 tool이 아니고, 추가돼도 아무것도 바뀌지 않는다(알림도 없다)
 
-def test_code_owned_changes_are_reported_only(tmp_path):
+def test_added_chat_operations_change_nothing(tmp_path):
     env = Env(tmp_path)
     first(env, ops=[o for o in OPS if o != "chat.send"])
     r = env.apply(changeset("cs-2", frags(*[o for o in OPS if o != "chat.send"]), frags(*OPS), "v1", "v2"), "ap-2")
-    assert r["codeOwnedChanges"][0]["operationId"] == "chat.send"
+    assert not r.get("codeOwnedChanges")
     assert r["status"] == "noop" and r["toolVersion"] == env.store.current("wf")
 
 

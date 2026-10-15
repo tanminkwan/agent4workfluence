@@ -58,15 +58,15 @@ def test_first_apply_counts_exactly(tmp_path):
     assert by[("added", None)] == 30                    # 단순 27 + 상위 3
     assert by[("excluded", "ADMIN")] == 12
     assert by[("excluded", "STRUCTURE_CHANGE")] == 14
-    assert by[("excluded", "NOT_NEEDED")] == 3
+    assert by[("excluded", "NOT_NEEDED")] == 12            # 내보내기·휴지통 3 + 채팅 9 (채팅은 tool 대상이 아니다)
     assert by[("excluded", "SPEC_META")] == 3
     assert by[("excluded", "GROUP_DISABLED")] == 7
-    assert by[("codeOwned", None)] == 9
-    assert r["summary"]["added"] == 30 and r["summary"]["excluded"] == 39 and r["summary"]["codeOwned"] == 9
+    assert ("codeOwned", None) not in by
+    assert r["summary"]["added"] == 30 and r["summary"]["excluded"] == 48 and r["summary"]["codeOwned"] == 0
 
 
-def test_66_to_75_reports_only_code_owned_chat(tmp_path):
-    """66 → 75의 차이는 채팅 9개 추가뿐이고, tool은 바뀌지 않는다 (AC-3a)."""
+def test_66_to_75_adds_only_chat_operations_and_changes_nothing(tmp_path):
+    """66 → 75의 차이는 채팅 9개 추가뿐이다. 채팅은 tool 대상이 아니라 tool은 바뀌지 않고, 따로 알리는 것도 없다 (AC-3a)."""
     before, after = fragments("openapi-66ops.yaml"), fragments("openapi-75ops.yaml")
     cs = changeset("cs-2", before, after, "v66", "v75")
     assert Counter(o.change for o in cs.operations) == {"added": 9}
@@ -74,7 +74,7 @@ def test_66_to_75_reports_only_code_owned_chat(tmp_path):
     base = {k: v for k, v in after.items() if not k.startswith("chat.")}
     r1 = apply(changeset("cs-1", {}, base, None, "v66"), "ap-1")
     r2 = apply(changeset("cs-2", base, after, "v66", "v75"), "ap-2")
-    assert sorted(c["operationId"] for c in r2["codeOwnedChanges"]) == sorted(k for k in after if k.startswith("chat."))
+    assert not r2.get("codeOwnedChanges")
     assert r2["status"] == "noop" and r2["toolVersion"] == r1["toolVersion"]
 
 

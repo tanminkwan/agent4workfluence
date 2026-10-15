@@ -14,7 +14,7 @@ scopeImplies:                # write scope는 read를 포함한다 (명세 info.
 
 rules:
   - match: {pathPrefix: /chat/}
-    codeOwned: true          # 채팅은 Phase 5 채팅 어댑터가 코드로 부른다
+    exclude: NOT_NEEDED      # 채팅은 tool 대상이 아니다. 채팅 API는 Detection·Manufacture 대상이 아니고 Phase 5 어댑터 코드가 부른다
   - match: {scope: admin}
     exclude: ADMIN
   - match: {operationId: ["spec.*"]}

@@ -212,3 +212,11 @@ Detection 검증 token과 agent token이 둘 다 `aiagent` 계정의 같은 toke
 - 정리 중 peer 빼기가 한 번 429(쓰기 한도)였다. `Retry-After`만큼 기다렸다가 다시 보내 200이 됐다. 검증 하나가 쓰기를 30번 가까이 하므로 한도에 닿을 수 있다. 계정을 나눈 지금은 agent 쪽 한도와 겹치지 않는다.
 - 확인하지 못한 것: manufacture의 모든 연결 반영(명령 10)은 다시 돌리지 않았다. 검증 API만 직접 불렀다.
 
+
+## 정정 (2026-10-15): 채팅 동작 처리
+
+위 결과는 채팅 동작을 `codeOwned`(변경을 `codeOwnedChanges`로 알림)로 처리하던 때의 기록이다. 사용자 정정으로 채팅 API는 Detection·Manufacture 대상이 아니게 되어, Workfluence 규칙(`catalog/rules.yaml`)의 `/chat/` 규칙을 `codeOwned`에서 제외(`NOT_NEEDED`)로 바꿨다. 코어의 일반 `codeOwned` 기능은 남겨 두었고 Workfluence는 쓰지 않는다.
+
+- 달라진 숫자: 제외 `NOT_NEEDED` 3 → 12(채팅 9 포함), 제외 합계 39 → 48(GROUP_DISABLED 7 포함), codeOwned 9 → 0. AC-3a는 "채팅 9개 추가는 tool을 바꾸지 않고 알림도 없다(noop)"로 바뀐다.
+- 시험 수정: `test_selection`·`test_workfluence_fixtures`·`test_apply_service`의 채팅 관련 기대값. 실행(`scripts/test.sh manufacture --src -q packages/core packages/tools packages/clients packages/targets agents/manufacture/tests`): **409 passed**, 9 skipped(live), 0 failed. detection 쪽 `agents/detection/tests`는 바뀐 것이 없고 161 passed, 5 skipped.
+- 확인하지 못한 것: 실행 중인 compose의 `manufacture` container는 이전 규칙 이미지다. 이미지를 다시 빌드·재기동하고 실호출로 다시 반영해 보기 전까지 실제 서빙 결과가 새 규칙인지 확인하지 못했다.
