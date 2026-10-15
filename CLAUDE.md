@@ -39,9 +39,13 @@ scripts/test.sh detection --src -q …   # 작업 트리를 붙여 container 안
 A4W_LIVE_TESTS=1 scripts/test.sh detection   # 시험 스택 실호출 포함
 scripts/build.sh detection runtime && docker compose up -d detection
 scripts/build.sh mcp test && scripts/test.sh mcp   # 공용 MCP server (packages/mcp, 시험 이미지만)
+scripts/build.sh inference test && scripts/test.sh inference   # Inference (REST 채널·수행 로직·MCP 풀)
+scripts/build.sh inference runtime && docker compose up -d inference
+docker compose exec -T -e INFERENCE_EVAL_BASE_URL=http://127.0.0.1:18003 inference \
+  python -m a4w_inference.evaluate --scenarios <scenarios.yaml>   # 수행 평가 (실제 모델 호출)
 ```
 
-- 설정: `.env`(서비스), `config/targets/<targetId>.env`(타겟), `config/secrets/targets/<targetId>.env`(타겟 비밀, Detection에만 붙임), `config/agents/<agentId>/<targetId>.env`(agent 설정)·`config/secrets/agents/<agentId>/<targetId>.env`(agent token, 공용 MCP server만), `config/secrets/<서비스>-*.env`(서비스 비밀, 예: `manufacture-llm.env`). 모두 Git 제외이고 `*.example`만 올린다.
+- 설정: `.env`(서비스), `config/targets/<targetId>.env`(타겟), `config/secrets/targets/<targetId>.env`(타겟 비밀, Detection에만 붙임), `config/agents/<agentId>/<targetId>.env`(agent 설정)·`config/secrets/agents/<agentId>/<targetId>.env`(agent token, 공용 MCP server만), `config/secrets/<서비스>-*.env`(서비스 비밀, 예: `manufacture-llm.env`, `inference-llm.env`), `config/prompts/*.md`(Inference 시스템 프롬프트, 예시만 올림). 모두 Git 제외이고 `*.example`만 올린다.
 
 ## 범용성
 

@@ -40,6 +40,32 @@ services:
       retries: 3
     restart: unless-stopped
 
+  inference:
+    image: ${INFERENCE_IMAGE}:${INFERENCE_TAG}
+    # LLM key는 inference-llm.env. agent token 파일(config/secrets/agents)은 붙이지만 본체는 열지 않고 MCP 자식(a4w_mcp)만 읽는다
+    env_file:
+      - .env
+      - ./config/secrets/inference-llm.env
+    extra_hosts:
+      - "${TARGET_HOST_ALIAS}"                 # MCP 자식이 타겟을 직접 호출한다
+      - "host.docker.internal:host-gateway"    # AI Pro Plus (host 포트)
+    ports:
+      - "${INFERENCE_PORT}:${INFERENCE_PORT}"
+    volumes:
+      - inference-store:${INFERENCE_STORE_PATH}
+      - ./config/targets:${INFERENCE_TARGETS_DIR}:ro
+      - ./config/agents:${INFERENCE_AGENTS_DIR}:ro
+      - ./config/secrets/agents:${MCP_SECRETS_DIR}:ro
+      - ./config/prompts:/config/prompts:ro
+    depends_on: [manufacture]
+    healthcheck:
+      test: ["CMD", "python", "-c", "import os,urllib.request; urllib.request.urlopen('http://127.0.0.1:%s/health' % os.environ['INFERENCE_PORT'], timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
 volumes:
   spec-store:
   tool-store:
+  inference-store:

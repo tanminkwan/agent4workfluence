@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import Any, Literal
 
-ErrorKind = Literal["auth", "timeout", "rate_limit", "output_format", "unavailable"]
+ErrorKind = Literal["auth", "timeout", "rate_limit", "output_format", "unavailable", "context_length"]
 
 
 @dataclass(frozen=True)

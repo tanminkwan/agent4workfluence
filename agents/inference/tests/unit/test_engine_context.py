@@ -116,8 +116,8 @@ async def test_F5b_second_context_error_ends_with_context_limit_not_a_failure():
 
 async def test_F6_safety_ratio_multiplies_the_limit():
     hist = history(4, 200)
-    loose = rig([say("네")], candidates=[], history=hist, cfg=settings(max_input_tokens=2000, safety_ratio=1.0, chars_per_token=1.0))
-    tight = rig([say("네")], candidates=[], history=hist, cfg=settings(max_input_tokens=2000, safety_ratio=0.5, chars_per_token=1.0))
+    loose = rig([say("네")], candidates=[], history=hist, cfg=settings(max_input_tokens=3000, safety_ratio=1.0, chars_per_token=1.0))
+    tight = rig([say("네")], candidates=[], history=hist, cfg=settings(max_input_tokens=3000, safety_ratio=0.5, chars_per_token=1.0))
     a = await loose.run("이번", conversation_id="c")
     b = await tight.run("이번", conversation_id="c")
     assert a.usage.history_dropped_turns == 0

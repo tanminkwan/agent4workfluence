@@ -16,6 +16,7 @@ MEETING = {"items": [{"pageId": "0b6f2c1e-77aa-4f0e-9d51-3c2a1f4e8a10", "title":
 async def test_A1_search_then_answer():
     r = rig([calls(("search_pages", {"q": "회의록"})), say("'10월 주간회의 회의록' 페이지가 있습니다.")],
             candidates=[cand("search_pages", "r-a1"), cand("read_page", "r-b2")],
+            tools=[tool_def("search_pages", "r-a1"), tool_def("read_page", "r-b2")],
             handlers={mcp("search_pages"): ok(MEETING)})
     res = await r.run("회의록 페이지 찾아줘")
 
@@ -127,3 +128,24 @@ async def test_search_is_called_once_per_run_without_errors():
     await r.run("a와 b를 찾아줘")
     assert len(r.search.queries) == 1 and r.gateway.refreshes == 0
     assert NONCE == "N0NCE"
+
+
+async def test_a_model_imitated_execution_note_is_removed_from_the_answer():
+    """이력에 붙는 [실행: …] 줄은 시스템 기록이다. 모델이 흉내 내 답 끝에 쓰면(live에서 관찰) 지운다."""
+    r = rig([say("AI Agent 작업공간\n\n[실행: 없음]")], candidates=[])
+    res = await r.run("스페이스 이름만 다시 말해줘")
+    assert res.answer == "AI Agent 작업공간"
+    r2 = rig([say("완료했습니다.\n[실행: workfluence__create_page ok]\n")], candidates=[])
+    assert (await r2.run("만들어줘")).answer == "완료했습니다."
+
+
+async def test_an_answer_that_is_only_an_execution_note_counts_as_empty():
+    r = rig([say("[실행: 없음]")], candidates=[])
+    res = await r.run("안녕")
+    assert res.complete is False and res.stop_reason == "EMPTY_ANSWER"
+
+
+async def test_brackets_elsewhere_in_the_answer_are_left_alone():
+    r = rig([say("[실행: 이 문장은 중간]에 있어도 본문입니다. 끝")], candidates=[])
+    res = await r.run("안녕")
+    assert res.answer == "[실행: 이 문장은 중간]에 있어도 본문입니다. 끝"

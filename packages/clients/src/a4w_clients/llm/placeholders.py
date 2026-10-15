@@ -17,5 +17,8 @@ def _unsupported(name: str):
 def register(registry: Registry) -> None:
     """factory는 (env, secrets) 묶음을 받는다."""
     registry.register("llm_client", "openai_compatible", lambda ctx: openai_compatible.from_settings(*ctx))
+    registry.register("chat_llm_client", "openai_compatible", lambda ctx: openai_compatible.from_chat_settings(*ctx))
     registry.register("llm_client", "anthropic", _unsupported("anthropic"))
+    registry.register("chat_llm_client", "anthropic", _unsupported("anthropic"))
     registry.register("llm_client", "claude_cli", _unsupported("claude_cli"))
+    registry.register("chat_llm_client", "claude_cli", _unsupported("claude_cli"))

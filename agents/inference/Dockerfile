@@ -18,7 +18,8 @@ COPY agents/inference/requirements-test.txt /tmp/requirements-test.txt
 RUN pip install --no-cache-dir -r /tmp/requirements-test.txt
 COPY pytest.ini /src/pytest.ini
 WORKDIR /src
-CMD ["python", "-m", "pytest", "-q", "packages", "agents/inference/tests"]
+# packages/mcp의 시험은 mcp 이미지에서 돈다 (두 곳의 tests 패키지 이름이 같아 한 번에 모으면 서로 가린다)
+CMD ["python", "-m", "pytest", "-q", "packages/core", "packages/tools", "packages/clients", "agents/inference/tests"]
 
 FROM deps AS runtime
 # 보관소 경로는 .env의 INFERENCE_STORE_PATH, 실행 사용자 uid는 .env의 A4W_UID
