@@ -168,16 +168,22 @@ for s in detection manufacture inference; do scripts/build.sh $s runtime; done
 docker compose up -d
 ```
 
-변화 받아들이기 (사람 또는 workflow 도구가 실행):
+변화 받아들이기: scheduler·workflow 도구가 `scripts/a4w-sync.sh`를 주기적으로 부른다(변경 식별 → 반영 → 결과 기다리기 → 승인된 보류 정리 반영, 멱등). cron·systemd timer·n8n·Prefect 연동과 결과별 처리는 [`docs/운영연동가이드.md`](docs/운영연동가이드.md)에 있다.
 
 ```bash
-# 1. 변경 식별
+A4W_TARGET=workfluence A4W_DETECTION_URL=http://localhost:18001 A4W_MANUFACTURE_URL=http://localhost:18002 \
+  scripts/a4w-sync.sh        # 종료 코드 0 끝남, 2 사람 검토 대기, 1 실패
+```
+
+손으로 돌릴 때 (반영은 비동기라 결과를 조회한다):
+
+```bash
 R=$(curl -s -X POST localhost:18001/v1/detect -H 'Content-Type: application/json' -d '{"targetId":"workfluence"}')
-# 2. 바뀌었으면 반영
 CS=$(echo "$R" | jq -r 'select(.status=="changed") | .changeSetId')
-[ -n "$CS" ] && curl -s -X POST localhost:18002/v1/apply -H 'Content-Type: application/json' \
-  -d "{\"targetId\":\"workfluence\",\"changeSetId\":\"$CS\"}"
-# 3. 보류가 있으면 검토 후 승인하고 정리 반영
+A=$(curl -s -X POST localhost:18002/v1/apply -H 'Content-Type: application/json' \
+      -d "{\"targetId\":\"workfluence\",\"changeSetId\":\"$CS\"}" | jq -r .applyId)
+curl -s localhost:18002/v1/applies/$A | jq '{status, toolVersion, summary, pendingReview}'   # running이면 다시
+# 보류가 있으면 검토 후 승인 → 정리 반영
 curl -s "localhost:18002/v1/reviews?targetId=workfluence&status=pending"
 curl -s -X POST localhost:18002/v1/reviews/<reviewId>/decision -H 'Content-Type: application/json' -d '{"decision":"approve"}'
 curl -s -X POST localhost:18002/v1/apply -H 'Content-Type: application/json' -d '{"targetId":"workfluence"}'
@@ -199,6 +205,7 @@ curl -s localhost:18003/v1/requests/<requestId>
 |---|---|
 | [`docs/과제정의서.md`](docs/과제정의서.md) | 전체 과제 정의 (정본) |
 | [`docs/시스템아키텍처.md`](docs/시스템아키텍처.md) | 구성, API 공통 규칙, 실행 환경 |
+| [`docs/운영연동가이드.md`](docs/운영연동가이드.md) | scheduler·workflow 도구로 Detection·Manufacture 돌리기 (cron, systemd, n8n, Prefect, webhook) |
 | [`docs/phase1_detection/`](docs/phase1_detection/) | Detection 요구사항·설계·시험 결과서 |
 | [`docs/phase2_manufacture/`](docs/phase2_manufacture/) | Manufacture (tool 생성·검증·색인) |
 | [`docs/phase3_tool_serving/`](docs/phase3_tool_serving/) | tool 정의 조회 API와 공용 MCP server |
