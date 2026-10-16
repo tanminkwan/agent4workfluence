@@ -53,10 +53,10 @@
     "operationId": "trash.pages",
     "method": "GET",
     "path": "/trash/pages",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "8e5ef9d1e986322875e241e240cc2bb7429c01b5403be9b5abd1892820fd000c",
     "structureSha256": "3588e08d061c7b812c4089e85eee0fed575a93200672df2717134525368115ee"
   },
   "origin": "seed",
-  "revision": "r-ab69af5a1542"
+  "revision": "r-be203939568e"
 }

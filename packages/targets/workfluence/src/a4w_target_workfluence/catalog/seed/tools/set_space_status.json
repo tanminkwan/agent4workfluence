@@ -81,10 +81,10 @@
     "operationId": "spaces.setStatus",
     "method": "PATCH",
     "path": "/spaces/{id}/status",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "0bd0b667250885401ce392a7f5c8efaf4a643665e143d2ca532d31d64088d973",
-    "structureSha256": "2294db567090409a94392fb9630c589cf01f6abc2a5fcc84034b46a15bebc65d"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "f90b641bfc4d1bc7d1ebec103ec35bfc708eb29cd4c9b7238aba68d554dad3af",
+    "structureSha256": "c9fbf4739a33e16883da4f19ae21ce0c0f9b8c7285d29c848a64652097da14d0"
   },
   "origin": "seed",
-  "revision": "r-dde5cf166039"
+  "revision": "r-c90bdbdc751e"
 }

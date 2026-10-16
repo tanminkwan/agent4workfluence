@@ -99,10 +99,10 @@
     "operationId": "pages.update",
     "method": "PATCH",
     "path": "/pages/{id}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "ec3db192e0df52cecd4149215f4c37cbcf8b3c04c88ceeffef6204e7bbf553f5",
-    "structureSha256": "63efcea300f736dc093c8877cbe344b765e8a300d527e64d6995cb16e5adfd26"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "11aab07f919488ab7aa5987d3d3237a72e4a2f5f693cfcb25f71601c60ab3dde",
+    "structureSha256": "7bf11328e199076d2f5c66329b5b8ebab832469cc8a2163074b39af84ac10d3c"
   },
   "origin": "seed",
-  "revision": "r-b395f6af1b5d"
+  "revision": "r-0f1296a0b57a"
 }

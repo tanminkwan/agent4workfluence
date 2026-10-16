@@ -62,10 +62,10 @@
     "operationId": "trash.restorePage",
     "method": "POST",
     "path": "/trash/pages/{id}/restore",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "f2076450d333b6577cc884a7baeaa0b14b8cdf1686e9fd33fdc84d0b19b4dd7e",
     "structureSha256": "bc61d3a9482bffe240a1bf1eba4cf13e49738362a382a77f684497a907d8b76c"
   },
   "origin": "seed",
-  "revision": "r-3e9d52102b5d"
+  "revision": "r-b268af72517f"
 }

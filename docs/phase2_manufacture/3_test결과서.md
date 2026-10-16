@@ -281,3 +281,21 @@ Phase 5 채팅 시험의 검색 오답("스페이스 목록 tool이 없다", Pha
 
 - GLM이 `_common.v2`로 쓰는 경우(새 동작·명세 변경)는 이번에 생기지 않아 실제 출력을 보지 않았다. live LLM 시험(`test_live_llm`)도 돌리지 않았다.
 - `seedtool`은 저장소 기준 명세(8c83f9c6)로 만들었다. 시험 스택 명세(3f0a9480)와는 채팅 동작만 다르다(Detection 변경 식별 cs-b33a5a88714e6ed0385e77d3).
+
+## 정정 (2026-10-16): 만든 사람·고친 사람 칸 반영 (설계 25절)
+
+workf 배포(impl-phase21 87bc85b, 명세 3f0a9480 → 4283c9bf)를 반영했다.
+
+| 명령 | 결과 |
+|---|---|
+| `POST /v1/detect {"targetId":"workfluence"}` | `cs-72b23a1591a6f5103cee8364`, modified 16, needsReview(`OPERATION_CHANGED`) |
+| `scripts/test.sh manufacture --src -q …test_apply_service.py` (red → green) | 명세가 바뀐 동작에 맞는 seed가 있으면 seed로(LLM 없음) 시험 1건 실패 확인 → 통과. seed가 없으면 LLM 시험은 그대로 통과 |
+| seed 글 수정(설계 25절 표) 후 `a4w-seedtool build --spec tests/fixtures/workfluence/openapi-75ops-4283c9bf.yaml` | tools 42, composites 3. 새 고정 명세를 더하고 seed 기준 시험은 그것을 본다(`tests/specs.py` `SEED_SPEC`). 이전 75ops 고정 명세는 명세 이력 시험(66→75)에 남김 |
+| `scripts/build.sh {manufacture,detection,mcp,inference} test` 후 `scripts/test.sh <s>` | manufacture **433 passed**, detection 406, mcp 319, inference 1149 passed |
+| 변경 반영 `ap-20261016T063118Z-1e09c5` (changeSetId) | `partial`: 13개 seed로 다시 만듦(LLM 0), 검증 passed 13, 모두 `SPEC_REVIEW` 보류. 3개는 위험 묶음이라 GROUP_DISABLED |
+| 보류 13건 승인(사용자 지시) 후 정리 반영 `ap-20261016T063444Z-a1ce81` | `applied`, `tv-000006-3784047a`, updated 13, 검증 passed 13, 색인 upserted 13. Inference MCP 갱신(36개) |
+
+### 확인하지 못한 것
+
+- 댓글 거르기(`author`)는 시험 스택에 댓글 있는 페이지가 없어(workf 알림) 실호출로 보지 않았다. 검증 시나리오는 기존 그대로(댓글 거르기 없이) 통과했다.
+- 페이지 목록의 `createdBy`·`updatedBy` 거르기는 Inference 실호출로 시험하지 않았다(스페이스만, Phase 5 결과서 6.6).

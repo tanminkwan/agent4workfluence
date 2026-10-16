@@ -73,10 +73,10 @@
     "operationId": "spaces.removeMember",
     "method": "DELETE",
     "path": "/spaces/{id}/members/{ref}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "6707063af73a85af5421fe056bfc4e934685cde8e4f26fb64df1175689791f5d",
     "structureSha256": "71aaf8e34dca75a878d1459fb3b1c53ababd53e9f871ca483527dc778a865d20"
   },
   "origin": "seed",
-  "revision": "r-1b5b2bae3314"
+  "revision": "r-2af92f065276"
 }

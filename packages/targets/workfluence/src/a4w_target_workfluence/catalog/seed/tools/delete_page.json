@@ -58,10 +58,10 @@
     "operationId": "pages.delete",
     "method": "DELETE",
     "path": "/pages/{id}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "9b1f076d0d3bb57154b6b0e49792eb8ac8faeb4ed1a7602807fe0f929edd506e",
     "structureSha256": "37d061152a588a250a52edd76ee7d16286cece191d627eb9e7e751f6ca557d95"
   },
   "origin": "seed",
-  "revision": "r-34fc3c12a923"
+  "revision": "r-e7ed56eaca65"
 }

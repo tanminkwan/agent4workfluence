@@ -12,7 +12,7 @@ from a4w_manufacture.seedtool import SeedError, build_seeds, main
 
 from ..specs import FIXTURES, catalog_dir
 
-SPEC = FIXTURES / "openapi-75ops.yaml"
+SPEC = FIXTURES / "openapi-75ops-4283c9bf.yaml"     # seed 기준 명세 (설계 25.2)
 ARGS = ["--spec", str(SPEC), "--limits", "description=600,summary=120,example=60", "--max-visible", "4",
         "--max-chars", "8000", "--content-types", "application/json,multipart/form-data"]
 

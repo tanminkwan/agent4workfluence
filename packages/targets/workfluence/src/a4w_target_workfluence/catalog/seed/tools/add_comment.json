@@ -77,10 +77,10 @@
     "operationId": "comments.create",
     "method": "POST",
     "path": "/pages/{pageId}/comments",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "397c34b9fe232e53a4bc1edfe5cd38b34421e8cee4cfa02dbf6a7fbee574c621",
-    "structureSha256": "c626f7a78808577465711d103559677abf08fff2e8cb3b708a960dc0eaee1730"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "1b09992b6735b76186359d23e364c13823e696a1463c5acbf2848db8f77ebbd4",
+    "structureSha256": "b53e4d6f3ad3497bf0ea98fac9ca3aded296211dcab870afebb619c2b380b8ce"
   },
   "origin": "seed",
-  "revision": "r-002c6a5868a4"
+  "revision": "r-3e4dbade861e"
 }

@@ -47,10 +47,10 @@
     "operationId": "notifications.unreadCount",
     "method": "GET",
     "path": "/notifications/unread-count",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "0d65f13eb132b64afc6cff3d133d0d9819bfd4a06dcd9bc549866bf93559d632",
     "structureSha256": "0859ccaba7804393a7ab9420fc07190d8cbb38b266a1c80552dda5e7f358a352"
   },
   "origin": "seed",
-  "revision": "r-cdee699562db"
+  "revision": "r-f1c6c30468ac"
 }

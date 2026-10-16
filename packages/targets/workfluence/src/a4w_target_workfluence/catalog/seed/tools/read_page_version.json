@@ -80,10 +80,10 @@
     "operationId": "pages.version",
     "method": "GET",
     "path": "/pages/{id}/versions/{no}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "74296fd404bdeb357052699079e1dad374666f75fb6d8308554948a268bf0589",
     "structureSha256": "bc11eb5a7a2d432a2682e1a5af829f84df88d4a5c18ba032b2e00987e4df706d"
   },
   "origin": "seed",
-  "revision": "r-abcd050ba41b"
+  "revision": "r-9bc8916858f8"
 }

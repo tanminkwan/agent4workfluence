@@ -58,10 +58,10 @@
     "operationId": "attachments.delete",
     "method": "DELETE",
     "path": "/attachments/{id}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "2c5a316fb52fca9fa00587bd55b6e3e87b6a3dc8a47bb79ee1c7d47ad3dfc7a7",
     "structureSha256": "3e94a43528142e00d5d9fff220d17c32fba4e87ad4c81898ab09f0aebdbf85b2"
   },
   "origin": "seed",
-  "revision": "r-daed4beaba3d"
+  "revision": "r-75fd16af99db"
 }

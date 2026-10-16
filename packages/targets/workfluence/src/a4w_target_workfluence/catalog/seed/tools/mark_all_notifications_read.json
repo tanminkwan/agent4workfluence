@@ -47,10 +47,10 @@
     "operationId": "notifications.readAll",
     "method": "POST",
     "path": "/notifications/read-all",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "4750733b6b4b0e4d20a7f34228a6d85fba01bd5f054ea17fa3bfe7527ebe84be",
     "structureSha256": "cca4d0ba0ef0030475fdc0aa302b726adbc2e3777d0fb8b85ddb3166d7d35b2f"
   },
   "origin": "seed",
-  "revision": "r-16111df7a1ff"
+  "revision": "r-bbd1ac46fa2e"
 }

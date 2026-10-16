@@ -3,7 +3,7 @@
   "kind": "operation",
   "name": "list_spaces",
   "title": "스페이스 목록 보기",
-  "description": "내가 볼 수 있는 스페이스 목록을 이름·설명·쓰기 가능 여부와 함께 본다. 이름 일부로 좁힐 수 있다. 많으면 잘리고 truncated가 true다.",
+  "description": "내가 볼 수 있는 스페이스 목록을 이름·설명·만든 사람·쓰기 가능 여부와 함께 본다. 이름 일부, 만든 사람, 든 사람으로 좁힐 수 있다. 없는 사람이면 404 USER_NOT_FOUND다. 많으면 잘리고 truncated가 true다.",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -11,6 +11,18 @@
         "maxLength": 100,
         "type": "string",
         "description": "찾을 스페이스 이름의 일부 — 요청 글에 스페이스 이름이 있을 때만 넣는다. 대소문자 무시"
+      },
+      "createdBy": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"
+      },
+      "member": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "그 사람이 든(Crew이거나 만든) 스페이스만 볼 때 그 사람의 아이디(username) — 요청에 있을 때만 넣는다"
       }
     },
     "required": [],
@@ -24,6 +36,16 @@
         "input": "q",
         "in": "query",
         "name": "q"
+      },
+      {
+        "input": "createdBy",
+        "in": "query",
+        "name": "createdBy"
+      },
+      {
+        "input": "member",
+        "in": "query",
+        "name": "member"
       }
     ],
     "fixed": [],
@@ -40,6 +62,8 @@
       "items[].name",
       "items[].description",
       "items[].canWrite",
+      "items[].createdByUsername",
+      "items[].createdByName",
       "truncated"
     ],
     "maxChars": 8000
@@ -50,13 +74,13 @@
   ],
   "group": "read",
   "index": {
-    "summary": "만들거나 고치지 않고 내가 볼 수 있는 스페이스 목록과 이름·설명을 본다. 이름으로 찾거나 있는지 확인할 때 쓴다",
+    "summary": "만들거나 고치지 않고 내가 볼 수 있는 스페이스 목록과 이름·설명·만든 사람을 본다. 이름이나 만든 사람으로 찾거나 있는지 확인할 때 쓴다",
     "examples": [
       "스페이스 뭐뭐 있는지 알려줘",
       "스터디 스페이스가 있는지 확인해줘",
       "이름에 개발이 들어간 공간 찾아줘",
       "내가 글 쓸 수 있는 스페이스만 골라줘",
-      "아까 그 스페이스 이름 다시 알려줘",
+      "네가 만든 스페이스 이름이 뭐야?",
       "스페이스 목록을 보고 이름으로 찾기",
       "Show me all spaces",
       "Is there a space named Design Team?"
@@ -66,10 +90,10 @@
     "operationId": "spaces.list",
     "method": "GET",
     "path": "/spaces",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "b2d21136574daf29d2c48b2fbcd92aedc02cce43f485e1a3b8b2af8afcdde818",
-    "structureSha256": "f9b3888b3e01f8baea0b88a9cead4db772fcc873845b92be9e4b4a0f45dc845f"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "b9615210de35a96afa76c3e5576b1f8a38fe943e66b34df0865d499e6f642bb7",
+    "structureSha256": "0a4e703f70e50f0242760d81988796a2e3c4be465cdc3e4c6887e07ec941c345"
   },
   "origin": "seed",
-  "revision": "r-b255dab1bb7a"
+  "revision": "r-e9dc693734d9"
 }

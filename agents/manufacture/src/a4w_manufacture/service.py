@@ -297,7 +297,8 @@ class ApplyService:
                   "specVersion": rec.spec_version, "fragmentSha256": fsha, "structureSha256": rec.structure_sha256}
         taken = (set(head_tools) | assigned) - ({cur["name"]} if cur else set())
         task, previous = None, cur
-        if cur is not None and not from_seed:
+        seed_same = rt.catalog.seed_match(rec.operation_id, fsha, rec.structure_sha256) == "same"
+        if cur is not None and not from_seed and not seed_same:   # 새 명세에 맞는 seed가 있으면 seed로 (설계 25.1)
             task = "redescribe" if cur["source"]["structureSha256"] == rec.structure_sha256 else "update"
         else:
             match = rt.catalog.seed_match(rec.operation_id, fsha, rec.structure_sha256)

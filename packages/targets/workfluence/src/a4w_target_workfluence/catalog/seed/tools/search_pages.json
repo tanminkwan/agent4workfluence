@@ -12,6 +12,18 @@
         "minLength": 1,
         "type": "string",
         "description": "검색어 — 요청 글의 핵심 낱말. 두 글자 이상, 200자까지"
+      },
+      "createdBy": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"
+      },
+      "updatedBy": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "마지막으로 고친 사람의 아이디(username) — 요청에 고친 사람이 있을 때만 넣는다"
       }
     },
     "required": [
@@ -27,6 +39,16 @@
         "input": "q",
         "in": "query",
         "name": "q"
+      },
+      {
+        "input": "createdBy",
+        "in": "query",
+        "name": "createdBy"
+      },
+      {
+        "input": "updatedBy",
+        "in": "query",
+        "name": "updatedBy"
       }
     ],
     "fixed": [
@@ -48,7 +70,9 @@
       "items[].pageId",
       "items[].title",
       "items[].snippet",
-      "items[].updatedAt"
+      "items[].updatedAt",
+      "items[].createdByName",
+      "items[].updatedByName"
     ],
     "maxChars": 8000
   },
@@ -64,7 +88,7 @@
       "온콜이라는 말이 들어간 문서 검색",
       "OKR 관련 페이지 있는지 찾아봐",
       "신입 교육 자료 어디 있어?",
-      "어떤 문서에 API 키 얘기가 있었지?",
+      "민수가 쓴 글 중에 회의록 찾아줘",
       "단어로 페이지 검색하기",
       "Search pages about deployment",
       "Find documents mentioning vacation policy"
@@ -74,10 +98,10 @@
     "operationId": "search.find",
     "method": "GET",
     "path": "/search",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "a0852912449ae528553831943aacc657b9b894894bf0b70718a72c3333ccfe49",
-    "structureSha256": "4e74a6d9bb5ece7930fcec5503ed19997c9d264e436cef13077f8e5663bf5367"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "54e35bf9808c08ac4a3d06e01352715a125414957e3f7a365cd5e492ee6d02bb",
+    "structureSha256": "5eb623c2d8fc99adcd34f5050ed4e3fc6d9fe2ce479690e146a1b6ec6d144390"
   },
   "origin": "seed",
-  "revision": "r-ad8adc998f58"
+  "revision": "r-65c5e540ab9b"
 }

@@ -89,10 +89,10 @@
     "operationId": "spaces.addMember",
     "method": "POST",
     "path": "/spaces/{id}/members",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "7414f1b6f8453a9ed937d1eccadc1ec6766e62327cd217b068e37f363dbac0f0",
     "structureSha256": "d7c9c9127ecbeabe67418e04d9cfc0d5b71d9010f1c8399626d9c667ae14e3f0"
   },
   "origin": "seed",
-  "revision": "r-6b59830d7408"
+  "revision": "r-55481ead142c"
 }

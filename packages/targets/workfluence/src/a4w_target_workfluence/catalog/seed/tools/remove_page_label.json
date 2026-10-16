@@ -68,10 +68,10 @@
     "operationId": "labels.detach",
     "method": "DELETE",
     "path": "/pages/{pageId}/labels/{ref}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "9eaeb92d75202f0a403a4c76a89b1842c580ae66e5677063b4b91d6daed82df1",
     "structureSha256": "06cc82f977372dfadc6b5c55e54dbcb6dd2123598aeb7615ea20668b9e2f84f3"
   },
   "origin": "seed",
-  "revision": "r-d24a50117c1b"
+  "revision": "r-4c72c40e9dcf"
 }

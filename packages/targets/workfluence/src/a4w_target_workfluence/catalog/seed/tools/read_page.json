@@ -43,7 +43,10 @@
       "body",
       "currentVersionNo",
       "ancestors[].title",
-      "updatedAt"
+      "updatedAt",
+      "createdByUsername",
+      "createdByName",
+      "updatedByName"
     ],
     "maxChars": 8000
   },
@@ -69,10 +72,10 @@
     "operationId": "pages.get",
     "method": "GET",
     "path": "/pages/{id}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "4cf0088cb4060074f626b5060bccd795b45bf0b66b1b7cc489c87880536c6cec",
-    "structureSha256": "e0272aabfb60929038d37c5acc9175df39e97fdd66edca9889dafd279d5e0437"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "a9b9e1c20aaa980dcf6afbd90e8a1d57d617ebc184e47d2def026f33a242c647",
+    "structureSha256": "6b9c6cddd72564f8acd0edcb735832bdc4a7510d91da21bee911be9f0817eba4"
   },
   "origin": "seed",
-  "revision": "r-1de18e95dabd"
+  "revision": "r-96e4e1e0f1dc"
 }

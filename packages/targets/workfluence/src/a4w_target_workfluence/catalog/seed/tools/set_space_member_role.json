@@ -88,10 +88,10 @@
     "operationId": "spaces.setMemberRole",
     "method": "PATCH",
     "path": "/spaces/{id}/members/{ref}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "e8419c02e8bb84faac766f9357be893808806e1c07a396f0ecc6307de0e44635",
     "structureSha256": "7a867a239d0b0fc03f43d2d8cb51d99abaff3a5d12c9a45a3fcb5fe515808cfc"
   },
   "origin": "seed",
-  "revision": "r-6b49d92bf5a7"
+  "revision": "r-e95a509f861c"
 }

@@ -64,10 +64,10 @@
     "operationId": "pages.versions",
     "method": "GET",
     "path": "/pages/{id}/versions",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "ebb9099d7f526522063896fe2591717237992674ecd26a711db607cc08b7647e",
     "structureSha256": "d98a6b47367ff44abba839b4d5abf871d726ab18acdd1d630a6577f048920ff2"
   },
   "origin": "seed",
-  "revision": "r-4390c7eaedf0"
+  "revision": "r-79c7e86f6603"
 }

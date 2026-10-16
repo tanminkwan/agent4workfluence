@@ -76,10 +76,10 @@
     "operationId": "comments.update",
     "method": "PATCH",
     "path": "/comments/{id}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "37557b2695d0da4791722782421f961b2887fc7b850ae3475ae217630d14a813",
-    "structureSha256": "ee3789dcd23c41933aa03afa80cec3ac774636dc1b73c8b458edd74dcc44ea22"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "a0942cb7b55968fa77d17d2347444ba020ea861a0a3083549a97bdbedf148474",
+    "structureSha256": "c2e7da55b3e3def38ad608924b56ad7aa0ab762bdd7a8e1693e0e967610b6232"
   },
   "origin": "seed",
-  "revision": "r-ba017380acdf"
+  "revision": "r-9975f5cf5683"
 }

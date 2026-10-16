@@ -63,10 +63,10 @@
     "operationId": "spaces.members",
     "method": "GET",
     "path": "/spaces/{id}/members",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "d3474cf5f2c8b306a7f2cb3948cb7051027327fbf61b93f7a85cdd772cbaaf9c",
     "structureSha256": "61f9d6bb29129f199388e66b30a1ec70cd2a6e58f5c6619831cfe96b935e4b1f"
   },
   "origin": "seed",
-  "revision": "r-637c7fc53e94"
+  "revision": "r-6c2bcabf0cba"
 }

@@ -61,10 +61,10 @@
     "operationId": "labels.forPage",
     "method": "GET",
     "path": "/pages/{pageId}/labels",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "855cbd94281d878970b3de8ed76b06a6dd566914fa0d104c4e6aaf463c2022cc",
     "structureSha256": "47ac48b15e5c1165ce277c96218b75eaeb8cf9ff30cf2e97ce5a036b4194b067"
   },
   "origin": "seed",
-  "revision": "r-5dd21fa59338"
+  "revision": "r-e76a90c12a68"
 }

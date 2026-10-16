@@ -77,10 +77,10 @@
     "operationId": "pages.restoreVersion",
     "method": "POST",
     "path": "/pages/{id}/versions/{no}/restore",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "3f6c0f371aa2e28081c0540adacee35caef74a7c70f8c89cc31506a4386174de",
-    "structureSha256": "0a0fc103140b53baf62c71bae9a0530762bca2597e7ad16372b91555e3f5ab17"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "bd6703973aca9a8a0d01bbf4f7a9586d0ae933a55054e490f5d3b68bb8dd0c36",
+    "structureSha256": "08dc78cb90f926591dd2fd2532f2a2ce3bcd6af03c7d39a31aca92ba03ed8f65"
   },
   "origin": "seed",
-  "revision": "r-5b674e33a33a"
+  "revision": "r-23f6a51c0cc7"
 }

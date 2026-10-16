@@ -86,10 +86,10 @@
     "operationId": "pages.move",
     "method": "PATCH",
     "path": "/pages/{id}/move",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "0f4e01765310ff40cccafb71b0490b3e381d76290d4d3a956071ff3a46fd10e7",
-    "structureSha256": "0b2b221f9b5abea7802e133e78a6cd781ce15de2b86055d24741de36b42d6d49"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "156dde95fcd7612a4275318c29e286aec120b5efb623a33fdc64ad936501d6e1",
+    "structureSha256": "9f0a64853fd8172635d5964967f2052f98636c9214dee1ad677799d580043a11"
   },
   "origin": "seed",
-  "revision": "r-1bc4a103aa9a"
+  "revision": "r-efb8b3de937d"
 }

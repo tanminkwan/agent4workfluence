@@ -90,10 +90,10 @@
     "operationId": "attachments.upload",
     "method": "POST",
     "path": "/pages/{pageId}/attachments",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "e7a2fe39ce21512e08693c7da9b1a0659d2adad0e5aa5f4c84760af2cd7226c9",
     "structureSha256": "f50dad1304815a2d3d42d27ac60bcb8506861b6b505556ab0f1013261e280ce4"
   },
   "origin": "seed",
-  "revision": "r-e6be86d6411e"
+  "revision": "r-e53653780012"
 }

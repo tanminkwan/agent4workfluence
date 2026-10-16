@@ -85,10 +85,10 @@
     "operationId": "pages.create",
     "method": "POST",
     "path": "/pages",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "47440b9394dd864d039c26bcae5a2eed8fb023e374e2639c432830fc582729f9",
-    "structureSha256": "5a3a89924c4c7eedcf542ef275bd8c2ea3e95c191031cd9c61f14be74d1d9509"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "40b1f41cfa6c7e21d00d8c47140d440e4579565dc658b0daefd8ded727677ca7",
+    "structureSha256": "063729d3c019a955f262e98f409d7af26d0ea32e2c7388c5510a0507e68fad52"
   },
   "origin": "seed",
-  "revision": "r-c5f49a7baca1"
+  "revision": "r-0c70ed879cc5"
 }

@@ -64,10 +64,10 @@
     "operationId": "attachments.list",
     "method": "GET",
     "path": "/pages/{pageId}/attachments",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "3e0d4b9bf717b4f173eab390761230911229f6a94fe37db35f7b5e1ae426704c",
     "structureSha256": "dda1f0daba1fa783894cb211b0ffeb51e7c277e90dcb1c02a9e5c1a156d695fb"
   },
   "origin": "seed",
-  "revision": "r-fbaa4f114103"
+  "revision": "r-4ed9092eb156"
 }

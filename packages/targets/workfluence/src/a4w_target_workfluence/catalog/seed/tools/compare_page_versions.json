@@ -89,10 +89,10 @@
     "operationId": "pages.diff",
     "method": "GET",
     "path": "/pages/{id}/versions/{a}/diff/{b}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "c1eca298f7b86c9da9a567d2623e5b9ed7379fea74f400017a59cb6c1070b66a",
     "structureSha256": "cfe0e920bb4f8986f2a112a1680a23d16d6b3e228a588cbc4bbcd69c7df3427f"
   },
   "origin": "seed",
-  "revision": "r-f7a8424f34c5"
+  "revision": "r-398946b0bb5c"
 }

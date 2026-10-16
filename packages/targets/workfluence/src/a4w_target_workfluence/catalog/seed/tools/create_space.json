@@ -97,10 +97,10 @@
     "operationId": "spaces.create",
     "method": "POST",
     "path": "/spaces",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "2dd329702bb817cde7228b87b7e8169cd8c601fdaf9288004fdc4526607a47bf",
-    "structureSha256": "6a72cd421871eba96d751e10054bb5d3c03de2b176060b9f0c16e588d9ccb343"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "aa40e06ed0668fcb2dec0a9e84c92338e6bdaeb1fab1618ab65334c32ee33915",
+    "structureSha256": "39edcedba3ed5725072152c46f204acf920fdd644d1ccbfcb921d09e0da0a9d7"
   },
   "origin": "seed",
-  "revision": "r-c8dadb507b40"
+  "revision": "r-db04492879bb"
 }

@@ -58,10 +58,10 @@
     "operationId": "comments.delete",
     "method": "DELETE",
     "path": "/comments/{id}",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "b85bad11f5ce526d734de7907133cc674bc7057c7ecec1da6eaef4ad13f55423",
     "structureSha256": "6a70d17be64dd40d19e9292729f9a679edd8f8523559e5f1cbb5aa184f43a4b5"
   },
   "origin": "seed",
-  "revision": "r-d67f0590600c"
+  "revision": "r-23616bf727c8"
 }

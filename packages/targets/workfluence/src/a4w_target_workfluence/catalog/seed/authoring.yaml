@@ -3,20 +3,22 @@
 #
 # 입력 칸 규칙 (설계 6.3.1): 여기 적지 않은 칸은 기계 기본(명세 기본값이 있는 선택 칸은 숨김=보내지 않음).
 # 보이는 칸 설명에는 값을 어디서 얻는지 적는다. space는 agent의 기본 스페이스(맥락 homeSpace)로 고정된다.
-# 기준 명세: 시험 스택 openapi.yaml sha256 8c83f9c6… (동작 75개)
+# 기준 명세: 시험 스택 openapi.yaml sha256 4283c9bf… (동작 75개, 2026-10-16 만든 사람·고친 사람 칸 반영, 설계 25절)
 
 # ── 탐색·읽기 (read)
 spaces.list:
   name: list_spaces
   title: 스페이스 목록 보기
-  description: 내가 볼 수 있는 스페이스 목록을 이름·설명·쓰기 가능 여부와 함께 본다. 이름 일부로 좁힐 수 있다. 많으면 잘리고 truncated가 true다.
+  description: 내가 볼 수 있는 스페이스 목록을 이름·설명·만든 사람·쓰기 가능 여부와 함께 본다. 이름 일부, 만든 사람, 든 사람으로 좁힐 수 있다. 없는 사람이면 404 USER_NOT_FOUND다. 많으면 잘리고 truncated가 true다.
   inputs:
     q: {description: "찾을 스페이스 이름의 일부 — 요청 글에 스페이스 이름이 있을 때만 넣는다. 대소문자 무시"}
+    createdBy: {description: "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"}
+    member: {description: "그 사람이 든(Crew이거나 만든) 스페이스만 볼 때 그 사람의 아이디(username) — 요청에 있을 때만 넣는다"}
     limit: {description: 돌려줄 최대 수, hide: true}
-  responseFields: ["items[].id", "items[].name", "items[].description", "items[].canWrite", truncated]
+  responseFields: ["items[].id", "items[].name", "items[].description", "items[].canWrite", "items[].createdByUsername", "items[].createdByName", truncated]
   index:
-    summary: "만들거나 고치지 않고 내가 볼 수 있는 스페이스 목록과 이름·설명을 본다. 이름으로 찾거나 있는지 확인할 때 쓴다"
-    examples: ["스페이스 뭐뭐 있는지 알려줘", "스터디 스페이스가 있는지 확인해줘", "이름에 개발이 들어간 공간 찾아줘", "내가 글 쓸 수 있는 스페이스만 골라줘", "아까 그 스페이스 이름 다시 알려줘", "스페이스 목록을 보고 이름으로 찾기", "Show me all spaces", "Is there a space named Design Team?"]
+    summary: "만들거나 고치지 않고 내가 볼 수 있는 스페이스 목록과 이름·설명·만든 사람을 본다. 이름이나 만든 사람으로 찾거나 있는지 확인할 때 쓴다"
+    examples: ["스페이스 뭐뭐 있는지 알려줘", "스터디 스페이스가 있는지 확인해줘", "이름에 개발이 들어간 공간 찾아줘", "내가 글 쓸 수 있는 스페이스만 골라줘", "네가 만든 스페이스 이름이 뭐야?", "스페이스 목록을 보고 이름으로 찾기", "Show me all spaces", "Is there a space named Design Team?"]
 
 spaces.get:
   name: get_space
@@ -24,7 +26,7 @@ spaces.get:
   description: 스페이스 하나의 이름·설명·상태와 내 역할(myRole), 쓸 수 있는지(canWrite)를 본다.
   inputs:
     id: {description: "스페이스 id — list_spaces 결과의 items[].id"}
-  responseFields: [id, name, description, status, myRole, canWrite]
+  responseFields: [id, name, description, status, myRole, canWrite, createdByUsername, createdByName, createdAt]
   index:
     summary: "목록이 아니라 스페이스 한 곳의 상세 정보(설명·상태)와 그곳에서 내 역할·쓰기 가능 여부를 본다"
     examples: ["그 공간은 무슨 용도야?", "이 스페이스에서 나는 무슨 역할이야?", "그 스페이스가 중지된 상태인지 봐줘", "내가 이 공간에 페이지 만들 수 있어?", "스페이스 상세 정보 보여줘", "스페이스 하나의 정보와 내 권한 보기", "What is my role in this space?", "Show details of this space"]
@@ -34,11 +36,13 @@ pages.tree:
   title: 기본 스페이스의 페이지 목록 보기
   description: agent의 기본 스페이스에 있는 페이지를 본문 없이 제목·부모(parentId)와 함께 본다. 트리는 parentId로 그린다. 많으면 잘리고 truncated가 true다(total은 전체 수). 본문은 read_page로 읽는다.
   inputs:
+    createdBy: {description: "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"}
+    updatedBy: {description: "마지막으로 고친 사람의 아이디(username) — 요청에 고친 사람이 있을 때만 넣는다"}
     limit: {description: 돌려줄 최대 수, hide: true}
-  responseFields: ["items[].id", "items[].title", "items[].parentId", total, truncated]
+  responseFields: ["items[].id", "items[].title", "items[].parentId", "items[].createdByUsername", "items[].updatedByUsername", total, truncated]
   index:
     summary: "기본 스페이스의 페이지를 본문 없이 제목과 상하 관계(트리)로 훑어본다. 단어로 찾는 검색이 아니다"
-    examples: ["위키에 어떤 문서들이 있는지 훑어봐줘", "페이지 트리 구조 보여줘", "하위 페이지가 뭐가 있는지 알려줘", "전체 문서 제목 목록 줘", "새 페이지 둘 위치를 정하게 구조 먼저 보자", "페이지 목록을 보고 구조 확인", "List all pages in the wiki", "Show me the page tree"]
+    examples: ["위키에 어떤 문서들이 있는지 훑어봐줘", "페이지 트리 구조 보여줘", "하위 페이지가 뭐가 있는지 알려줘", "전체 문서 제목 목록 줘", "내가 만든 페이지들만 보여줘", "페이지 목록을 보고 구조 확인", "List all pages in the wiki", "Show me the page tree"]
 
 pages.get:
   name: read_page
@@ -46,7 +50,7 @@ pages.get:
   description: 페이지 하나를 본문(마크다운)과 함께 읽는다. 지금 버전 번호(currentVersionNo)가 함께 온다 — 이 페이지를 고칠 때 update_page의 baseVersionNo로 그대로 쓴다. 제목만 알면 read_page_by_title을 쓴다.
   inputs:
     id: {description: "페이지 id — search_pages 결과의 items[].pageId나 list_pages 결과의 items[].id"}
-  responseFields: [id, title, body, currentVersionNo, "ancestors[].title", updatedAt]
+  responseFields: [id, title, body, currentVersionNo, "ancestors[].title", updatedAt, createdByUsername, createdByName, updatedByName]
   index:
     summary: "이미 고른 페이지 하나(id를 앎)의 본문 전체를 읽는다. 제목만 알 때는 제목으로 찾아 읽기를 쓴다"
     examples: ["방금 찾은 페이지 본문 읽어줘", "그 문서 전체 내용 보여줘", "목록에서 고른 페이지 열어줘", "이 페이지 내용 요약해줘", "이 글 무슨 내용이야?", "페이지 본문 읽기", "Read the page content", "Open that page and summarize it"]
@@ -57,10 +61,12 @@ search.find:
   description: 기본 스페이스에서 제목과 본문으로 페이지를 찾는다. 검색어는 두 글자부터 된다. 결과의 pageId로 다른 tool을 부른다. 기본 20개까지 돌려준다.
   inputs:
     q: {description: "검색어 — 요청 글의 핵심 낱말. 두 글자 이상, 200자까지"}
-  responseFields: ["items[].pageId", "items[].title", "items[].snippet", "items[].updatedAt"]
+    createdBy: {description: "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"}
+    updatedBy: {description: "마지막으로 고친 사람의 아이디(username) — 요청에 고친 사람이 있을 때만 넣는다"}
+  responseFields: ["items[].pageId", "items[].title", "items[].snippet", "items[].updatedAt", "items[].createdByName", "items[].updatedByName"]
   index:
     summary: "제목을 모를 때 단어로 여러 스페이스의 페이지 제목·본문을 검색해 관련 글을 찾는다"
-    examples: ["휴가 규정이 나온 글 찾아줘", "온콜이라는 말이 들어간 문서 검색", "OKR 관련 페이지 있는지 찾아봐", "신입 교육 자료 어디 있어?", "어떤 문서에 API 키 얘기가 있었지?", "단어로 페이지 검색하기", "Search pages about deployment", "Find documents mentioning vacation policy"]
+    examples: ["휴가 규정이 나온 글 찾아줘", "온콜이라는 말이 들어간 문서 검색", "OKR 관련 페이지 있는지 찾아봐", "신입 교육 자료 어디 있어?", "민수가 쓴 글 중에 회의록 찾아줘", "단어로 페이지 검색하기", "Search pages about deployment", "Find documents mentioning vacation policy"]
 
 labels.list:
   name: list_labels
@@ -77,7 +83,9 @@ labels.pages:
   description: 라벨 하나가 붙은, 내가 읽을 수 있는 페이지 목록을 본다. 기본 100개까지 돌려준다.
   inputs:
     name: {description: "라벨 이름 — 요청 글에 있는 라벨이나 list_labels 결과의 name"}
-  responseFields: ["items[].pageId", "items[].title", "items[].spaceName", "items[].updatedAt"]
+    createdBy: {description: "만든 사람의 아이디(username) — 요청에 만든 사람이 있을 때만 넣는다"}
+    updatedBy: {description: "마지막으로 고친 사람의 아이디(username) — 요청에 고친 사람이 있을 때만 넣는다"}
+  responseFields: ["items[].pageId", "items[].title", "items[].spaceName", "items[].updatedAt", "items[].createdByName"]
   index:
     summary: "라벨(태그) 이름 하나로 그 라벨이 붙은 페이지들을 모아 본다"
     examples: ["긴급 태그 달린 글 다 보여줘", "회의록 라벨 페이지 모아줘", "보안 라벨 붙은 문서 있어?", "라벨로 문서 찾아줘", "검토중 라벨 붙은 것들 보여줘", "라벨이 붙은 페이지 목록 보기", "Show pages tagged urgent", "Find documents with the security label"]
@@ -187,10 +195,11 @@ comments.list:
   description: 페이지에 달린 댓글과 답글을 시간순으로 본다. 답글은 parentId가 상위 댓글 id다.
   inputs:
     pageId: {description: "페이지 id — search_pages 결과의 items[].pageId"}
-  responseFields: ["items[].id", "items[].author", "items[].body", "items[].parentId", "items[].createdAt"]
+    author: {description: "쓴 사람의 아이디(username) — 요청에 댓글 쓴 사람이 있을 때만 넣는다"}
+  responseFields: ["items[].id", "items[].author", "items[].authorUsername", "items[].body", "items[].parentId", "items[].createdAt"]
   index:
     summary: "페이지 하나에 달린 댓글과 답글을 읽는다. 댓글을 쓰지는 않는다"
-    examples: ["이 페이지 댓글 보여줘", "누가 무슨 의견 달았어?", "답글까지 다 읽어줘", "댓글 몇 개 달렸어?", "문서에 달린 피드백 정리해줘", "페이지 댓글 목록 보기", "Show comments on this page", "What did people comment?"]
+    examples: ["이 페이지 댓글 보여줘", "누가 무슨 의견 달았어?", "답글까지 다 읽어줘", "민수가 단 댓글만 보여줘", "문서에 달린 피드백 정리해줘", "페이지 댓글 목록 보기", "Show comments on this page", "What did people comment?"]
 
 comments.create:
   name: add_comment

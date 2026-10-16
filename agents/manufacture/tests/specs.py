@@ -11,6 +11,7 @@ import yaml
 from a4w_core.openapi.operations import collect_operations
 
 FIXTURES = Path(__file__).parent / "fixtures" / "workfluence"
+SEED_SPEC = "openapi-75ops-4283c9bf.yaml"     # 저장소 seed가 맞춘 명세 (설계 25.2). 75ops는 그 전 판(8c83f9c6)
 
 
 @cache

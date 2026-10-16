@@ -48,10 +48,10 @@
     "operationId": "categories.list",
     "method": "GET",
     "path": "/categories",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "30180f5f5139cda9c6a200eec18c4504b5833f710ca0091424afc45905e61ee2",
     "structureSha256": "04083995148dd643f80a3ad5a342aa01691b62a7aed9a569a1ec4ed2141c9f11"
   },
   "origin": "seed",
-  "revision": "r-2189b1d44908"
+  "revision": "r-ef7b07b3608c"
 }

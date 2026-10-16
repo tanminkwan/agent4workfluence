@@ -50,10 +50,10 @@
     "operationId": "labels.list",
     "method": "GET",
     "path": "/labels",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "ae83e8fcc5f2d2367ebd3aff6c436ac792b160f6b7236ad0aa5911919c0a0158",
     "structureSha256": "07450c275e4955f577a7cb28d5c7d310875acb816d2fdf85f74bad859c9d2f1f"
   },
   "origin": "seed",
-  "revision": "r-a725615f90f0"
+  "revision": "r-9af9c2a5c0ff"
 }

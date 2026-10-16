@@ -55,10 +55,10 @@
     "operationId": "notifications.list",
     "method": "GET",
     "path": "/notifications",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "2fe5a960309a838749d1adb4157327c3970c9d0b67b28560d14e9f460a3b09d0",
     "structureSha256": "a5545596b8d49534a80da7df69acc7e9879805a073916e417d58b5464c462222"
   },
   "origin": "seed",
-  "revision": "r-b1eabc52ac08"
+  "revision": "r-f4f979cef911"
 }

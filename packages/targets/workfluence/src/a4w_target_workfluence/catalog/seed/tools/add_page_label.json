@@ -75,10 +75,10 @@
     "operationId": "labels.attach",
     "method": "POST",
     "path": "/pages/{pageId}/labels",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
     "fragmentSha256": "bf578a56f326b8d9d6cec5b778ab5924130c55b44c06bf00f947631e2b744e9b",
     "structureSha256": "f60c82a6cc9e9265e5155d19e80d64ce76c554c1b1bb0c62375783da431990af"
   },
   "origin": "seed",
-  "revision": "r-c95dcb8719ef"
+  "revision": "r-cd4aa1154f15"
 }

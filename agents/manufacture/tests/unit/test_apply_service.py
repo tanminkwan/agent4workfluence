@@ -385,3 +385,31 @@ def test_an_invalid_changed_seed_keeps_the_served_tool_and_says_why(tmp_path):
     o = outcome(r, "pages.get")
     assert o["outcome"] == "unchanged" and o["reason"] == "SEED_INVALID"
     assert env.served()["read_page"] == before
+
+
+# ── 설계 25.1: 명세가 바뀐 동작도 새 명세에 맞는 seed가 있으면 LLM 대신 seed로 (보류는 그대로)
+
+def test_spec_change_with_a_matching_seed_uses_the_seed_and_still_waits_for_review(tmp_path):
+    import json
+
+    from ..apply_fakes import seed_definition
+    env = Env(tmp_path)
+    first(env)
+    after = modified_comments()
+    d = seed_definition("comments.create", after["comments.create"])
+    (env.catalog_dir / "seed" / "tools" / "add_comment.json").write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+    env.deploy()
+    r = env.apply(changeset("cs-2", frags(*OPS), after, "v1", "v2"), "ap-2")
+    assert env.assistant.calls == []
+    item = outcome(r, "comments.create")
+    assert item["outcome"] == "pending" and item["origin"] == "seed"
+    assert r["pendingReview"][0]["reasons"] == ["SPEC_REVIEW"]
+
+
+def test_spec_change_without_a_matching_seed_still_goes_through_llm(tmp_path):
+    out = copy.deepcopy(AUTHORING["comments.create"])
+    out["inputs"]["mention"] = {"description": "멘션할 사용자", "hide": True}
+    env = Env(tmp_path, outputs={"comments.create": out})
+    first(env)
+    env.apply(changeset("cs-2", frags(*OPS), modified_comments(), "v1", "v2"), "ap-2")
+    assert env.assistant.calls == [("update", "comments.create", "add_comment")]

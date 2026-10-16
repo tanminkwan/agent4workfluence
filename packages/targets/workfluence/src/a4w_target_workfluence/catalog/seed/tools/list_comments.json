@@ -11,6 +11,12 @@
         "format": "uuid",
         "type": "string",
         "description": "페이지 id — search_pages 결과의 items[].pageId"
+      },
+      "author": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "쓴 사람의 아이디(username) — 요청에 댓글 쓴 사람이 있을 때만 넣는다"
       }
     },
     "required": [
@@ -26,6 +32,11 @@
         "input": "pageId",
         "in": "path",
         "name": "pageId"
+      },
+      {
+        "input": "author",
+        "in": "query",
+        "name": "author"
       }
     ],
     "fixed": [],
@@ -40,6 +51,7 @@
     "fields": [
       "items[].id",
       "items[].author",
+      "items[].authorUsername",
       "items[].body",
       "items[].parentId",
       "items[].createdAt"
@@ -57,7 +69,7 @@
       "이 페이지 댓글 보여줘",
       "누가 무슨 의견 달았어?",
       "답글까지 다 읽어줘",
-      "댓글 몇 개 달렸어?",
+      "민수가 단 댓글만 보여줘",
       "문서에 달린 피드백 정리해줘",
       "페이지 댓글 목록 보기",
       "Show comments on this page",
@@ -68,10 +80,10 @@
     "operationId": "comments.list",
     "method": "GET",
     "path": "/pages/{pageId}/comments",
-    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
-    "fragmentSha256": "154f29d2369fb11e179b01ea65cef91693b2f972f81d484066945188f4c83d87",
-    "structureSha256": "0e9c538a13903002b97703d3c2ec8fb919d681850d84319b396281a5e07b8c63"
+    "specVersion": "4283c9bf8068f47335af33c9f1bf722e501b1f36d4ed5aad7aed4ab9d8ee60ad",
+    "fragmentSha256": "d75c89642bdad3fab4c47b9a432d12443d5b51d28499464c18f5212359805905",
+    "structureSha256": "e34e5af4f039e1bac427d6fcc9a9f220c91144b572260efc4554f55e7117de7b"
   },
   "origin": "seed",
-  "revision": "r-4a738bd794d3"
+  "revision": "r-5687d9a729b5"
 }

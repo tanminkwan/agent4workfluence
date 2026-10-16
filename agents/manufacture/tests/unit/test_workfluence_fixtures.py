@@ -13,7 +13,7 @@ from a4w_manufacture.storage.sqlite_db import SqliteManufactureDb
 from a4w_manufacture.transform.openapi3 import OpenApi3Transformer
 
 from ..apply_fakes import FakeAssistant, FakeDetection, FakeRag, changeset
-from ..specs import catalog_dir, fragments
+from ..specs import SEED_SPEC, catalog_dir, fragments
 
 DEFAULT = ("read", "history", "communication", "authoring")
 
@@ -42,8 +42,8 @@ def env(tmp_path, groups=DEFAULT):
 
 def test_first_apply_of_real_spec_uses_seeds_only(tmp_path):
     apply, det, store = env(tmp_path)
-    ops = fragments("openapi-75ops.yaml")
-    r = apply(changeset("cs-1", {}, ops, None, "8c83f9c6"), "ap-1")
+    ops = fragments(SEED_SPEC)
+    r = apply(changeset("cs-1", {}, ops, None, "4283c9bf"), "ap-1")
     assert r["llm"]["calls"] == 0
     served = store.read("workfluence", store.current("workfluence")).tools
     assert len(served) == 36                           # 단순 33(스페이스 6 포함) + 상위 3
@@ -53,7 +53,7 @@ def test_first_apply_of_real_spec_uses_seeds_only(tmp_path):
 
 def test_first_apply_counts_exactly(tmp_path):
     apply, _, store = env(tmp_path)
-    r = apply(changeset("cs-1", {}, fragments("openapi-75ops.yaml"), None, "8c83f9c6"), "ap-1")
+    r = apply(changeset("cs-1", {}, fragments(SEED_SPEC), None, "4283c9bf"), "ap-1")
     by = Counter((i["outcome"], i.get("reason")) for i in r["items"])
     assert by[("added", None)] == 36                    # 단순 33 + 상위 3
     assert by[("excluded", "ADMIN")] == 12
@@ -71,16 +71,17 @@ def test_66_to_75_adds_only_chat_operations_and_changes_nothing(tmp_path):
     cs = changeset("cs-2", before, after, "v66", "v75")
     assert Counter(o.change for o in cs.operations) == {"added": 9}
     apply, _, store = env(tmp_path)
-    base = {k: v for k, v in after.items() if not k.startswith("chat.")}
+    seeded = fragments(SEED_SPEC)                      # 반영은 seed가 맞춘 명세로 한다 (채팅만 뺀 것 → 전부)
+    base = {k: v for k, v in seeded.items() if not k.startswith("chat.")}
     r1 = apply(changeset("cs-1", {}, base, None, "v66"), "ap-1")
-    r2 = apply(changeset("cs-2", base, after, "v66", "v75"), "ap-2")
+    r2 = apply(changeset("cs-2", base, seeded, "v66", "v75"), "ap-2")
     assert not r2.get("codeOwnedChanges")
     assert r2["status"] == "noop" and r2["toolVersion"] == r1["toolVersion"]
 
 
 def test_danger_enabled_holds_nine_for_review(tmp_path):
     apply, _, store = env(tmp_path, groups=DEFAULT + ("danger",))
-    r = apply(changeset("cs-1", {}, fragments("openapi-75ops.yaml"), None, "8c83f9c6"), "ap-1")
+    r = apply(changeset("cs-1", {}, fragments(SEED_SPEC), None, "4283c9bf"), "ap-1")
     assert sorted(p["tool"] for p in r["pendingReview"]) == sorted([
         "delete_page", "move_page", "restore_page_version", "upload_attachment", "delete_attachment",
         "list_trashed_pages", "restore_trashed_page", "delete_space", "set_space_status"])
