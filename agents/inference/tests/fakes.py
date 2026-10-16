@@ -237,6 +237,7 @@ DEFAULT_SETTINGS = EngineSettings(
     max_steps=12, max_tool_calls=12, max_write_calls=3, max_seconds=300.0, max_same_error=2, retry_search_max=1,
     max_input_tokens=131072, safety_ratio=0.8, chars_per_token=1.5, tool_result_max_chars=20000, trim_keep_chars=1500,
     search_history_turns=3, search_query_max_chars=1000, history_max_turns=50, record_arg_max_chars=200,
+    history_refs_max=6,
 )
 
 

@@ -54,15 +54,17 @@ class ActionSummary:
     target_request_id: str | None
     write: bool
     args: dict[str, str]                   # 표시를 붙인 뒤 실제로 보낸 값의 요약(길이 제한)
+    refs: dict[str, str] = field(default_factory=dict)   # 성공 결과의 식별자 값 (다음 차례가 기억한다, 설계 19절)
 
     def to_dict(self) -> dict[str, Any]:
         return {"tool": self.tool, "revision": self.revision, "ok": self.ok, "errorCode": self.error_code,
-                "targetRequestId": self.target_request_id, "write": self.write, "args": dict(self.args)}
+                "targetRequestId": self.target_request_id, "write": self.write, "args": dict(self.args), "refs": dict(self.refs)}
 
     @classmethod
     def from_dict(cls, d: dict[str, Any]) -> ActionSummary:
         return cls(tool=d["tool"], revision=d.get("revision"), ok=d["ok"], error_code=d.get("errorCode"),
-                   target_request_id=d.get("targetRequestId"), write=d.get("write", False), args=dict(d.get("args") or {}))
+                   target_request_id=d.get("targetRequestId"), write=d.get("write", False), args=dict(d.get("args") or {}),
+                   refs=dict(d.get("refs") or {}))
 
 
 @dataclass

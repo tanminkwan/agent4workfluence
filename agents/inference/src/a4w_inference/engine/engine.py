@@ -31,6 +31,7 @@ LLM_ERROR_CODES = {"auth": "LLM_AUTH", "timeout": "LLM_TIMEOUT", "rate_limit": "
                    "unavailable": "LLM_UNAVAILABLE", "output_format": "LLM_BAD_RESPONSE"}
 MESSAGE_OVERHEAD_CHARS = 32               # 역할·구분자 등 직렬화 여분 (어림)
 EXEC_NOTE = re.compile(r"(?:\s*\[실행:[^\]\n]*\])+\s*$")   # 이력에 붙이는 시스템 기록 줄. 모델이 흉내 내 쓰면 지운다
+IDENTIFIER = re.compile(r"^[A-Za-z0-9._:-]{1,64}$")     # 이력 줄에 남길 수 있는 값 모양 (설계 19절: 자유 글은 담지 않는다)
 
 
 class Clock(Protocol):
@@ -60,6 +61,7 @@ class EngineSettings:
     search_query_max_chars: int
     history_max_turns: int
     record_arg_max_chars: int
+    history_refs_max: int
 
 
 @dataclass(frozen=True)
@@ -227,10 +229,21 @@ class AgentEngine(TurnEngine):
             msgs.append(_Msg("user", turn.text, history=True, turn=i))
             note = ""
             if turn.actions:
-                note = "\n[실행: " + ", ".join(f"{a.tool} {'ok' if a.ok else a.error_code}" for a in turn.actions) + "]"
+                note = "\n[실행: " + ", ".join(self._action_note(a) for a in turn.actions) + "]"
             msgs.append(_Msg("assistant", turn.answer + note, history=True, turn=i))
         msgs.append(_Msg("user", state.request.text))
         return msgs
+
+    @staticmethod
+    def _action_note(a: ActionSummary) -> str:
+        """`tool 결과 (인자 식별자) → 결과 식별자`. 다음 차례가 앞서 만든 것의 id를 안다 (설계 19절)."""
+        text = f"{a.tool} {'ok' if a.ok else a.error_code}"
+        args = [f"{k}={v}" for k, v in a.args.items() if _identifier(v)]
+        if args:
+            text += f" ({', '.join(args)})"
+        if a.refs:
+            text += " → " + ", ".join(f"{k}={v}" for k, v in a.refs.items())
+        return text
 
     def _chat_messages(self, state: _Run) -> tuple[ChatMessage, ...]:
         out = [ChatMessage("system", state.system)]
@@ -357,7 +370,7 @@ class AgentEngine(TurnEngine):
         code = None if outcome.ok else str((outcome.error or {}).get("code", "UNKNOWN"))
         state.actions.append(ActionSummary(tool=call.name, revision=cand.revision if cand else None, ok=outcome.ok, error_code=code,
                                            target_request_id=outcome.request_id, write=write,
-                                           args=self._summarize(sent or args)))
+                                           args=self._summarize(sent or args), refs=self._refs(outcome)))
         log.info("tool=%s ok=%s code=%s attempts=%s", call.name, outcome.ok, code, outcome.attempts)
         state.msgs.append(_Msg("tool", tool_call_id=call.id, body=self._body(state, outcome)))
         if code is not None:
@@ -417,6 +430,25 @@ class AgentEngine(TurnEngine):
             body = f"{body[:cap]}…(줄임: {len(body)}자 중 {cap}자)"
         return body
 
+    def _refs(self, outcome: ToolOutcome) -> dict[str, str]:
+        """성공한 객체 결과의 맨 윗단 식별자 값. 목록·실패·자유 글은 담지 않는다."""
+        if not outcome.ok:
+            return {}
+        data = outcome.data
+        if isinstance(data, Mapping) and "data" in data:          # MCP structuredContent {data, truncated}
+            data = data["data"]
+        if not isinstance(data, Mapping):
+            return {}
+        refs: dict[str, str] = {}
+        for k, v in data.items():
+            if len(refs) >= self._s.history_refs_max:
+                break
+            if isinstance(v, bool) or not isinstance(v, (str, int)):
+                continue
+            if _identifier(str(v)):
+                refs[str(k)] = str(v)
+        return refs
+
     def _summarize(self, args: Mapping[str, Any]) -> dict[str, str]:
         cap = self._s.record_arg_max_chars
         out: dict[str, str] = {}
@@ -424,6 +456,10 @@ class AgentEngine(TurnEngine):
             text = v if isinstance(v, str) else json.dumps(v, ensure_ascii=False)
             out[k] = text if len(text) <= cap else f"{text[:cap]}…({len(text)}자)"
         return out
+
+
+def _identifier(value: str) -> bool:
+    return bool(IDENTIFIER.match(value))
 
 
 def _parse_args(raw: str) -> dict[str, Any] | None:

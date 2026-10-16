@@ -96,6 +96,7 @@ class InferenceSettings:
             search_query_max_chars=_positive_int(env, "INFERENCE_SEARCH_QUERY_MAX_CHARS"),
             history_max_turns=_positive_int(env, "INFERENCE_HISTORY_MAX_TURNS"),
             record_arg_max_chars=_positive_int(env, "INFERENCE_RECORD_ARG_MAX_CHARS"),
+            history_refs_max=_positive_int(env, "INFERENCE_HISTORY_REFS_MAX"),
         )
         return cls(
             port=_positive_int(env, "INFERENCE_PORT"), auth_mode=auth, store_path=env.require("INFERENCE_STORE_PATH"),

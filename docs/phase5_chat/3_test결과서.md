@@ -1,0 +1,74 @@
+# Phase 5 test 결과서 — 채팅 채널 (`inference` 안 채팅 어댑터)
+
+- 시험일: 2026-10-15 ~ 2026-10-16
+- 대상: 요구사항 [`1_요구사항정의.md`](1_요구사항정의.md), 설계 [`2_설계.md`](2_설계.md) (18절 방 참여자 알림은 2026-10-16 추가). Phase 4 설계 19절(대화 기록에 id 남기기)도 이 phase의 사용자 시험에서 나와 함께 적는다.
+- 환경: 시험 이미지 `a4w/inference:0.1.0-test`, 실행 이미지 `a4w/inference:0.1.0`, compose의 `inference`·`manufacture`·`detection`, 시험 스택 Workfluence(`wf.internal:8444`, workf 커밋 `5c1a710` — 방 정보 `members[].username` 추가 뒤, Phase 21 브랜치 상태), 사내 LLM `openai/gpt-oss-120b`
+- 채팅 프레임·REST 모양은 2026-10-15~16 시험 스택 기준이다. Phase 21이 병합되기 전이라 바뀔 수 있다.
+
+## 1. 실행한 명령과 결과
+
+| # | 명령 | 결과 |
+|---|---|---|
+| 1 | `scripts/build.sh inference test && scripts/test.sh inference` | **1107 passed, 14 skipped** (`packages/core·tools·clients` + `agents/inference/tests`). skipped는 live 시험과 LLM 비밀이 필요한 clients live |
+| 2 | 그 가운데 `agents/inference/tests` | 917건 수집, 912 passed, 5 skipped(live) |
+| 3 | 그 가운데 Phase 5 시험(`test_chat_*`, `test_engine_channel`, `test_engine_memory`, `test_runner_submitter`) | **567건**. Phase 4 시험은 고치지 않고 통과(회귀 0). 바꾼 Phase 4 시험은 기대 모양이 늘어난 2건뿐이다: REST 응답 `actions[]`에 `refs` 칸(19절), `full_environ`에 `CHAT_ENABLED=false` |
+| 4 | `A4W_LIVE_TESTS=1 scripts/test.sh inference -q agents/inference/tests/live` | **5 passed** (Phase 4 live 2 + 채팅 live 3, 4절) |
+| 5 | `scripts/test.sh {manufacture,detection,mcp}` (2026-10-16, 스페이스 tool 반영 때) | 424 · 406 · 319 passed (Phase 2 결과서 정정 절) |
+
+- TDD: S1~S10 단계마다 시험을 먼저 쓰고(red: 모듈 없음·인자 없음으로 실패를 확인) 구현해 green으로 만들었다. S1~S8은 커밋 `762f633`, S9·S9b는 `c6a123c`.
+- 시험이 잡아낸 것: 모르는 방의 메시지 처리 순서(X20, S4), 하드코딩 검사에 걸린 WebSocket 주소 조립(S4), 붙잡는 시험에서 가짜 sleep이 즉시 돌아 시간 초과(S5), 토큰 버킷이 창 경계에서 2배를 보낼 수 있음(S6, 설계 5.2를 미끄러지는 창으로 정정), 시험 이미지에 `config/` 예시가 없어 조립 시험이 실패(S10, 시험이 문구를 직접 쓰게 고침).
+
+## 2. 인수 기준별 결과
+
+| AC | 결과 | 근거 |
+|---|---|---|
+| AC-C1 연결·재연결·보충·중복 제거 | **단위 충족** | `test_chat_supervisor`·`ws_client`(가짜 WebSocket 서버)·`dispatcher`·`store`. 실서버에서 끊고 다시 붙는 것은 하지 않았다(5절) |
+| AC-C2 join·leave·모르는 kind·자기 메시지 무시 | **충족** | 단위 시험. 실호출에서도 aiagent 자신의 인사 메시지(seq 3)는 `skipped`로 남았다 |
+| AC-C3 1:1 전부, 여럿은 이름 부를 때만 | **충족** | 단위 시험 + live L3 + 사용자 시험(이름 없는 메시지 3건은 `not_mentioned`로 건너뜀) |
+| AC-C4 요청 모양과 이어 가기 | **충족** | 단위 시험(`conversationId=chat:<roomId>`, 요청자 이름) + 사용자 시험(앞 차례의 스페이스를 "방금 만든 space"로 이어 받음, 3절) |
+| AC-C5 방별 차례·방 간 동시·재시작 뒤 다시 수행 안 함 | **단위 충족** | `test_chat_worker` 30건. 실서비스 재시작 중 요청이 끊기는 상황은 만들지 않았다(5절) |
+| AC-C6 평문·길이·clientMsgId·429 재시도·속도 제한 | **단위 충족** | `test_chat_sender`·`rate`·`rest_send`. 실서버 429는 일으키지 않았다 |
+| AC-C7 길이 규칙 | **충족** | 단위 시험 + live에서 답이 짧은 기준(600자) 안·마크다운 없음 |
+| AC-C8 허용 목록 밖 쓰기 불가 | **단위 충족** | engine 시험 W1~W6(쓰기 tool을 모델에 싣지 않고, 불러도 `WRITE_NOT_ALLOWED`), 조립 시험 W6. 실제 모델로 허용 목록 밖 쓰기 요청은 하지 않았다 |
+| AC-C9 시험 스택 실호출 | **충족** | live L1~L3 (4절) |
+| AC-C10 모르는 프레임·/health chat 항목 | **충족** | 단위 시험 + 실행 중 `/health`에 `chat.state=connected`, 카운터 보임 |
+| AC-C11 의존 방향·Phase 4 회귀 | **충족** | `test_architecture`(engine·runner가 채널을 모름), Phase 4 시험 통과 |
+| AC-C12 token·본문이 로그에 없음 | **충족** | 단위 시험(로그 검사, token이 `repr`에 없음). 로그에는 방 id 앞 8자·seq·글자 수만 남는다 |
+
+## 3. 사용자 시험 (2026-10-16, "AI Agent Test" 방)
+
+사용자가 여럿 방을 만들고(참여자 tanminkwan·tiffanie) aiagent를 초대해 직접 시험했다. 지정 시나리오는 "여기 chatting 방에 있는 사람들로 새로운 스페이스를 만들어"다.
+
+| 순서 | 일 | 결과·조치 |
+|---|---|---|
+| 1 | 이름 없이 보낸 메시지들 | 여럿 방 규칙대로 건너뜀(`not_mentioned`) |
+| 2 | "Mr. AI agent! make a space "Crazy Study" including all members in this room" | `create_space` 성공, `add_space_member` tiffanie 성공, tanminkwan은 모델이 스페이스 id를 `"f..."`로 줄여 보내 400, 다음 쓰기에서 **쓰기 한도(3)** 로 멈춤 |
+| 3 | 사용자 결정 | `INFERENCE_MAX_WRITE_CALLS` 3 → **10** (`.env`·`.env.example`·Phase 4 설계 표) |
+| 4 | "AI Agent, add tanminkwan to the space "Crazy Study"" | 모델이 tool 없이 스페이스 id를 되물음. 대화 기록에 앞 차례 결과(id)가 남지 않았기 때문 |
+| 5 | 사용자 지시 "api 처리 후 받은 생성 결과(주로 id)는 기억하고 있게 해" | Phase 4 설계 19절: 결과의 식별자 값(`refs`)을 기록하고 다음 차례 이력 줄에 보인다. TDD(`test_engine_memory` 8건) |
+| 6 | "Ai agent 야, 방금 만든 space에 tanminkwan 추가해줘" | **성공** (`list_spaces` → `add_space_member`, 1.3초). Crew: aiagent(owner)·tiffanie·tanminkwan |
+| 7 | 답에 스페이스 id가 그대로 나옴 → 사용자 지적 | 채팅 덧붙임에 "답에 id 같은 내부 식별자를 쓰지 않는다" 규칙 추가 |
+
+- 방 참여자는 설계 18절대로 `channel_notes`로 모델에 갔다(에이전트 자신 제외, username 포함).
+- 시험이 만든 스페이스 "Crazy Study"는 사용자의 시험 자료로 시험 스택에 남아 있다(지우지 않았다).
+
+## 4. live 시험 (AC-C9, `tests/live/test_live_chat.py`)
+
+고정 시험 방 두 개를 `aiagent-peer`가 2026-10-16에 만들었다(방은 지울 수 없어 재사용한다). 방 id는 `.env`의 `INFERENCE_LIVE_CHAT_DIRECT_ROOM`·`INFERENCE_LIVE_CHAT_GROUP_ROOM`에 있다. 요청자 peer token은 `INFERENCE_TEST_SECRETS`에 `targets/workfluence.peer.env`를 더해 붙인다. 메시지마다 실행 id를 넣어 새로 돈 결과임을 확인했다.
+
+| 시험 | 요청(peer) | aiagent 답 |
+|---|---|---|
+| L1 1:1 읽기 | "내가 볼 수 있는 스페이스 목록 알려줘 (시험 253541ba)" | 1초 뒤 스페이스 3개를 평문 목록으로 |
+| L2 1:1 쓰기 | "'a4w 시험 바탕 페이지' 페이지에 '채팅 시험 57812582' 라고 댓글 달아줘" | 1초 뒤 "댓글을 달았습니다". 시험이 댓글이 정확히 1개인 것을 확인하고 agent token으로 지웠다 |
+| L3 여럿 방 | 이름 없는 "오늘 점심 뭐 먹지" → 20초 동안 답 없음. "AI Agent …스페이스 목록 알려줘" | 1초 뒤 한 줄 답 |
+
+## 5. 확인하지 못한 것
+
+- WebSocket 장시간 유지, 서버 쪽 재시작·끊김 뒤 재연결과 보충, `4409`(연결 수 초과), 실서버 429는 시험 스택에서 일으키지 않았다. 모두 가짜 서버 단위 시험으로만 확인했다.
+- 수행 중 Inference를 재시작했을 때 방에 중단 알림이 한 번 가는 것은 실서비스에서 보지 않았다(재시작은 요청이 없을 때만 했다).
+- 허용 목록 밖 요청자의 쓰기 요청, 다른 참여자 메시지 속 지시문은 실제 모델로 시험하지 않았다(코드가 쓰기 tool을 빼고 실행을 막는 것은 단위 시험으로 확인).
+- "답에 id를 쓰지 않는다"는 프롬프트 규칙이라 코드로 강제하지 않는다. 규칙을 더한 뒤 실제 답으로 다시 보지는 않았다.
+- 한도에 걸렸을 때 방에 가는 답("한도에 걸려 일부만 처리했습니다")에는 무엇을 했는지가 빠진다. 고치지 않았다.
+- 여럿 방에서 여러 사람이 부르면 한 대화(`chat:<roomId>`)로 섞이고, 이력에 요청자 이름이 없다(설계 16절 5번, 한계로 둠).
+- httpx가 `verify=<CA 파일 경로 글자열>`에 대해 deprecation 경고를 낸다(동작은 정상). 바꾸지 않았다.
+- 시험 스택의 공개 명세가 바뀌었다(workf: 채팅 응답 username 추가, `openapi.sha256` 변경). 채팅 API는 Detection 대상이 아니지만 Detection 변경 식별은 이번에 돌리지 않았다.

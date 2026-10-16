@@ -125,7 +125,7 @@ GOOD = {
     "INFERENCE_MAX_SECONDS": "300", "INFERENCE_MAX_SAME_ERROR": "2", "INFERENCE_RETRY_SEARCH_MAX": "1",
     "INFERENCE_MAX_INPUT_TOKENS": "131072", "INFERENCE_INPUT_SAFETY_RATIO": "0.8", "INFERENCE_CHARS_PER_TOKEN": "1.5",
     "INFERENCE_TOOL_RESULT_MAX_CHARS": "20000", "INFERENCE_TRIM_KEEP_CHARS": "1500", "INFERENCE_AI_MARK_SUFFIX": r"\n\n---\n_AI_",
-    "INFERENCE_RECORD_ARG_MAX_CHARS": "200", "INFERENCE_SYSTEM_PROMPT": "너는 ${agent_id}다",
+    "INFERENCE_RECORD_ARG_MAX_CHARS": "200", "INFERENCE_HISTORY_REFS_MAX": "6", "INFERENCE_SYSTEM_PROMPT": "너는 ${agent_id}다",
 }
 
 
@@ -133,6 +133,7 @@ def test_G4_good_settings_load_with_the_documented_defaults_coming_only_from_env
     s = InferenceSettings.from_environ(GOOD)
     assert s.engine.max_input_tokens == 131072 and s.engine.safety_ratio == 0.8 and s.engine.chars_per_token == 1.5
     assert s.engine.max_write_calls == 3 and s.engine.search_history_turns == 3 and s.port == 18003
+    assert s.engine.history_refs_max == 6
     assert s.ai_mark_suffix == "\n\n---\n_AI_" and s.auth_mode == "none" and s.agents == ("aiagent",)
 
 

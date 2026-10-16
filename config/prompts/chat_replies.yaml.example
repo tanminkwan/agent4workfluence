@@ -13,7 +13,7 @@ texts:
 stop_labels:
   LIMIT_STEPS: "(처리 단계 한도)"
   LIMIT_TOOL_CALLS: "(tool 호출 한도)"
-  LIMIT_WRITE_CALLS: "(쓰기 한도)"
+  LIMIT_WRITES: "(쓰기 한도)"
   LIMIT_TIME: "(처리 시간 한도)"
   CONTEXT_LIMIT: "(입력 크기 한도)"
 # 답이 짧은 기준(CHAT_ANSWER_MAX_CHARS)을 넘어 잘렸을 때 끝에 붙이는 안내

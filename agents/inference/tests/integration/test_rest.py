@@ -43,7 +43,7 @@ async def test_H1_post_returns_202_then_get_shows_the_finished_result(tmp_path):
     assert g["status"] == "done" and g["complete"] is True and g["stopReason"] is None and g["error"] is None
     assert g["answer"] == "'10월 주간회의 회의록'이 있습니다." and g["agentId"] == "aiagent" and g["conversationId"] == "c-1"
     assert g["actions"] == [{"tool": "workfluence__search_pages", "revision": "r-1", "ok": True, "errorCode": None,
-                             "targetRequestId": "wf-req-0", "write": False, "args": {}}]
+                             "targetRequestId": "wf-req-0", "write": False, "args": {}, "refs": {}}]
     assert g["usage"]["promptTokens"] == 1200 and g["usage"]["steps"] == 2 and g["usage"]["toolCalls"] == 1
     assert g["usage"]["lastInputTokens"] == 1200
     assert {"requestId", "elapsedMs", "createdAt", "finishedAt"} <= set(g)

@@ -76,7 +76,7 @@ def full_environ(tmp_path):
                 "INFERENCE_MCP_CHILD_ENV_NAMES": "PATH,HTTP_PROXY,NO_PROXY", "INFERENCE_MCP_RESTART_BACKOFF_SECONDS": "1",
                 "INFERENCE_MCP_RESTART_BACKOFF_MAX_SECONDS": "30", "INFERENCE_MCP_START_TIMEOUT_SECONDS": "30",
                 "INFERENCE_MCP_TOOLS_WAIT_SECONDS": "10", "INFERENCE_MCP_PING_SECONDS": "5",
-                "INFERENCE_SYSTEM_PROMPT": "너는 ${agent_id}다. ${data_open} ${data_close}"})
+                "INFERENCE_SYSTEM_PROMPT": "너는 ${agent_id}다. ${data_open} ${data_close}", "CHAT_ENABLED": "false"})
     return env
 
 
