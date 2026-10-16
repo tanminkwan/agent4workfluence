@@ -1,0 +1,2 @@
+call: {args: {id: "${sandbox.spaceId}"}}
+expect: {ok: true}

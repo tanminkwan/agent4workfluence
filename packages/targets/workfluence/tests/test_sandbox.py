@@ -43,6 +43,10 @@ class FakeWorkfluence:
             sid = f"s{next(self.ids)}"
             self.spaces[sid] = {"id": sid, "name": body["name"], "kind": "team", "status": "active"}
             return httpx.Response(201, json=self.spaces[sid])
+        m = re.fullmatch(r"/spaces/([^/]+)/members", path)
+        if method == "GET" and m and m.group(1) in self.spaces:
+            return httpx.Response(200, json=[{"userId": "u-agent", "username": "aiagent", "displayName": "AI Agent",
+                                              "role": "owner"}])
         if method == "DELETE" and path.startswith("/spaces/"):
             self.spaces.pop(path.split("/")[2], None)
             return httpx.Response(200, json={"ok": True})
@@ -93,7 +97,7 @@ def test_prepare_creates_space_and_base_data(wf):
     assert isinstance(sb, VerifySandbox)
     ctx = sb.prepare(make_caller(wf), "vf-1")
     v = ctx.values
-    assert set(sb.context_keys()) - {"notificationId"} <= set(v)  # notificationId는 peer가 있을 때만
+    assert set(sb.context_keys()) - {"notificationId", "peerUsername"} <= set(v)  # 두 값은 peer가 있을 때만
     assert v["spaceName"] == PREFIX + "vf-1"
     assert v["spaceId"] in wf.spaces
     assert v["pageId"] in wf.pages
@@ -176,6 +180,11 @@ class FakeWithPeer(FakeWorkfluence):
             self.calls.append((method, path))
             self.members.setdefault(m.group(1), set()).add(body["username"])
             return httpx.Response(201, json=[{"username": u} for u in sorted(self.members[m.group(1)])])
+        if method == "GET" and m:
+            self.calls.append((method, path))
+            crew = [{"userId": "u-agent", "username": "aiagent", "displayName": "AI Agent", "role": "owner"}]
+            crew += [{"userId": f"u-{u}", "username": u, "displayName": u, "role": "editor"} for u in sorted(self.members.get(m.group(1), ()))]
+            return httpx.Response(200, json=crew)
         m = re.fullmatch(r"/spaces/([^/]+)/members/([^/]+)", path)
         if method == "DELETE" and m:
             self.calls.append((method, path))

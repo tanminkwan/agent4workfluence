@@ -24,9 +24,9 @@ def test_workfluence_counts_match_design_table():
     out = select_all()
     tools = Counter(s.group for s in out.values() if s.kind == "tool")
     excluded = Counter(s.reason for s in out.values() if s.kind == "excluded")
-    assert tools == {"read": 12, "history": 3, "communication": 8, "authoring": 4, "danger": 7}
+    assert tools == {"read": 13, "history": 3, "communication": 8, "authoring": 9, "danger": 9}   # 스페이스 8개 포함 (설계 23절)
     # 채팅 9개는 tool 대상이 아니다(채팅 API는 Detection·Manufacture 대상이 아니고 어댑터 코드가 부른다). 변경을 따로 알리지도 않는다
-    assert excluded == {"ADMIN": 12, "STRUCTURE_CHANGE": 14, "NOT_NEEDED": 12, "SPEC_META": 3}
+    assert excluded == {"ADMIN": 12, "STRUCTURE_CHANGE": 6, "NOT_NEEDED": 12, "SPEC_META": 3}
     assert not [s for s in out.values() if s.kind == "codeOwned"]
 
 
@@ -34,8 +34,9 @@ def test_danger_group_disabled_by_default():
     out = select_all(groups=DEFAULT_GROUPS)
     disabled = sorted(op for op, s in out.items() if s.reason == "GROUP_DISABLED")
     assert disabled == sorted(["pages.delete", "pages.move", "pages.restoreVersion", "attachments.upload",
-                               "attachments.delete", "trash.pages", "trash.restorePage"])
-    assert sum(1 for s in out.values() if s.kind == "tool") == 27
+                               "attachments.delete", "trash.pages", "trash.restorePage", "spaces.delete",
+                               "spaces.setStatus"])
+    assert sum(1 for s in out.values() if s.kind == "tool") == 33
 
 
 def test_missing_scope_excludes_write_tools():
@@ -52,6 +53,9 @@ def test_write_scope_implies_read():
 @pytest.mark.parametrize("op,risk", [
     ("pages.get", "read"), ("pages.versions", "read"), ("comments.list", "read"), ("comments.create", "write"),
     ("pages.update", "write"), ("pages.delete", "danger"), ("trash.pages", "danger"),
+    ("spaces.create", "write"), ("spaces.update", "write"), ("spaces.members", "read"), ("spaces.addMember", "write"),
+    ("spaces.removeMember", "write"), ("spaces.setMemberRole", "write"), ("spaces.delete", "danger"),
+    ("spaces.setStatus", "danger"),
 ])
 def test_risk(op, risk):
     assert select_all()[op].risk == risk
@@ -100,3 +104,13 @@ def test_context_binds_become_fixed_context_values():
     assert sel.fixed_values(fragment("search.find")) == {"query": {"space": {"$context": "homeSpace"}},
                                                          "body": {"space": {"$context": "homeSpace"}}}
     assert sel.fixed_values(fragment("attachments.download"))["query"]["format"] == "json"
+
+
+def test_space_operations_are_tools_but_category_and_template_changes_stay_excluded():
+    """2026-10-16 정정(설계 23절, FR-217): 스페이스 동작 8개는 tool, 분류·템플릿 변경 6개는 계속 STRUCTURE_CHANGE."""
+    out = select_all()
+    spaces = {op: s for op, s in out.items() if op.startswith("spaces.")}
+    assert all(s.kind == "tool" for s in spaces.values()), {op: s.reason for op, s in spaces.items() if s.kind != "tool"}
+    structure = sorted(op for op, s in out.items() if s.reason == "STRUCTURE_CHANGE")
+    assert structure == sorted(["categories.create", "categories.rename", "categories.delete",
+                                "templates.create", "templates.update", "templates.delete"])

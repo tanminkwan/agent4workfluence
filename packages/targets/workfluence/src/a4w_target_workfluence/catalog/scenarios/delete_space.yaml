@@ -1,0 +1,6 @@
+setup:
+  - tool: create_space
+    args: {name: "${sandbox.spaceName}-delete"}
+    save: {sid: /id}
+call: {args: {id: "${saved.sid}"}}
+expect: {ok: true, fields: [ok]}

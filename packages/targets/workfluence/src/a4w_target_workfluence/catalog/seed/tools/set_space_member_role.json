@@ -1,0 +1,92 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "set_space_member_role",
+  "title": "스페이스 Crew 역할 바꾸기",
+  "description": "Crew 한 사람의 역할을 editor(고칠 수 있다)·viewer(읽기만)로 바꾼다. owner는 줄 수 없고 하나뿐인 owner는 내릴 수 없다. 바뀐 Crew 목록 전체를 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — list_spaces 결과의 items[].id"
+      },
+      "ref": {
+        "type": "string",
+        "description": "바꿀 사람의 아이디(username) — list_space_members 결과의 username"
+      },
+      "role": {
+        "description": "editor 또는 viewer",
+        "enum": [
+          "editor",
+          "viewer"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "ref",
+      "role"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "PATCH",
+    "path": "/spaces/{id}/members/{ref}",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "ref",
+        "in": "path",
+        "name": "ref"
+      },
+      {
+        "input": "role",
+        "in": "body",
+        "pointer": "/role"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].username",
+      "[].displayName",
+      "[].role"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "스페이스 멤버의 권한(편집·읽기)을 바꾼다",
+    "examples": [
+      "이 사람 읽기 전용으로 바꿔줘",
+      "멤버 권한을 편집자로 올려줘",
+      "Crew 역할 변경해줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.setMemberRole",
+    "method": "PATCH",
+    "path": "/spaces/{id}/members/{ref}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "e8419c02e8bb84faac766f9357be893808806e1c07a396f0ecc6307de0e44635",
+    "structureSha256": "7a867a239d0b0fc03f43d2d8cb51d99abaff3a5d12c9a45a3fcb5fe515808cfc"
+  },
+  "origin": "seed",
+  "revision": "r-2079f6fc67a4"
+}

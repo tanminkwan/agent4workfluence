@@ -132,6 +132,17 @@ attachments.download:
     summary: 첨부 파일의 내용을 받아 읽는다
     examples: ["첨부된 문서 내용 읽어줘", "그 파일 열어봐줘", "첨부 파일 내용 보여줘"]
 
+spaces.members:
+  name: list_space_members
+  title: 스페이스 Crew 보기
+  description: 스페이스의 Crew(멤버)를 아이디(username)·표시 이름·역할(owner·editor·viewer)과 함께 본다.
+  inputs:
+    id: {description: "스페이스 id — list_spaces 결과의 items[].id 또는 create_space 결과의 id"}
+  responseFields: ["[].username", "[].displayName", "[].role"]
+  index:
+    summary: 스페이스에 누가 멤버(Crew)로 있는지 본다
+    examples: ["이 스페이스 멤버 누구야?", "공간에 들어 있는 사람 보여줘", "스페이스 Crew 역할 알려줘"]
+
 # ── 이력 (history)
 pages.versions:
   name: list_page_versions
@@ -302,6 +313,71 @@ labels.detach:
     summary: 페이지에 붙은 라벨(태그)을 뗀다
     examples: ["이 문서에서 긴급 라벨 떼줘", "태그 지워줘", "페이지 라벨 하나 빼줘"]
 
+spaces.create:
+  name: create_space
+  title: 새 스페이스 만들기
+  description: 새 팀 스페이스를 만든다. 만든 나는 owner가 된다. 같은 이름의 스페이스도 만들어지니 먼저 list_spaces로 겹치지 않는지 본다. 분류는 이름으로 고르고 없는 이름이면 404다. 사람을 넣으려면 만든 뒤 결과의 id로 add_space_member를 부른다.
+  inputs:
+    name: {description: "스페이스 이름 — 200자까지"}
+    description: {description: "스페이스 설명 — 요청에 있을 때만 넣는다", hide: false}
+    category: {description: "넣을 분류의 이름 — list_categories 결과의 name. 요청에 분류가 있을 때만 넣는다", hide: false}
+  responseFields: [id, name, description, status, myRole]
+  index:
+    summary: 위키에 새 스페이스(공간)를 만든다
+    examples: ["새 스페이스 만들어줘", "스터디용 공간 하나 만들어줘", "팀 스페이스 새로 열어줘"]
+
+spaces.update:
+  name: update_space
+  title: 스페이스 고치기
+  description: 스페이스의 이름·설명·분류를 고친다. 바꿀 것만 보낸다. owner만 고칠 수 있다.
+  inputs:
+    id: {description: "스페이스 id — list_spaces 결과의 items[].id"}
+    name: {description: "새 이름 — 바꿀 때만"}
+    description: {description: "새 설명 — 바꿀 때만"}
+    category: {description: "새 분류의 이름 — list_categories 결과의 name. 바꿀 때만"}
+  responseFields: [id, name, description, status]
+  index:
+    summary: 스페이스 이름이나 설명을 고친다
+    examples: ["스페이스 이름 바꿔줘", "공간 설명 수정해줘", "스페이스 분류 바꿔줘"]
+
+spaces.addMember:
+  name: add_space_member
+  title: 스페이스에 사람 넣기
+  description: 스페이스 Crew에 사람 한 명을 넣는다. username은 로그인 아이디이고 표시 이름이 아니다. 요청 글이나 주어진 참여자 목록의 username을 쓴다. 역할은 editor(고칠 수 있다)·viewer(읽기만), 안 주면 editor다. 없는 아이디면 404, 이미 Crew면 400이다. 바뀐 Crew 목록 전체를 돌려준다.
+  inputs:
+    id: {description: "스페이스 id — create_space 결과의 id 또는 list_spaces 결과의 items[].id"}
+    username: {description: "넣을 사람의 아이디(username) — 표시 이름이 아니다"}
+    role: {description: "editor 또는 viewer — 요청에 역할이 있을 때만", hide: false}
+  responseFields: ["[].username", "[].displayName", "[].role"]
+  index:
+    summary: 스페이스에 사람을 멤버(Crew)로 넣는다
+    examples: ["이 사람 스페이스에 넣어줘", "민지를 공간 멤버로 추가해줘", "스페이스에 팀원 초대해줘"]
+
+spaces.removeMember:
+  name: remove_space_member
+  title: 스페이스에서 사람 빼기
+  description: 스페이스 Crew에서 사람 한 명을 뺀다. 하나뿐인 owner는 뺄 수 없다. 바뀐 Crew 목록 전체를 돌려준다.
+  inputs:
+    id: {description: "스페이스 id — list_spaces 결과의 items[].id"}
+    ref: {description: "뺄 사람의 아이디(username) — list_space_members 결과의 username"}
+  responseFields: ["[].username", "[].displayName", "[].role"]
+  index:
+    summary: 스페이스 멤버(Crew)에서 사람을 뺀다
+    examples: ["이 사람 스페이스에서 빼줘", "공간 멤버에서 제외해줘", "스페이스 Crew 정리해줘"]
+
+spaces.setMemberRole:
+  name: set_space_member_role
+  title: 스페이스 Crew 역할 바꾸기
+  description: Crew 한 사람의 역할을 editor(고칠 수 있다)·viewer(읽기만)로 바꾼다. owner는 줄 수 없고 하나뿐인 owner는 내릴 수 없다. 바뀐 Crew 목록 전체를 돌려준다.
+  inputs:
+    id: {description: "스페이스 id — list_spaces 결과의 items[].id"}
+    ref: {description: "바꿀 사람의 아이디(username) — list_space_members 결과의 username"}
+    role: {description: "editor 또는 viewer"}
+  responseFields: ["[].username", "[].displayName", "[].role"]
+  index:
+    summary: 스페이스 멤버의 권한(편집·읽기)을 바꾼다
+    examples: ["이 사람 읽기 전용으로 바꿔줘", "멤버 권한을 편집자로 올려줘", "Crew 역할 변경해줘"]
+
 # ── 위험 동작 (danger, 기본 꺼짐. 켜도 추가는 사람 확인)
 pages.delete:
   name: delete_page
@@ -379,3 +455,27 @@ trash.restorePage:
   index:
     summary: 휴지통에서 지운 페이지를 되살린다
     examples: ["지운 문서 되살려줘", "휴지통에서 페이지 복구해줘", "실수로 지운 페이지 살려줘"]
+
+spaces.delete:
+  name: delete_space
+  title: 스페이스 지우기 (휴지통으로)
+  description: 스페이스를 휴지통으로 보낸다. owner만, Crew가 나 혼자이고 중지되지 않았을 때만 지운다(아니면 403). 다른 Crew는 remove_space_member로 먼저 뺀다. 되살리기는 관리자만 한다.
+  inputs:
+    id: {description: "지울 스페이스 id — list_spaces 결과의 items[].id"}
+  responseFields: [ok]
+  index:
+    summary: 스페이스(공간)를 통째로 휴지통으로 지운다
+    examples: ["이 스페이스 지워줘", "필요 없는 공간 삭제해줘", "스페이스 없애줘"]
+
+spaces.setStatus:
+  name: set_space_status
+  title: 스페이스 중지·다시 쓰기
+  description: 스페이스를 중지(suspended)하거나 다시 쓰게(active) 한다. 중지하면 읽기만 되고 쓰기가 막힌다. 관리자가 건 중지는 풀 수 없다.
+  inputs:
+    id: {description: "스페이스 id — list_spaces 결과의 items[].id"}
+    status: {description: "suspended(중지) 또는 active(다시 쓰기)"}
+    takeover: {description: 관리자 전용, hide: true}
+  responseFields: [id, name, status]
+  index:
+    summary: 스페이스를 중지하거나 다시 쓸 수 있게 한다
+    examples: ["이 스페이스 잠시 중지해줘", "공간 다시 쓸 수 있게 열어줘", "스페이스 동결해줘"]

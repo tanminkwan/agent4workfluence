@@ -5,6 +5,9 @@
 
 검증 상대 계정(peer, 선택, 11.6.1절): 시험 스페이스 멤버로 넣고 @멘션 댓글로 검증 계정에게 알림을 만든다.
 다른 멤버가 있으면 owner도 스페이스를 지울 수 없으므로(403) 정리할 때 peer를 먼저 뺀다.
+
+스페이스 동작 검증(23.3절): 시나리오가 앞머리를 붙여 스페이스를 더 만들 수 있다. 그래서 정리는 앞머리가 같은 스페이스를 모두,
+"중지면 active로 → owner가 아닌 Crew 빼기 → 지우기" 순서로 지운다(중지된 스페이스와 다른 Crew가 있는 스페이스는 owner도 못 지운다).
 """
 
 from __future__ import annotations
@@ -64,8 +67,9 @@ class WorkfluenceSpaceSandbox(VerifySandbox):
     def context_keys(self) -> list[str]:
         # homeSpace: agent의 고정 맥락 키 (카탈로그 rules.yaml의 context). 검증 때는 시험 스페이스다
         # notificationId: peer가 있을 때만 값이 생긴다 (11.6.1)
+        # peerUsername: peer가 있을 때만 값이 생긴다 (Crew 넣기·빼기·역할 시나리오, 23.3절)
         return ["spaceId", "spaceName", "pageId", "pageTitle", "currentVersionNo", "labelName", "commentId",
-                "attachmentId", "notificationId", "homeSpace"]
+                "attachmentId", "notificationId", "homeSpace", "peerUsername"]
 
     def prepare(self, caller: RawCaller, run_id: str) -> SandboxContext:
         self._remove_leftovers(caller)
@@ -80,6 +84,7 @@ class WorkfluenceSpaceSandbox(VerifySandbox):
             if self._peer is not None:
                 caller.expect("POST", f"/spaces/{space['id']}/members", ok=(200, 201),
                               json={"username": self._peer_user, "role": PEER_ROLE})
+                ctx.values["peerUsername"] = self._peer_user
             page = caller.expect(
                 "POST", "/pages", ok=(200, 201),
                 # 제목에 검증 id를 넣어 유일하게 한다 (제목으로 찾는 상위 tool이 다른 페이지를 고르지 않게)
@@ -121,29 +126,44 @@ class WorkfluenceSpaceSandbox(VerifySandbox):
         space_id = context.internal.get("spaceId")
         if not space_id:
             return CleanupReport(ok=True)
+        failures: list[str] = []
         try:
-            self._drop_peer(caller, space_id)
-            caller.expect("DELETE", f"/spaces/{space_id}", ok=(200, 204))
+            spaces = self._prefixed(caller)
         except CallFailed as e:
-            return CleanupReport(ok=False, failures=(f"시험 스페이스 {space_id} 삭제 실패: {e}",))
-        return CleanupReport(ok=True)
+            failures.append(f"스페이스 목록을 읽지 못했다: {e}")
+            spaces = []
+        if all(sp["id"] != space_id for sp in spaces):
+            spaces.insert(0, {"id": space_id, "status": "active"})
+        for space in spaces:
+            try:
+                self._remove(caller, space)
+            except CallFailed as e:
+                failures.append(f"시험 스페이스 {space['id']} 삭제 실패: {e}")
+        return CleanupReport(ok=not failures, failures=tuple(failures))
 
-    def _drop_peer(self, caller: RawCaller, space_id: str) -> None:
-        """다른 멤버가 있으면 owner도 스페이스를 지울 수 없다(403). peer를 먼저 뺀다. 없으면(404) 그대로 둔다."""
-        if self._peer is None:
-            return
-        caller.expect("DELETE", f"/spaces/{space_id}/members/{self._peer_user}", ok=(200, 204, 404))
+    def _prefixed(self, caller: RawCaller) -> list[dict]:
+        listed = caller.expect("GET", "/spaces", ok=(200,), query={"q": self._prefix, "limit": str(LIST_LIMIT)})
+        return [sp for sp in listed.get("items", []) if sp.get("name", "").startswith(self._prefix)]
+
+    def _remove(self, caller: RawCaller, space: dict) -> None:
+        """중지면 active로 되돌리고, owner가 아닌 Crew를 모두 뺀 뒤 지운다(workf 확인 2026-10-16)."""
+        sid = space["id"]
+        if space.get("status") == "suspended":
+            caller.expect("PATCH", f"/spaces/{sid}/status", ok=(200,), json={"status": "active"})
+        crew = caller.expect("GET", f"/spaces/{sid}/members", ok=(200,))
+        for member in crew if isinstance(crew, list) else crew.get("items", []):
+            if member.get("role") != "owner":
+                caller.expect("DELETE", f"/spaces/{sid}/members/{member['username']}", ok=(200, 204, 404))
+        caller.expect("DELETE", f"/spaces/{sid}", ok=(200, 204))
 
     def _remove_leftovers(self, caller: RawCaller) -> None:
         """지난 검증이 남긴 스페이스(앞머리가 같은 것)를 먼저 지운다. 다른 스페이스는 건드리지 않는다."""
         try:
-            listed = caller.expect("GET", "/spaces", ok=(200,), query={"q": self._prefix, "limit": str(LIST_LIMIT)})
+            spaces = self._prefixed(caller)
         except CallFailed as e:
             raise SandboxUnavailable(f"스페이스 목록을 읽지 못했다: {e}") from None
-        for space in listed.get("items", []):
-            if space.get("name", "").startswith(self._prefix):
-                try:
-                    self._drop_peer(caller, space["id"])
-                    caller.expect("DELETE", f"/spaces/{space['id']}", ok=(200, 204))
-                except CallFailed:
-                    pass  # 다음 검증에서 다시 지운다
+        for space in spaces:
+            try:
+                self._remove(caller, space)
+            except CallFailed:
+                pass  # 다음 검증에서 다시 지운다

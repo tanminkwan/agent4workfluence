@@ -1,0 +1,108 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "update_space",
+  "title": "스페이스 고치기",
+  "description": "스페이스의 이름·설명·분류를 고친다. 바꿀 것만 보낸다. owner만 고칠 수 있다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — list_spaces 결과의 items[].id"
+      },
+      "category": {
+        "anyOf": [
+          {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "description": "새 분류의 이름 — list_categories 결과의 name. 바꿀 때만"
+      },
+      "description": {
+        "description": "새 설명 — 바꿀 때만",
+        "maxLength": 2000,
+        "type": "string"
+      },
+      "name": {
+        "description": "새 이름 — 바꿀 때만",
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "PATCH",
+    "path": "/spaces/{id}",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "category",
+        "in": "body",
+        "pointer": "/category"
+      },
+      {
+        "input": "description",
+        "in": "body",
+        "pointer": "/description"
+      },
+      {
+        "input": "name",
+        "in": "body",
+        "pointer": "/name"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "name",
+      "description",
+      "status"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "스페이스 이름이나 설명을 고친다",
+    "examples": [
+      "스페이스 이름 바꿔줘",
+      "공간 설명 수정해줘",
+      "스페이스 분류 바꿔줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.update",
+    "method": "PATCH",
+    "path": "/spaces/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "d31f29751dcd113a7600a7c0f42d22a4f1a5064ef9159c2c26c913f588fe3092",
+    "structureSha256": "f1d59d3db8639fd200f56e59ae031ff78146b03cd9e6fd8de8dacc62358fca15"
+  },
+  "origin": "seed",
+  "revision": "r-fd1816be2c9b"
+}

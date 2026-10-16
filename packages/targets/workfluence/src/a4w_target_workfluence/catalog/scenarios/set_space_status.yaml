@@ -1,0 +1,7 @@
+# 중지한 스페이스는 정리가 active로 되돌린 뒤 지운다 (설계 23.3).
+setup:
+  - tool: create_space
+    args: {name: "${sandbox.spaceName}-status"}
+    save: {sid: /id}
+call: {args: {id: "${saved.sid}", status: suspended}}
+expect: {ok: true, fields: [status]}

@@ -46,23 +46,23 @@ def test_first_apply_of_real_spec_uses_seeds_only(tmp_path):
     r = apply(changeset("cs-1", {}, ops, None, "8c83f9c6"), "ap-1")
     assert r["llm"]["calls"] == 0
     served = store.read("workfluence", store.current("workfluence")).tools
-    assert len(served) == 30
+    assert len(served) == 36                           # 단순 33(스페이스 6 포함) + 상위 3
     assert all(t["origin"] == "seed" for t in served.values())
-    assert len(det.verify_calls) == 1 and len(det.verify_calls[0]["tools"]) == 30
+    assert len(det.verify_calls) == 1 and len(det.verify_calls[0]["tools"]) == 36
 
 
 def test_first_apply_counts_exactly(tmp_path):
     apply, _, store = env(tmp_path)
     r = apply(changeset("cs-1", {}, fragments("openapi-75ops.yaml"), None, "8c83f9c6"), "ap-1")
     by = Counter((i["outcome"], i.get("reason")) for i in r["items"])
-    assert by[("added", None)] == 30                    # 단순 27 + 상위 3
+    assert by[("added", None)] == 36                    # 단순 33 + 상위 3
     assert by[("excluded", "ADMIN")] == 12
-    assert by[("excluded", "STRUCTURE_CHANGE")] == 14
+    assert by[("excluded", "STRUCTURE_CHANGE")] == 6           # 분류·템플릿 (스페이스는 설계 23절로 tool)
     assert by[("excluded", "NOT_NEEDED")] == 12            # 내보내기·휴지통 3 + 채팅 9 (채팅은 tool 대상이 아니다)
     assert by[("excluded", "SPEC_META")] == 3
-    assert by[("excluded", "GROUP_DISABLED")] == 7
+    assert by[("excluded", "GROUP_DISABLED")] == 9             # 위험 7 + 스페이스 지우기·상태
     assert ("codeOwned", None) not in by
-    assert r["summary"]["added"] == 30 and r["summary"]["excluded"] == 48 and r["summary"]["codeOwned"] == 0
+    assert r["summary"]["added"] == 36 and r["summary"]["excluded"] == 42 and r["summary"]["codeOwned"] == 0
 
 
 def test_66_to_75_adds_only_chat_operations_and_changes_nothing(tmp_path):
@@ -78,10 +78,10 @@ def test_66_to_75_adds_only_chat_operations_and_changes_nothing(tmp_path):
     assert r2["status"] == "noop" and r2["toolVersion"] == r1["toolVersion"]
 
 
-def test_danger_enabled_holds_seven_for_review(tmp_path):
+def test_danger_enabled_holds_nine_for_review(tmp_path):
     apply, _, store = env(tmp_path, groups=DEFAULT + ("danger",))
     r = apply(changeset("cs-1", {}, fragments("openapi-75ops.yaml"), None, "8c83f9c6"), "ap-1")
     assert sorted(p["tool"] for p in r["pendingReview"]) == sorted([
         "delete_page", "move_page", "restore_page_version", "upload_attachment", "delete_attachment",
-        "list_trashed_pages", "restore_trashed_page"])
+        "list_trashed_pages", "restore_trashed_page", "delete_space", "set_space_status"])
     assert all(p["reasons"] == ["DANGER_ADDED"] for p in r["pendingReview"])

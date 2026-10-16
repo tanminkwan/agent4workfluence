@@ -26,6 +26,7 @@ queries:
   - {query: "문서에 붙어 있는 첨부 이름 알려줘", expect: [list_attachments]}
   - {query: "첨부된 텍스트 파일 내용 읽어줘", expect: [download_attachment]}
   - {query: "붙어 있는 파일 열어서 보여줘", expect: [download_attachment]}
+  - {query: "이 공간에 참여한 사람 명단 알려줘", expect: [list_space_members]}
   # 이력
   - {query: "이 문서 수정한 사람들 목록", expect: [list_page_versions]}
   - {query: "몇 번이나 고쳐졌는지 이력 보여줘", expect: [list_page_versions]}
@@ -60,6 +61,11 @@ queries:
   - {query: "주간회의록 문서에 완료 라벨 붙여줘", expect: [label_page_by_title, add_page_label]}
   - {query: "이 문서의 임시 태그 떼어내", expect: [remove_page_label]}
   - {query: "라벨 하나 제거해줘", expect: [remove_page_label]}
+  - {query: "열심공부라는 스터디 공간을 새로 개설해줘", expect: [create_space]}
+  - {query: "스페이스 소개 문구를 바꿔줘", expect: [update_space]}
+  - {query: "minji를 이 스페이스 편집자로 초대해", expect: [add_space_member]}
+  - {query: "jun은 이제 그 공간에서 빠지게 해줘", expect: [remove_space_member]}
+  - {query: "그 사람은 보기만 할 수 있게 권한 낮춰줘", expect: [set_space_member_role]}
   # 위험 동작 (켰을 때만)
   - {query: "이 문서 삭제해", expect: [delete_page], danger: true}
   - {query: "문서를 다른 페이지 밑으로 이동", expect: [move_page], danger: true}
@@ -68,3 +74,5 @@ queries:
   - {query: "첨부 파일 하나 지워줘", expect: [delete_attachment], danger: true}
   - {query: "지운 문서 목록 보여줘", expect: [list_trashed_pages], danger: true}
   - {query: "휴지통에서 꺼내줘", expect: [restore_trashed_page], danger: true}
+  - {query: "이 공간 통째로 없애줘", expect: [delete_space], danger: true}
+  - {query: "스페이스를 당분간 못 쓰게 잠가줘", expect: [set_space_status], danger: true}

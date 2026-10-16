@@ -1,0 +1,93 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "add_space_member",
+  "title": "스페이스에 사람 넣기",
+  "description": "스페이스 Crew에 사람 한 명을 넣는다. username은 로그인 아이디이고 표시 이름이 아니다. 요청 글이나 주어진 참여자 목록의 username을 쓴다. 역할은 editor(고칠 수 있다)·viewer(읽기만), 안 주면 editor다. 없는 아이디면 404, 이미 Crew면 400이다. 바뀐 Crew 목록 전체를 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — create_space 결과의 id 또는 list_spaces 결과의 items[].id"
+      },
+      "role": {
+        "default": "editor",
+        "description": "editor 또는 viewer — 요청에 역할이 있을 때만",
+        "enum": [
+          "editor",
+          "viewer"
+        ],
+        "type": "string"
+      },
+      "username": {
+        "description": "넣을 사람의 아이디(username) — 표시 이름이 아니다",
+        "pattern": "^[a-z0-9._-]{2,64}$",
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "username"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/spaces/{id}/members",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "role",
+        "in": "body",
+        "pointer": "/role"
+      },
+      {
+        "input": "username",
+        "in": "body",
+        "pointer": "/username"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].username",
+      "[].displayName",
+      "[].role"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "스페이스에 사람을 멤버(Crew)로 넣는다",
+    "examples": [
+      "이 사람 스페이스에 넣어줘",
+      "민지를 공간 멤버로 추가해줘",
+      "스페이스에 팀원 초대해줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.addMember",
+    "method": "POST",
+    "path": "/spaces/{id}/members",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "7414f1b6f8453a9ed937d1eccadc1ec6766e62327cd217b068e37f363dbac0f0",
+    "structureSha256": "d7c9c9127ecbeabe67418e04d9cfc0d5b71d9010f1c8399626d9c667ae14e3f0"
+  },
+  "origin": "seed",
+  "revision": "r-30b6973623e5"
+}

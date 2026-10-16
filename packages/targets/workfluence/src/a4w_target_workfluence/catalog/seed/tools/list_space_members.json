@@ -1,0 +1,67 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "list_space_members",
+  "title": "스페이스 Crew 보기",
+  "description": "스페이스의 Crew(멤버)를 아이디(username)·표시 이름·역할(owner·editor·viewer)과 함께 본다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — list_spaces 결과의 items[].id 또는 create_space 결과의 id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "GET",
+    "path": "/spaces/{id}/members",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].username",
+      "[].displayName",
+      "[].role"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "read",
+  "scopes": [
+    "read"
+  ],
+  "group": "read",
+  "index": {
+    "summary": "스페이스에 누가 멤버(Crew)로 있는지 본다",
+    "examples": [
+      "이 스페이스 멤버 누구야?",
+      "공간에 들어 있는 사람 보여줘",
+      "스페이스 Crew 역할 알려줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.members",
+    "method": "GET",
+    "path": "/spaces/{id}/members",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "d3474cf5f2c8b306a7f2cb3948cb7051027327fbf61b93f7a85cdd772cbaaf9c",
+    "structureSha256": "61f9d6bb29129f199388e66b30a1ec70cd2a6e58f5c6619831cfe96b935e4b1f"
+  },
+  "origin": "seed",
+  "revision": "r-38acc6b15a67"
+}

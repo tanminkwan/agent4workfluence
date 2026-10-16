@@ -19,23 +19,23 @@ rules:
     exclude: ADMIN
   - match: {operationId: ["spec.*"]}
     exclude: SPEC_META
-  - match:
-      operationId: [spaces.create, spaces.update, spaces.delete, spaces.members, spaces.addMember,
-                    spaces.removeMember, spaces.setMemberRole, spaces.setStatus,
-                    categories.create, categories.rename, categories.delete,
+  - match:                   # 스페이스 동작은 tool 대상이다 (2026-10-16 사용자 결정, Phase 2 설계 23절)
+      operationId: [categories.create, categories.rename, categories.delete,
                     templates.create, templates.update, templates.delete]
     exclude: STRUCTURE_CHANGE
   - match: {operationId: [pages.export, trash.spaces, trash.restoreSpace]}
     exclude: NOT_NEEDED
   - match:
       operationId: [pages.delete, pages.move, pages.restoreVersion, attachments.upload,
-                    attachments.delete, trash.pages, trash.restorePage]
+                    attachments.delete, trash.pages, trash.restorePage, spaces.delete, spaces.setStatus]
     group: danger
   - match: {operationId: [pages.versions, pages.version, pages.diff]}
     group: history
   - match: {operationId: ["comments.*", "notifications.*"]}
     group: communication
-  - match: {operationId: [pages.create, pages.update, labels.attach, labels.detach]}
+  - match:
+      operationId: [pages.create, pages.update, labels.attach, labels.detach, spaces.create, spaces.update,
+                    spaces.addMember, spaces.removeMember, spaces.setMemberRole]
     group: authoring
   - match: {method: GET}
     group: read

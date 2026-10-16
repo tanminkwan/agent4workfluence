@@ -1,0 +1,8 @@
+setup:
+  - tool: create_space
+    args: {name: "${sandbox.spaceName}-remove"}
+    save: {sid: /id}
+  - tool: add_space_member
+    args: {id: "${saved.sid}", username: "${sandbox.peerUsername}"}
+call: {args: {id: "${saved.sid}", ref: "${sandbox.peerUsername}"}}
+expect: {ok: true}

@@ -220,3 +220,34 @@ Detection 검증 token과 agent token이 둘 다 `aiagent` 계정의 같은 toke
 - 달라진 숫자: 제외 `NOT_NEEDED` 3 → 12(채팅 9 포함), 제외 합계 39 → 48(GROUP_DISABLED 7 포함), codeOwned 9 → 0. AC-3a는 "채팅 9개 추가는 tool을 바꾸지 않고 알림도 없다(noop)"로 바뀐다.
 - 시험 수정: `test_selection`·`test_workfluence_fixtures`·`test_apply_service`의 채팅 관련 기대값. 실행(`scripts/test.sh manufacture --src -q packages/core packages/tools packages/clients packages/targets agents/manufacture/tests`): **409 passed**, 9 skipped(live), 0 failed. detection 쪽 `agents/detection/tests`는 바뀐 것이 없고 161 passed, 5 skipped.
 - 확인하지 못한 것: 실행 중인 compose의 `manufacture` container는 이전 규칙 이미지다. 이미지를 다시 빌드·재기동하고 실호출로 다시 반영해 보기 전까지 실제 서빙 결과가 새 규칙인지 확인하지 못했다.
+
+## 정정 (2026-10-16): 스페이스 동작을 tool 대상에 넣음 (FR-217, 설계 23절)
+
+사용자 결정으로 스페이스 동작 8개를 tool 대상에 넣었다. 분류·템플릿 변경 6개는 계속 제외한다.
+
+### 바꾼 것
+
+- `catalog/rules.yaml`: `spaces.delete`·`spaces.setStatus`는 danger, `spaces.create`·`update`·`addMember`·`removeMember`·`setMemberRole`은 authoring, `spaces.members`는 GET 규칙으로 read.
+- seed: `authoring.yaml`에 8개를 쓰고 `a4w-seedtool build`로 `seed/tools/*.json` 8개를 만들었다. 기존 seed 34개는 바뀌지 않았다(같은 기계 변환). 질의 세트는 62개에서 70개가 되었다.
+- 검증 시나리오 8개: Crew 넣기·빼기·역할 시나리오는 setup으로 앞머리 이름의 스페이스를 따로 만들어 쓴다. 시험 스페이스의 peer는 건드리지 않는다.
+- 시험 환경(`WorkfluenceSpaceSandbox`): 정리가 앞머리로 시작하는 스페이스를 모두 찾아 "중지면 active로 → owner가 아닌 Crew 빼기 → 지우기" 순서로 지운다. 실패한 스페이스가 있어도 나머지는 계속 지운다. 맥락 키 `peerUsername`을 더했다(peer가 있을 때만 값이 있다).
+- agent 설정 `AGENT_WRITE_MARKS`에 5개를 더했다(예시 파일과 실제 설정).
+
+### 실행한 명령과 결과
+
+| 명령 | 결과 |
+|---|---|
+| `scripts/test.sh detection --src -q packages/targets/workfluence/tests` (red) | 새 시험 6건 실패 확인 |
+| `scripts/test.sh manufacture --src -q …test_selection.py …test_workfluence_fixtures.py` (red) | 13건 실패 확인 |
+| `scripts/build.sh {detection,manufacture,inference,mcp} test` 후 `scripts/test.sh <s> -q` | detection 406 passed, manufacture 424 passed, mcp 319 passed |
+| `scripts/test.sh inference` (이미지 기본 명령) | 1057 passed, 11 skipped |
+| `A4W_LIVE_TESTS=1 scripts/test.sh detection -q` | 411 passed, 4 skipped |
+| compose 재기동 후 정리 반영 `POST /v1/apply {"targetId":"workfluence"}` (`ap-20261016T010949Z-91fe21`) | `applied`, `tv-000003-3c858529`, added 6, 검증 passed 6, 색인 upserted 6, LLM 호출 0 |
+| 반영 뒤 시험 스택에서 `GET /spaces?q=aiagent-manufacture-` | 앞머리로 시작하는 스페이스 0개(정리 확인) |
+| Inference REST 읽기 요청("스페이스 <id>의 Crew 목록") | `list_space_members` 성공, 서빙 36개 |
+
+### 확인하지 못한 것
+
+- `delete_space`·`set_space_status`는 danger 묶음이 꺼져 있어 실호출 검증을 하지 않았다. 단위 시험의 선정·seed·시나리오 형식만 확인했다. 정리 순서의 "중지면 active로 되돌림"은 가짜 서버로만 시험했다.
+- 스페이스 이름 없이 "Crew 목록 알려줘"라고 하면 모델이 스페이스를 되물었다(tool 호출 없음). 되묻기 규칙대로의 동작이다.
+- 쓰기 tool(`create_space`·`add_space_member` 등)을 Inference가 실제로 부르는 시험은 Phase 5 "열심공부" 시나리오로 한다(workf의 username 배포 뒤).

@@ -1,0 +1,85 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "set_space_status",
+  "title": "스페이스 중지·다시 쓰기",
+  "description": "스페이스를 중지(suspended)하거나 다시 쓰게(active) 한다. 중지하면 읽기만 되고 쓰기가 막힌다. 관리자가 건 중지는 풀 수 없다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — list_spaces 결과의 items[].id"
+      },
+      "status": {
+        "description": "suspended(중지) 또는 active(다시 쓰기)",
+        "enum": [
+          "active",
+          "suspended"
+        ],
+        "type": "string"
+      }
+    },
+    "required": [
+      "id",
+      "status"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "PATCH",
+    "path": "/spaces/{id}/status",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "status",
+        "in": "body",
+        "pointer": "/status"
+      }
+    ],
+    "fixed": [],
+    "omitted": [
+      "takeover"
+    ],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "name",
+      "status"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "danger",
+  "scopes": [
+    "write"
+  ],
+  "group": "danger",
+  "index": {
+    "summary": "스페이스를 중지하거나 다시 쓸 수 있게 한다",
+    "examples": [
+      "이 스페이스 잠시 중지해줘",
+      "공간 다시 쓸 수 있게 열어줘",
+      "스페이스 동결해줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.setStatus",
+    "method": "PATCH",
+    "path": "/spaces/{id}/status",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "0bd0b667250885401ce392a7f5c8efaf4a643665e143d2ca532d31d64088d973",
+    "structureSha256": "2294db567090409a94392fb9630c589cf01f6abc2a5fcc84034b46a15bebc65d"
+  },
+  "origin": "seed",
+  "revision": "r-a1f8c95bd098"
+}

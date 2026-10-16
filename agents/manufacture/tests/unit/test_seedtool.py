@@ -32,9 +32,9 @@ def test_build_writes_all_tool_operations(tmp_path):
     cat = copy_catalog(tmp_path)
     report = build_seeds(SPEC, cat, limits="description=600,summary=120,example=60", max_visible=4, max_chars=8000,
                          content_types=["application/json", "multipart/form-data"])
-    assert report["tools"] == 34 and report["composites"] == 3
+    assert report["tools"] == 42 and report["composites"] == 3     # 스페이스 8개 포함 (설계 23절)
     names = {p.stem for p in (cat / "seed" / "tools").glob("*.json")}
-    assert {"add_comment", "read_page", "search_pages", "update_page", "delete_page"} <= names
+    assert {"add_comment", "read_page", "search_pages", "update_page", "delete_page", "create_space", "add_space_member"} <= names
     seeds = FileCatalog(cat)
     t = seeds.seed_for("pages.update")
     assert list(t["inputSchema"]["properties"]) == ["id", "baseVersionNo", "body", "title"]

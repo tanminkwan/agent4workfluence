@@ -1,0 +1,101 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "create_space",
+  "title": "새 스페이스 만들기",
+  "description": "새 팀 스페이스를 만든다. 만든 나는 owner가 된다. 같은 이름의 스페이스도 만들어지니 먼저 list_spaces로 겹치지 않는지 본다. 분류는 이름으로 고르고 없는 이름이면 404다. 사람을 넣으려면 만든 뒤 결과의 id로 add_space_member를 부른다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "category": {
+        "anyOf": [
+          {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          {
+            "type": "null"
+          }
+        ],
+        "default": null,
+        "description": "넣을 분류의 이름 — list_categories 결과의 name. 요청에 분류가 있을 때만 넣는다"
+      },
+      "description": {
+        "default": "",
+        "description": "스페이스 설명 — 요청에 있을 때만 넣는다",
+        "maxLength": 2000,
+        "type": "string"
+      },
+      "name": {
+        "description": "스페이스 이름 — 200자까지",
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
+      }
+    },
+    "required": [
+      "name"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "POST",
+    "path": "/spaces",
+    "contentType": "application/json",
+    "bindings": [
+      {
+        "input": "category",
+        "in": "body",
+        "pointer": "/category"
+      },
+      {
+        "input": "description",
+        "in": "body",
+        "pointer": "/description"
+      },
+      {
+        "input": "name",
+        "in": "body",
+        "pointer": "/name"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      201
+    ]
+  },
+  "response": {
+    "fields": [
+      "id",
+      "name",
+      "description",
+      "status",
+      "myRole"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "위키에 새 스페이스(공간)를 만든다",
+    "examples": [
+      "새 스페이스 만들어줘",
+      "스터디용 공간 하나 만들어줘",
+      "팀 스페이스 새로 열어줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.create",
+    "method": "POST",
+    "path": "/spaces",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "2dd329702bb817cde7228b87b7e8169cd8c601fdaf9288004fdc4526607a47bf",
+    "structureSha256": "6a72cd421871eba96d751e10054bb5d3c03de2b176060b9f0c16e588d9ccb343"
+  },
+  "origin": "seed",
+  "revision": "r-d60679190186"
+}

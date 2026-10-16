@@ -1,0 +1,2 @@
+call: {args: {id: "${sandbox.spaceId}", description: "검증 설명 ${run.id}"}}
+expect: {ok: true, fields: [id, description]}

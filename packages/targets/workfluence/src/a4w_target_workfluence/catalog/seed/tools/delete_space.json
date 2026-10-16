@@ -1,0 +1,65 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "delete_space",
+  "title": "스페이스 지우기 (휴지통으로)",
+  "description": "스페이스를 휴지통으로 보낸다. owner만, Crew가 나 혼자이고 중지되지 않았을 때만 지운다(아니면 403). 다른 Crew는 remove_space_member로 먼저 뺀다. 되살리기는 관리자만 한다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "지울 스페이스 id — list_spaces 결과의 items[].id"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "DELETE",
+    "path": "/spaces/{id}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "ok"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "danger",
+  "scopes": [
+    "write"
+  ],
+  "group": "danger",
+  "index": {
+    "summary": "스페이스(공간)를 통째로 휴지통으로 지운다",
+    "examples": [
+      "이 스페이스 지워줘",
+      "필요 없는 공간 삭제해줘",
+      "스페이스 없애줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.delete",
+    "method": "DELETE",
+    "path": "/spaces/{id}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "a612262fa86883fe99dc347b7ed7af0b1a73c5a8d6322203093eaf8245ed62df",
+    "structureSha256": "a5c8964ef38e95c451c78cd53d67a12e45a4a7362822d8d171213763f9d55dab"
+  },
+  "origin": "seed",
+  "revision": "r-b18812a9b607"
+}

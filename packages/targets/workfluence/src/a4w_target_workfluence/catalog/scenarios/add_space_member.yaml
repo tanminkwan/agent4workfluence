@@ -1,0 +1,8 @@
+# 시험 스페이스의 peer는 알림 자료라 건드리지 않는다. 앞머리 이름으로 스페이스를 하나 더 만들어 거기에 넣는다 (설계 23.3).
+# peer가 없으면 peerUsername이 없어 이 tool만 검증 안 됨(unverified, SANDBOX_VALUE_MISSING)이다.
+setup:
+  - tool: create_space
+    args: {name: "${sandbox.spaceName}-add"}
+    save: {sid: /id}
+call: {args: {id: "${saved.sid}", username: "${sandbox.peerUsername}", role: viewer}}
+expect: {ok: true}

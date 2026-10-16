@@ -1,0 +1,77 @@
+{
+  "schema": "a4w.tool/v1",
+  "kind": "operation",
+  "name": "remove_space_member",
+  "title": "스페이스에서 사람 빼기",
+  "description": "스페이스 Crew에서 사람 한 명을 뺀다. 하나뿐인 owner는 뺄 수 없다. 바뀐 Crew 목록 전체를 돌려준다.",
+  "inputSchema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "format": "uuid",
+        "type": "string",
+        "description": "스페이스 id — list_spaces 결과의 items[].id"
+      },
+      "ref": {
+        "type": "string",
+        "description": "뺄 사람의 아이디(username) — list_space_members 결과의 username"
+      }
+    },
+    "required": [
+      "id",
+      "ref"
+    ],
+    "additionalProperties": false
+  },
+  "http": {
+    "method": "DELETE",
+    "path": "/spaces/{id}/members/{ref}",
+    "bindings": [
+      {
+        "input": "id",
+        "in": "path",
+        "name": "id"
+      },
+      {
+        "input": "ref",
+        "in": "path",
+        "name": "ref"
+      }
+    ],
+    "fixed": [],
+    "success": [
+      200
+    ]
+  },
+  "response": {
+    "fields": [
+      "[].username",
+      "[].displayName",
+      "[].role"
+    ],
+    "maxChars": 8000
+  },
+  "risk": "write",
+  "scopes": [
+    "write"
+  ],
+  "group": "authoring",
+  "index": {
+    "summary": "스페이스 멤버(Crew)에서 사람을 뺀다",
+    "examples": [
+      "이 사람 스페이스에서 빼줘",
+      "공간 멤버에서 제외해줘",
+      "스페이스 Crew 정리해줘"
+    ]
+  },
+  "source": {
+    "operationId": "spaces.removeMember",
+    "method": "DELETE",
+    "path": "/spaces/{id}/members/{ref}",
+    "specVersion": "8c83f9c66a3a6a0acc82bbc386954cffb2fc24fb031f21bf123700e518a2b1e6",
+    "fragmentSha256": "6707063af73a85af5421fe056bfc4e934685cde8e4f26fb64df1175689791f5d",
+    "structureSha256": "71aaf8e34dca75a878d1459fb3b1c53ababd53e9f871ca483527dc778a865d20"
+  },
+  "origin": "seed",
+  "revision": "r-3a01bb3ff516"
+}
