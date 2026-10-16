@@ -309,3 +309,4 @@ workf 배포(impl-phase21 87bc85b, 명세 3f0a9480 → 4283c9bf)를 반영했다
 | `scripts/build.sh {mcp,detection,manufacture,inference} test` 후 `scripts/test.sh <s>` | mcp 324, detection 411, manufacture **442**, inference 1163 passed |
 | seed 다시 만들기 (기준 명세 4283c9bf) | create_page·list_pages·search_pages에 `space` 선택 칸과 `contextDefault: homeSpace` |
 | 재기동 후 정리 반영 `ap-20261016T073216Z-4a7952` | `applied`, `tv-000007-2df77909`, updated 3, 검증 passed 3(시나리오는 space 없이 → 시험 스페이스로 채워짐), LLM 0 |
+| 상위 tool `*_by_title` 3개에 `space` 선택 칸 (시험 1건 red → green, manufacture 443 passed) 후 정리 반영 `ap-20261016T075419Z-dc2bad` | `applied`, `tv-000008-ebccb4cb`, updated 3, 검증 passed 3, LLM 0 |

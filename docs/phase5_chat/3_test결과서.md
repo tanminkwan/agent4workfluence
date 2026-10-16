@@ -209,3 +209,19 @@ workf F-024(impl-phase21 a7a93b3, 화면만 바뀜, 명세 해시 4283c9bf 그�
 - 확인: 만든 페이지(`9208277f…`)의 스페이스가 Crazy Study, 본문 끝에 AI 작성 표시.
 - 시험이 만든 페이지 "채팅 시험 6c76d3"은 사용자 스페이스(Crazy Study)에 남겨 두었다(지우지 않음).
 - 확인하지 못한 것: 쓰기 권한이 없는 스페이스에 만들기(403) 실호출, `list_pages`·`search_pages`의 `space` 실호출.
+
+## 9. 답에서 id 빼기, 다른 스페이스 페이지에 제목으로 쓰기 (2026-10-16)
+
+사용자 시험: "댓글을 “test” 내용으로 추가했습니다. 페이지 ID는 67b7eca0-a5ab-43e5-88ff-f06d f06d1cc12ce7 에 있습니다." — 덧붙임 프롬프트의 "id를 쓰지 않는다" 규칙을 어겼고 id도 깨졌다. 설계 20절대로 보내기 직전에 코드가 뺀다.
+
+| 명령·요청 | 결과 |
+|---|---|
+| `scripts/test.sh inference --src -q …test_chat_hide_ids.py` (red → green) | 7건(H1~H7). 함수 없음 실패 확인 → 통과 |
+| 전체 `scripts/test.sh inference --src -q packages/core packages/tools packages/clients agents/inference/tests` | 1179 passed, 9 skipped |
+| 실호출 "@AI Agent Crazy Study 스페이스의 id 알려줘" (첫 배포) | 모델 답 "…ID는 f8e35749-… 입니다." → 보낸 답 "Crazy Study 스페이스 ID는 입니다." (어색함) → `hidden_ids_notice` 문구를 더함 |
+| 같은 요청 (다시 배포 뒤) | 보낸 답 "내부 식별자(id)는 채팅에 보여 드리지 않습니다. 이름이나 제목으로 말씀해 주시면 그대로 처리합니다." |
+| "@AI Agent 채팅 시험 6c76d3 페이지에 확인이라고 댓글 달아줘" (`tv-000007`) | "페이지를 찾을 수 없습니다" — 제목으로 찾는 상위 tool이 기본 스페이스에서만 찾았다 |
+| `*_by_title`에 `space` 칸 (`tv-000008`) 뒤 "@AI Agent Crazy Study 스페이스의 채팅 시험 6c76d3 페이지에 확인이라고 댓글 달아줘" | "'채팅 시험 6c76d3' 페이지에 “확인” 댓글을 달았습니다." `comment_on_page_by_title(space="Crazy Study", title=…)` |
+
+- 시험이 단 댓글("확인")은 시험 페이지 "채팅 시험 6c76d3"(Crazy Study)에 남아 있다.
+- 확인하지 못한 것: 목록 줄 안의 id 빼기는 단위 시험만. `/health`의 agent tool 수가 재기동 뒤 0으로 남는 표시 문제(실제는 36개를 받음)는 고치지 않았다.

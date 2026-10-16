@@ -1,5 +1,5 @@
 {
-  "description": "기본 스페이스에서 제목으로 페이지를 하나 찾아 라벨(태그)을 붙인다. 없는 라벨이면 만든다. 여러 개가 맞으면 AMBIGUOUS와 후보 목록이 오니, 더 정확한 제목으로 다시 하거나 후보의 pageId로 add_page_label을 쓴다.",
+  "description": "스페이스(지정하지 않으면 기본 스페이스)에서 제목으로 페이지를 하나 찾아 라벨(태그)을 붙인다. 없는 라벨이면 만든다. 여러 개가 맞으면 AMBIGUOUS와 후보 목록이 오니, 더 정확한 제목으로 다시 하거나 후보의 pageId로 add_page_label을 쓴다.",
   "group": "authoring",
   "index": {
     "examples": [
@@ -21,6 +21,10 @@
         "description": "붙일 라벨 이름 (40자까지)",
         "type": "string"
       },
+      "space": {
+        "description": "페이지가 있는 스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study의'). 비우면 agent의 기본 스페이스",
+        "type": "string"
+      },
       "title": {
         "description": "라벨을 붙일 페이지 제목 (요청 글에 나온 그대로)",
         "type": "string"
@@ -38,7 +42,7 @@
   "output": {
     "$step": "label"
   },
-  "revision": "r-feed3dbc4e04",
+  "revision": "r-53d91293132a",
   "risk": "write",
   "schema": "a4w.tool/v1",
   "scopes": [
@@ -50,6 +54,9 @@
       "args": {
         "q": {
           "$input": "title"
+        },
+        "space": {
+          "$input": "space"
         }
       },
       "expect": {

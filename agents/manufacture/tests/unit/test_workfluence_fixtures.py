@@ -86,3 +86,14 @@ def test_danger_enabled_holds_nine_for_review(tmp_path):
         "delete_page", "move_page", "restore_page_version", "upload_attachment", "delete_attachment",
         "list_trashed_pages", "restore_trashed_page", "delete_space", "set_space_status"])
     assert all(p["reasons"] == ["DANGER_ADDED"] for p in r["pendingReview"])
+
+
+def test_by_title_composites_pass_an_optional_space_to_the_page_search():
+    """제목으로 찾는 상위 tool도 다른 스페이스에서 찾는다 (설계 26절, 2026-10-16 채팅 시험). 비우면 기본 스페이스."""
+    from a4w_manufacture.catalog import FileCatalog
+    comps = {c["name"]: c for c in FileCatalog(catalog_dir()).composites()}
+    for name in ("comment_on_page_by_title", "label_page_by_title", "read_page_by_title"):
+        c = comps[name]
+        assert "space" in c["inputSchema"]["properties"] and "space" not in c["inputSchema"]["required"], name
+        find = c["steps"][0]
+        assert find["tool"] == "search_pages" and find["args"]["space"] == {"$input": "space"}, name

@@ -1,5 +1,5 @@
 {
-  "description": "기본 스페이스에서 제목으로 페이지를 하나 찾아 본문을 읽는다. 여러 개가 맞으면 AMBIGUOUS와 후보 목록이 오니, 더 정확한 제목으로 다시 하거나 후보의 pageId로 read_page를 쓴다.",
+  "description": "스페이스(지정하지 않으면 기본 스페이스)에서 제목으로 페이지를 하나 찾아 본문을 읽는다. 여러 개가 맞으면 AMBIGUOUS와 후보 목록이 오니, 더 정확한 제목으로 다시 하거나 후보의 pageId로 read_page를 쓴다.",
   "group": "read",
   "index": {
     "examples": [
@@ -17,6 +17,10 @@
   "inputSchema": {
     "additionalProperties": false,
     "properties": {
+      "space": {
+        "description": "페이지가 있는 스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study의'). 비우면 agent의 기본 스페이스",
+        "type": "string"
+      },
       "title": {
         "description": "찾을 페이지 제목 (요청 글에 나온 그대로, 두 글자 이상)",
         "type": "string"
@@ -33,7 +37,7 @@
   "output": {
     "$step": "read"
   },
-  "revision": "r-039962ba43a4",
+  "revision": "r-53758a271d7f",
   "risk": "read",
   "schema": "a4w.tool/v1",
   "scopes": [
@@ -44,6 +48,9 @@
       "args": {
         "q": {
           "$input": "title"
+        },
+        "space": {
+          "$input": "space"
         }
       },
       "expect": {
