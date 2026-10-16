@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 from .models import IncomingRequest
 from .notes import render_channel_notes
-from .policy import strip_mention
+from .policy import my_names, strip_mention
 from .ports import ChatOutcome, ChatSubmit, ReplySender, RequestSubmitter, SubmitRejected
 from .store import SqliteChatState
 
@@ -117,12 +117,16 @@ class ChatWorkerPool:
             self._tasks.pop(room, None)
             self._overflowed.discard(room)
 
-    def _text(self, body: str) -> str:
-        return strip_mention(body, self._mention) if self._mention else body.strip()
+    def _text(self, request: IncomingRequest) -> str:
+        """호명(설정 이름과 방에서 내 표시 이름)을 뺀 요청 글 (설계 19절)."""
+        text = request.message.body
+        for name in (*([self._mention] if self._mention else []), *my_names(request.room, request.my_user_id)):
+            text = strip_mention(text, name)
+        return text.strip()
 
     async def _process(self, request: IncomingRequest) -> None:
         room, seq = request.room.room_id, request.message.seq
-        args = ChatSubmit(agent_id=self._agent_id, text=self._text(request.message.body), requester=request.requester,
+        args = ChatSubmit(agent_id=self._agent_id, text=self._text(request), requester=request.requester,
                           conversation_id=f"chat:{room}", idempotency_key=f"chat:{room}:{seq}", allow_writes=request.allow_writes,
                           channel_notes=render_channel_notes(self._notes, request.room.members, my_user_id=request.my_user_id,
                                                              max_members=self._notes_members_max,

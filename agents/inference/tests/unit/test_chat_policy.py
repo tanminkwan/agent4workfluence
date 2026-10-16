@@ -146,3 +146,22 @@ def test_P18_decision_is_immutable():
     d = policy().decide(message(), room("direct"), my_user_id=ME)
     with pytest.raises(Exception):
         d.is_request = False  # type: ignore[misc]
+
+
+# ── 채팅 멘션 "@표시 이름" (2026-10-16 workf F-024: 본문 맨 앞의 "@<members[].displayName> ") ──
+
+BOT = (Member(ME, "AI Bot"), Member(ALICE, "tiffanie"))
+
+
+@pytest.mark.parametrize("body", ["@AI Bot 오늘 회의 정리해 줘", "@ai bot\n목록", "AI Bot 목록 알려줘"])
+def test_P20_my_display_name_in_the_room_also_calls_me_even_if_the_setting_differs(body):
+    d = policy().decide(message(body), room(members=BOT), my_user_id=ME)
+    assert d.is_request and d.reason == "mentioned"
+
+
+def test_P21_the_configured_name_still_works_when_my_display_name_is_different():
+    assert policy().decide(message("@AI Agent 목록"), room(members=BOT), my_user_id=ME).is_request
+
+
+def test_P22_another_members_mention_does_not_call_me():
+    assert not policy().decide(message("@tiffanie 오늘 회의 정리해 줘"), room(members=BOT), my_user_id=ME).is_request

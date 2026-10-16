@@ -34,6 +34,16 @@ def test_M2_a_message_that_is_only_the_name_keeps_its_original_text(body):
     assert strip_mention(body, NAME) == body.strip()
 
 
+@pytest.mark.parametrize("body, expected", [
+    ("@AI Agent 스페이스 목록 알려줘", "스페이스 목록 알려줘"),
+    ("@tanminkwan 을 스페이스에 넣어줘 @AI Agent", "@tanminkwan 을 스페이스에 넣어줘"),
+    ("@ai agent, 목록", "목록"),
+])
+def test_M6_an_at_sign_right_before_the_name_goes_with_it(body, expected):
+    """채팅 멘션(@이름, 2026-10-16 workf 기능 추가 예정). 다른 사람의 @멘션은 그대로 둔다."""
+    assert strip_mention(body, NAME) == expected
+
+
 def test_M3_names_with_regex_characters_are_matched_literally():
     assert strip_mention("bot.v2 (beta) 목록 보여줘", "bot.v2 (beta)") == "목록 보여줘"
     assert strip_mention("botXv2 목록", "bot.v2") == "botXv2 목록"
@@ -49,3 +59,13 @@ async def test_M5_without_a_mention_name_the_text_is_unchanged(tmp_path):
     env = make(tmp_path)
     await env.run(incoming(5, body="AI Agent. 스페이스 목록 알려줘"))
     assert env.submitter.submits[0].text == "AI Agent. 스페이스 목록 알려줘"
+
+
+async def test_M7_the_worker_also_strips_my_display_name_in_the_room(tmp_path):
+    from a4w_inference.channels.chat.models import IncomingRequest
+    from tests.chat_fakes import ME, ALICE, chat_message, members, room_info
+    env = make(tmp_path, mention_name=NAME)
+    room = room_info(kind="group", member_list=members((ME, "AI Bot"), (ALICE, "tiffanie")))
+    await env.run(IncomingRequest(room=room, message=chat_message(5, "@AI Bot 스페이스 목록 알려줘"), requester="tiffanie",
+                                  allow_writes=False, my_user_id=ME))
+    assert env.submitter.submits[0].text == "스페이스 목록 알려줘"

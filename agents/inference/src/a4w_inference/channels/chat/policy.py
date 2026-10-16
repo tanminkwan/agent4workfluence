@@ -14,6 +14,7 @@ from .models import ChatMessage, RoomInfo
 ROOM_DIRECT = "direct"
 ROOM_GROUP = "group"
 AFTER_MENTION = r"[\s,.!?:;~]*"          # 호명 바로 뒤의 문장 부호·공백
+BEFORE_MENTION = "@?"                     # 채팅 멘션(@이름)의 @ (설계 19절)
 
 
 @dataclass(frozen=True)
@@ -44,13 +45,22 @@ class ReplyPolicy:
         if room.kind == ROOM_DIRECT:
             return self._request("direct", message)
         if room.kind == ROOM_GROUP:
-            if self._mention in _normalize(message.body):
+            body = _normalize(message.body)
+            names = (self._mention, *(_normalize(n) for n in my_names(room, my_user_id)))
+            if any(n and n in body for n in names):
                 return self._request("mentioned", message)
             return Decision(False, "not_mentioned")
         return Decision(False, "unknown_room_kind")
 
     def _request(self, reason: str, message: ChatMessage) -> Decision:
         return Decision(True, reason, allow_writes=message.sender_id in self._writers)
+
+
+def my_names(room: RoomInfo | None, my_user_id: str | None) -> tuple[str, ...]:
+    """방에서 내 표시 이름. 채팅 화면의 멘션은 "@<members[].displayName>"이다 (workf F-024, 설계 19절)."""
+    if room is None or not my_user_id:
+        return ()
+    return tuple(m.display_name for m in room.members if m.user_id == my_user_id and m.display_name.strip())
 
 
 def requester_label(sender_id: str, room: RoomInfo | None) -> str:
@@ -67,6 +77,6 @@ def strip_mention(body: str, mention_name: str) -> str:
     words = mention_name.split()
     if not words:
         return body.strip()
-    pattern = re.compile(r"\s+".join(re.escape(w) for w in words) + AFTER_MENTION, re.IGNORECASE)
+    pattern = re.compile(BEFORE_MENTION + r"\s+".join(re.escape(w) for w in words) + AFTER_MENTION, re.IGNORECASE)
     stripped = pattern.sub("", body).strip()
     return stripped or body.strip()
