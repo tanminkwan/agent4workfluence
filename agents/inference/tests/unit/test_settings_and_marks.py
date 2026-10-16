@@ -119,7 +119,7 @@ GOOD = {
     "INFERENCE_TEXT_MAX_CHARS": "8000", "INFERENCE_REQUESTER_MAX_CHARS": "128", "INFERENCE_MAX_CONCURRENT_PER_AGENT": "2",
     "INFERENCE_RETENTION_DAYS": "30", "INFERENCE_PURGE_INTERVAL_SECONDS": "3600", "INFERENCE_HISTORY_MAX_TURNS": "50",
     "INFERENCE_SEARCH_TOP_K": "8", "INFERENCE_SEARCH_MIN_SCORE": "0", "INFERENCE_SEARCH_HISTORY_TURNS": "3",
-    "INFERENCE_SEARCH_QUERY_MAX_CHARS": "1000", "INFERENCE_LLM_MODEL": "openai/gpt-oss-120b", "INFERENCE_LLM_TIMEOUT_SECONDS": "120",
+    "INFERENCE_SEARCH_QUERY_MAX_CHARS": "1000", "INFERENCE_SEARCH_KEEP_HISTORY_TOOLS": "true", "INFERENCE_LLM_MODEL": "openai/gpt-oss-120b", "INFERENCE_LLM_TIMEOUT_SECONDS": "120",
     "INFERENCE_LLM_MAX_OUTPUT_TOKENS": "4096", "INFERENCE_LLM_TEMPERATURE": "0.2", "INFERENCE_LLM_REASONING_EFFORT": "low",
     "INFERENCE_LLM_MAX_RETRIES": "2", "INFERENCE_MAX_STEPS": "12", "INFERENCE_MAX_TOOL_CALLS": "12", "INFERENCE_MAX_WRITE_CALLS": "3",
     "INFERENCE_MAX_SECONDS": "300", "INFERENCE_MAX_SAME_ERROR": "2", "INFERENCE_RETRY_SEARCH_MAX": "1",
@@ -133,7 +133,7 @@ def test_G4_good_settings_load_with_the_documented_defaults_coming_only_from_env
     s = InferenceSettings.from_environ(GOOD)
     assert s.engine.max_input_tokens == 131072 and s.engine.safety_ratio == 0.8 and s.engine.chars_per_token == 1.5
     assert s.engine.max_write_calls == 3 and s.engine.search_history_turns == 3 and s.port == 18003
-    assert s.engine.history_refs_max == 6
+    assert s.engine.history_refs_max == 6 and s.engine.search_keep_history_tools is True
     assert s.ai_mark_suffix == "\n\n---\n_AI_" and s.auth_mode == "none" and s.agents == ("aiagent",)
 
 
@@ -175,3 +175,55 @@ def test_agent_settings_need_targets_and_parse_optional_overrides():
     with pytest.raises(ConfigError):
         AgentSettings.from_values("aiagent", {})
     assert AgentSettings.from_values("aiagent", {"AGENT_TARGETS": "w"}).max_concurrent is None
+
+
+# ---- G5 검색어 다듬기 설정 (설계 20절) ----
+
+def rewrite_env(tmp_path, text="검색어 한 줄.\n${history}\n${request}\n", **over):
+    f = tmp_path / "search_rewrite.md"
+    f.write_text(text, encoding="utf-8")
+    env = {**GOOD, "INFERENCE_SEARCH_REWRITE_PROMPT_FILE": str(f), "INFERENCE_SEARCH_REWRITE_MAX_OUTPUT_TOKENS": "512",
+           "INFERENCE_SEARCH_REWRITE_ANSWER_MAX_CHARS": "300"}
+    env.update(over)
+    return env
+
+
+@pytest.mark.parametrize("value", [None, ""])
+def test_G5_without_a_rewrite_file_rewriting_is_off(value):
+    env = dict(GOOD) if value is None else {**GOOD, "INFERENCE_SEARCH_REWRITE_PROMPT_FILE": value}
+    assert InferenceSettings.from_environ(env).engine.search_rewrite_prompt is None
+
+
+def test_G5_a_rewrite_file_is_loaded_with_its_limits(tmp_path):
+    e = InferenceSettings.from_environ(rewrite_env(tmp_path)).engine
+    assert e.search_rewrite_prompt == "검색어 한 줄.\n${history}\n${request}\n"
+    assert e.search_rewrite_max_output_tokens == 512 and e.search_rewrite_answer_max_chars == 300
+
+
+@pytest.mark.parametrize("key", ["INFERENCE_SEARCH_REWRITE_MAX_OUTPUT_TOKENS", "INFERENCE_SEARCH_REWRITE_ANSWER_MAX_CHARS"])
+def test_G5_limits_are_required_when_rewriting_is_on(tmp_path, key):
+    env = rewrite_env(tmp_path)
+    env.pop(key)
+    with pytest.raises(ConfigError) as e:
+        InferenceSettings.from_environ(env)
+    assert key in str(e.value)
+
+
+@pytest.mark.parametrize("text", ["", "   \n", "${history} 뿐이고 요청 자리가 없다"])
+def test_G5_an_empty_file_or_one_without_the_request_slot_is_rejected(tmp_path, text):
+    with pytest.raises(ConfigError) as e:
+        InferenceSettings.from_environ(rewrite_env(tmp_path, text=text))
+    assert "INFERENCE_SEARCH_REWRITE_PROMPT_FILE" in str(e.value)
+
+
+def test_G5_a_missing_file_is_rejected(tmp_path):
+    with pytest.raises(ConfigError) as e:
+        InferenceSettings.from_environ(rewrite_env(tmp_path, INFERENCE_SEARCH_REWRITE_PROMPT_FILE=str(tmp_path / "없음.md")))
+    assert "INFERENCE_SEARCH_REWRITE_PROMPT_FILE" in str(e.value)
+
+
+def test_G5_keep_history_tools_must_be_a_boolean():
+    assert InferenceSettings.from_environ({**GOOD, "INFERENCE_SEARCH_KEEP_HISTORY_TOOLS": "false"}).engine.search_keep_history_tools is False
+    with pytest.raises(ConfigError) as e:
+        InferenceSettings.from_environ({**GOOD, "INFERENCE_SEARCH_KEEP_HISTORY_TOOLS": "maybe"})
+    assert "INFERENCE_SEARCH_KEEP_HISTORY_TOOLS" in str(e.value)

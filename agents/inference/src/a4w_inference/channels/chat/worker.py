@@ -15,6 +15,7 @@ from dataclasses import dataclass
 
 from .models import IncomingRequest
 from .notes import render_channel_notes
+from .policy import strip_mention
 from .ports import ChatOutcome, ChatSubmit, ReplySender, RequestSubmitter, SubmitRejected
 from .store import SqliteChatState
 
@@ -56,13 +57,15 @@ class ChatWorkerPool:
     def __init__(self, *, submitter: RequestSubmitter, sender: ReplySender, state: SqliteChatState, replies: ReplyTexts,
                  now_iso: Callable[[], str], agent_id: str, poll_interval: float, wait_max_seconds: float, busy_retry_seconds: float,
                  busy_retry_max_seconds: float, queue_max: int, notes: str | None = None, notes_members_max: int = 50,
-                 notes_name_max_chars: int = 64, sleep: Callable[[float], Awaitable[None]] = asyncio.sleep):
+                 notes_name_max_chars: int = 64, mention_name: str | None = None,
+                 sleep: Callable[[float], Awaitable[None]] = asyncio.sleep):
         self._submitter, self._sender, self._state, self._replies = submitter, sender, state, replies
         self._now, self._agent_id = now_iso, agent_id
         self._poll, self._wait_max = poll_interval, wait_max_seconds
         self._busy, self._busy_max = busy_retry_seconds, busy_retry_max_seconds
         self._queue_max, self._notes, self._sleep = queue_max, notes, sleep
         self._notes_members_max, self._notes_name_max = notes_members_max, notes_name_max_chars
+        self._mention = mention_name
         self._queues: dict[str, deque[IncomingRequest]] = {}
         self._pending: dict[str, int] = {}
         self._tasks: dict[str, asyncio.Task] = {}
@@ -114,9 +117,12 @@ class ChatWorkerPool:
             self._tasks.pop(room, None)
             self._overflowed.discard(room)
 
+    def _text(self, body: str) -> str:
+        return strip_mention(body, self._mention) if self._mention else body.strip()
+
     async def _process(self, request: IncomingRequest) -> None:
         room, seq = request.room.room_id, request.message.seq
-        args = ChatSubmit(agent_id=self._agent_id, text=request.message.body.strip(), requester=request.requester,
+        args = ChatSubmit(agent_id=self._agent_id, text=self._text(request.message.body), requester=request.requester,
                           conversation_id=f"chat:{room}", idempotency_key=f"chat:{room}:{seq}", allow_writes=request.allow_writes,
                           channel_notes=render_channel_notes(self._notes, request.room.members, my_user_id=request.my_user_id,
                                                              max_members=self._notes_members_max,

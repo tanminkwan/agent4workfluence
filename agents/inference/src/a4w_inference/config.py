@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from a4w_core.config import Settings, parse_env_text
 from a4w_core.errors import ConfigError
 
-from .engine.engine import EngineSettings
+from .engine.engine import REWRITE_REQUEST_SLOT, EngineSettings
 from .engine.marks import AuthorshipMarker
 
 AUTH_MODES = ("none", "bearer")
@@ -28,6 +28,23 @@ def _float(env: Settings, key: str) -> float:
         return float(env.require(key))
     except ValueError:
         raise ConfigError(f"실수가 아니다: {key}") from None
+
+
+def _search_rewrite(env: Settings) -> dict[str, object]:
+    """검색어 다듬기 (설계 20절). 파일이 없으면 끔. 켜면 한도 두 개도 반드시 받는다."""
+    path = env.optional("INFERENCE_SEARCH_REWRITE_PROMPT_FILE")
+    if not path:
+        return {}
+    key = "INFERENCE_SEARCH_REWRITE_PROMPT_FILE"
+    p = Path(path)
+    if not p.is_file():
+        raise ConfigError(f"검색어 다듬기 프롬프트 파일이 없다: {key}")
+    text = p.read_text(encoding="utf-8")
+    if not text.strip() or REWRITE_REQUEST_SLOT not in text:
+        raise ConfigError(f"검색어 다듬기 프롬프트가 비었거나 {REWRITE_REQUEST_SLOT} 자리가 없다: {key}")
+    return {"search_rewrite_prompt": text,
+            "search_rewrite_max_output_tokens": _positive_int(env, "INFERENCE_SEARCH_REWRITE_MAX_OUTPUT_TOKENS"),
+            "search_rewrite_answer_max_chars": _positive_int(env, "INFERENCE_SEARCH_REWRITE_ANSWER_MAX_CHARS")}
 
 
 def _optional_float(env: Settings, key: str) -> float | None:
@@ -94,9 +111,11 @@ class InferenceSettings:
             trim_keep_chars=_positive_int(env, "INFERENCE_TRIM_KEEP_CHARS"),
             search_history_turns=_positive_int(env, "INFERENCE_SEARCH_HISTORY_TURNS", minimum=0),
             search_query_max_chars=_positive_int(env, "INFERENCE_SEARCH_QUERY_MAX_CHARS"),
+            search_keep_history_tools=env.require_bool("INFERENCE_SEARCH_KEEP_HISTORY_TOOLS"),
             history_max_turns=_positive_int(env, "INFERENCE_HISTORY_MAX_TURNS"),
             record_arg_max_chars=_positive_int(env, "INFERENCE_RECORD_ARG_MAX_CHARS"),
             history_refs_max=_positive_int(env, "INFERENCE_HISTORY_REFS_MAX"),
+            **_search_rewrite(env),
         )
         return cls(
             port=_positive_int(env, "INFERENCE_PORT"), auth_mode=auth, store_path=env.require("INFERENCE_STORE_PATH"),

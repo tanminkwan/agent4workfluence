@@ -5,6 +5,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from dataclasses import dataclass
 
@@ -12,6 +13,7 @@ from .models import ChatMessage, RoomInfo
 
 ROOM_DIRECT = "direct"
 ROOM_GROUP = "group"
+AFTER_MENTION = r"[\s,.!?:;~]*"          # 호명 바로 뒤의 문장 부호·공백
 
 
 @dataclass(frozen=True)
@@ -58,3 +60,13 @@ def requester_label(sender_id: str, room: RoomInfo | None) -> str:
             if member.user_id == sender_id and member.display_name.strip():
                 return member.display_name
     return sender_id
+
+
+def strip_mention(body: str, mention_name: str) -> str:
+    """요청 글에서 호명(대소문자·공백 차이 무시)과 바로 뒤 문장 부호를 뺀다. 이름만 있는 글이면 원문을 둔다 (설계 20절)."""
+    words = mention_name.split()
+    if not words:
+        return body.strip()
+    pattern = re.compile(r"\s+".join(re.escape(w) for w in words) + AFTER_MENTION, re.IGNORECASE)
+    stripped = pattern.sub("", body).strip()
+    return stripped or body.strip()

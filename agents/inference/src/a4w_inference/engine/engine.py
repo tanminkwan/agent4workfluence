@@ -31,6 +31,7 @@ LLM_ERROR_CODES = {"auth": "LLM_AUTH", "timeout": "LLM_TIMEOUT", "rate_limit": "
                    "unavailable": "LLM_UNAVAILABLE", "output_format": "LLM_BAD_RESPONSE"}
 MESSAGE_OVERHEAD_CHARS = 32               # 역할·구분자 등 직렬화 여분 (어림)
 EXEC_NOTE = re.compile(r"(?:\s*\[실행:[^\]\n]*\])+\s*$")   # 이력에 붙이는 시스템 기록 줄. 모델이 흉내 내 쓰면 지운다
+REWRITE_HISTORY_SLOT, REWRITE_REQUEST_SLOT = "${history}", "${request}"
 IDENTIFIER = re.compile(r"^[A-Za-z0-9._:-]{1,64}$")     # 이력 줄에 남길 수 있는 값 모양 (설계 19절: 자유 글은 담지 않는다)
 
 
@@ -62,6 +63,10 @@ class EngineSettings:
     history_max_turns: int
     record_arg_max_chars: int
     history_refs_max: int
+    search_keep_history_tools: bool = False          # 검색 창 안의 앞선 차례에서 성공한 tool을 후보에 넣는다 (설계 20.3절)
+    search_rewrite_prompt: str | None = None        # 검색어 다듬기 틀 (${history}·${request}). None = 다듬지 않는다 (설계 20절)
+    search_rewrite_max_output_tokens: int = 512
+    search_rewrite_answer_max_chars: int = 300
 
 
 @dataclass(frozen=True)
@@ -157,7 +162,7 @@ class AgentEngine(TurnEngine):
         state.open_mark, state.close_mark = f"<<a4w-data:{nonce}>>", f"<<a4w-data-end:{nonce}>>"
         if req.conversation_id:
             state.history = list(await self._store.history(req.agent_id, req.conversation_id, limit=s.history_max_turns))
-        state.query = self._query(state)
+        state.query = await self._search_query(state)
         stored = await self._store.last_chars_per_token(req.agent_id)
         state.cpt = min(s.chars_per_token, stored) if stored else s.chars_per_token
         await self._build_functions(state)
@@ -186,16 +191,46 @@ class AgentEngine(TurnEngine):
 
     # ------------------------------------------------------------------ 검색·후보
 
+    def _recent(self, state: _Run) -> list[HistoryTurn]:
+        n = self._s.search_history_turns
+        return state.history[-n:] if n > 0 else []
+
     def _query(self, state: _Run) -> str:
+        query = "\n".join([*(t.text for t in self._recent(state)), state.request.text])
+        return query[-self._s.search_query_max_chars:]
+
+    async def _search_query(self, state: _Run) -> str:
+        """검색어: 다듬기 프롬프트가 있으면 모델이 쓴 한 줄, 쓸 수 없으면 원래 방식 (설계 20절)."""
         s = self._s
-        previous = [t.text for t in state.history][-s.search_history_turns:] if s.search_history_turns > 0 else []
-        query = "\n".join([*previous, state.request.text])
-        return query[-s.search_query_max_chars:]
+        if not s.search_rewrite_prompt:
+            return self._query(state)
+        history = "\n".join(f"user: {t.text}\nassistant: {t.answer[:s.search_rewrite_answer_max_chars]}" for t in self._recent(state))
+        content = s.search_rewrite_prompt.replace(REWRITE_HISTORY_SLOT, history).replace(REWRITE_REQUEST_SLOT, state.request.text)
+        request = ChatRequest(messages=(ChatMessage("user", content),), tools=(), model=s.model,
+                              timeout_seconds=min(s.timeout_seconds, self._remaining(state)),
+                              max_output_tokens=s.search_rewrite_max_output_tokens, temperature=s.temperature,
+                              reasoning_effort=s.reasoning_effort)
+        try:
+            result = await anyio.to_thread.run_sync(self._llm.chat, request)
+        except LlmError as e:
+            log.warning("search rewrite failed: kind=%s (raw query used)", e.kind)
+            return self._query(state)
+        u = state.usage
+        u.prompt_tokens += result.usage.prompt_tokens
+        u.completion_tokens += result.usage.completion_tokens
+        u.reasoning_tokens += result.usage.reasoning_tokens
+        line = next((x.strip() for x in (result.message.content or "").splitlines() if x.strip()), "")
+        if result.finish_reason != "stop" or not line:
+            log.warning("search rewrite unusable: finish=%s chars=%d (raw query used)", result.finish_reason, len(line))
+            return self._query(state)
+        log.info("search query rewritten: chars=%d", len(line))
+        return line[:s.search_query_max_chars]
 
     async def _build_functions(self, state: _Run) -> None:
         agent = state.request.agent_id
         candidates = await self._search.search(agent, state.query)
-        defs = await self._gateway.definitions(agent) if candidates else []
+        used = self._history_tools(state)
+        defs = await self._gateway.definitions(agent) if candidates or used else []
         state.gen = self._gateway.generation(agent)
         best: dict[tuple[str, str], Candidate] = {}
         for c in candidates:
@@ -203,9 +238,13 @@ class AgentEngine(TurnEngine):
             if key not in best or c.score > best[key].score:
                 best[key] = c
         by_key = {(d.target_id, d.name): d for d in defs}
+        ordered = sorted(best.values(), key=lambda c: -c.score)
+        for d in defs:                                 # 앞선 차례의 tool은 검색 후보 뒤에, 지금 서빙하는 revision으로
+            if d.mcp_name in used and (d.target_id, d.name) not in best:
+                ordered.append(Candidate(target_id=d.target_id, name=d.name, revision=d.revision, score=0.0))
         functions: dict[str, tuple[ToolDef, Candidate]] = {}
         blocked: set[str] = set()
-        for cand in sorted(best.values(), key=lambda c: -c.score):
+        for cand in ordered:
             tool = by_key.get((cand.target_id, cand.name))
             if tool is None or tool.risk not in ALLOWED_RISKS:
                 log.info("candidate dropped: %s/%s", cand.target_id, cand.name)
@@ -215,6 +254,11 @@ class AgentEngine(TurnEngine):
                 continue
             functions[tool.mcp_name] = (tool, cand)
         state.functions, state.blocked = functions, blocked
+
+    def _history_tools(self, state: _Run) -> set[str]:
+        if not self._s.search_keep_history_tools:
+            return set()
+        return {a.tool for t in self._recent(state) for a in t.actions if a.ok}
 
     async def _research(self, state: _Run) -> None:
         state.research_left -= 1

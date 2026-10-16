@@ -215,7 +215,7 @@ def build_chat_channel(environ: Mapping[str, str], *, runner: RequestRunner, age
                             agent_id=chat.agent_id, poll_interval=chat.poll_interval_seconds, wait_max_seconds=chat.wait_max_seconds,
                             busy_retry_seconds=chat.busy_retry_seconds, busy_retry_max_seconds=chat.busy_retry_max_seconds,
                             queue_max=chat.room_queue_max, notes=notes, notes_members_max=chat.notes_members_max,
-                            notes_name_max_chars=chat.notes_name_max_chars)
+                            notes_name_max_chars=chat.notes_name_max_chars, mention_name=chat.mention_name)
     dispatcher = ChatDispatcher(api=api, state=state, policy=ReplyPolicy(mention_name=chat.mention_name,
                                                                          write_allowed_users=chat.write_allowed_users),
                                 sink=worker, clock=lambda: datetime.now(UTC), now_iso=utc_iso, catchup_page=chat.catchup_page,
