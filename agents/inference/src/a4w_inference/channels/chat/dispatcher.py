@@ -17,6 +17,7 @@ from .ports import ChatApi, ChatApiError
 from .store import SqliteChatState
 
 log = logging.getLogger(__name__)
+KIND_JOIN = "join"
 KIND_LEAVE = "leave"
 
 
@@ -123,6 +124,8 @@ class ChatDispatcher:
                 self._rooms.pop(message.room_id, None)
                 log.info("left chat room: room=%s", message.room_id[:8])
             return
+        if message.kind in (KIND_JOIN, KIND_LEAVE):
+            self._rooms.pop(message.room_id, None)          # 참여자가 바뀌었다. 다음 요청 때 방 정보를 다시 읽는다 (설계 18.2)
         if catchup and self._is_stale(message):
             if self._state.begin(message.room_id, message.seq, "skipped", now=now):
                 self.stats.stale_skipped += 1
@@ -134,7 +137,7 @@ class ChatDispatcher:
         if not self._state.begin(message.room_id, message.seq, "queued", now=now):
             return
         request = IncomingRequest(room=room, message=message, requester=requester_label(message.sender_id, room),
-                                  allow_writes=decision.allow_writes)
+                                  allow_writes=decision.allow_writes, my_user_id=self._me)
         log.info("chat request: room=%s seq=%d reason=%s writes=%s chars=%d", message.room_id[:8], message.seq, decision.reason,
                  decision.allow_writes, len(message.body))
         try:

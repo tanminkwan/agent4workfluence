@@ -219,3 +219,14 @@ async def test_logs_never_contain_the_request_text_or_answer(tmp_path, caplog):
     await runner.drain()
     assert "요청 비밀 내용" not in caplog.text and "답변 비밀 내용" not in caplog.text
     assert "r-0001" in caplog.text                                # 요청 id·상태 같은 메타 정보만 남는다
+
+
+async def test_chat_fields_reach_the_engine_and_default_to_the_phase4_behaviour(tmp_path):
+    """Phase 5 S9: 채널이 정한 쓰기 허용·덧붙임은 engine까지 그대로 간다. 주지 않으면 기본값."""
+    engine = FakeEngine(result())
+    runner, _ = make(tmp_path, engine)
+    await runner.submit(req(conversation_id="c-1", allow_writes=False, channel_notes="짧게"))
+    await runner.submit(req(conversation_id="c-2"))
+    await runner.drain()
+    assert (engine.seen[0].allow_writes, engine.seen[0].channel_notes) == (False, "짧게")
+    assert (engine.seen[1].allow_writes, engine.seen[1].channel_notes) == (True, None)

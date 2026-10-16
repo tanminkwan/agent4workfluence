@@ -57,6 +57,8 @@ class SubmitRequest:
     requester: str
     conversation_id: str | None = None
     idempotency_key: str | None = None
+    allow_writes: bool = True                 # 채널이 정한 요청별 쓰기 허용 (Phase 5). 기본값은 Phase 4 동작
+    channel_notes: str | None = None          # 채널이 시스템 프롬프트에 덧붙이는 문구 (Phase 5)
 
 
 @dataclass(frozen=True)
@@ -118,7 +120,8 @@ class RequestRunner:
 
     async def _execute(self, request_id: str, req: SubmitRequest) -> None:
         started = time.monotonic()
-        turn = TurnRequest(agent_id=req.agent_id, text=req.text, requester=req.requester, conversation_id=req.conversation_id)
+        turn = TurnRequest(agent_id=req.agent_id, text=req.text, requester=req.requester, conversation_id=req.conversation_id,
+                           allow_writes=req.allow_writes, channel_notes=req.channel_notes)
         status, extra = "failed", ""
         try:
             try:

@@ -27,6 +27,7 @@ class ChatMessage:
 class Member:
     user_id: str
     display_name: str
+    username: str | None = None        # 로그인 아이디. 서버가 주지 않으면 None (설계 18.1)
 
 
 @dataclass(frozen=True)
@@ -91,3 +92,4 @@ class IncomingRequest:
     message: ChatMessage
     requester: str
     allow_writes: bool
+    my_user_id: str | None = None      # 에이전트 자신의 id (참여자 목록에서 뺀다, 설계 18.2)

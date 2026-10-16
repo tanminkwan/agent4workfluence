@@ -135,4 +135,5 @@ def _room(item: Any) -> RoomInfo | None:
 def _members(value: Any) -> tuple[Member, ...]:
     if not isinstance(value, list):
         return ()
-    return tuple(Member(m["userId"], m.get("displayName") or "") for m in value if isinstance(m, dict) and isinstance(m.get("userId"), str))
+    return tuple(Member(m["userId"], m.get("displayName") or "", m["username"] if isinstance(m.get("username"), str) else None)
+                 for m in value if isinstance(m, dict) and isinstance(m.get("userId"), str))

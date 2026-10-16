@@ -12,6 +12,8 @@ class TurnRequest:
     text: str
     requester: str            # 감사 기록용 자기 신고 값. 모델에 보내지 않는다
     conversation_id: str | None = None
+    allow_writes: bool = True             # 거짓이면 쓰기 tool을 모델에 싣지 않고 실행도 막는다 (Phase 5 FR-C32)
+    channel_notes: str | None = None      # 채널이 시스템 프롬프트 끝에 덧붙이는 문구 (Phase 5 FR-C23)
 
 
 @dataclass(frozen=True)

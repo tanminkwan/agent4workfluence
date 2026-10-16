@@ -99,6 +99,7 @@ class _Run:
     history: list[HistoryTurn] = field(default_factory=list)
     msgs: list[_Msg] = field(default_factory=list)
     functions: dict[str, tuple[ToolDef, Candidate]] = field(default_factory=dict)
+    blocked: set[str] = field(default_factory=set)      # 쓰기가 허용되지 않아 뺀 tool의 MCP 이름
     gen: int = 0
     research_left: int = 0
     started: float = 0.0
@@ -160,6 +161,8 @@ class AgentEngine(TurnEngine):
         await self._build_functions(state)
         state.system = state.profile.prompt.render(data_open=state.open_mark, data_close=state.close_mark,
                                                    now=self._clock.now(), agent_id=req.agent_id, targets=state.profile.targets)
+        if req.channel_notes and req.channel_notes.strip():
+            state.system = f"{state.system}\n\n{req.channel_notes.strip()}"
         state.msgs = self._base_messages(state)
         while True:
             self._check_limits(state)
@@ -199,13 +202,17 @@ class AgentEngine(TurnEngine):
                 best[key] = c
         by_key = {(d.target_id, d.name): d for d in defs}
         functions: dict[str, tuple[ToolDef, Candidate]] = {}
+        blocked: set[str] = set()
         for cand in sorted(best.values(), key=lambda c: -c.score):
             tool = by_key.get((cand.target_id, cand.name))
             if tool is None or tool.risk not in ALLOWED_RISKS:
                 log.info("candidate dropped: %s/%s", cand.target_id, cand.name)
                 continue
+            if tool.risk == "write" and not state.request.allow_writes:
+                blocked.add(tool.mcp_name)
+                continue
             functions[tool.mcp_name] = (tool, cand)
-        state.functions = functions
+        state.functions, state.blocked = functions, blocked
 
     async def _research(self, state: _Run) -> None:
         state.research_left -= 1
@@ -334,7 +341,10 @@ class AgentEngine(TurnEngine):
         sent: dict[str, Any] = {}
         write = bool(entry and entry[0].risk == "write")
         outcome: ToolOutcome
-        if entry is None:
+        if entry is None and call.name in state.blocked:
+            write = True
+            outcome = self._write_not_allowed()
+        elif entry is None:
             outcome = self._engine_error("NOT_A_CANDIDATE", "이번에 주어진 tool 목록에 없는 이름이다", "목록에 있는 tool 이름만 부를 수 있다")
         else:
             parsed = _parse_args(call.arguments)
@@ -363,6 +373,8 @@ class AgentEngine(TurnEngine):
         tool, cand = entry
         sent = args
         if write:
+            if not state.request.allow_writes:          # 후보에서 이미 뺐다. 그래도 실행 직전에 한 번 더 막는다
+                return self._write_not_allowed(), args
             if u.write_calls >= s.max_write_calls:
                 raise _Stop("LIMIT_WRITES")
             try:
@@ -389,6 +401,11 @@ class AgentEngine(TurnEngine):
     @staticmethod
     def _engine_error(code: str, message: str, hint: str) -> ToolOutcome:
         return ToolOutcome(ok=False, error={"code": code, "message": message, "hint": hint, "retryable": False})
+
+    @classmethod
+    def _write_not_allowed(cls) -> ToolOutcome:
+        return cls._engine_error("WRITE_NOT_ALLOWED", "이 요청자에게는 쓰기가 허용되지 않아 실행하지 않았다",
+                                 "쓰기 없이 할 수 있는 일만 하고, 쓰기는 권한이 없다고 답하라")
 
     def _body(self, state: _Run, outcome: ToolOutcome) -> str:
         payload = outcome.data if outcome.ok else {"error": outcome.error}

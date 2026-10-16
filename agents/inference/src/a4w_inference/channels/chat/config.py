@@ -73,6 +73,8 @@ class ChatSettings:
     busy_retry_max_seconds: float = 0.0
     replies_file: str = ""
     notes_file: str | None = None
+    notes_members_max: int = 0
+    notes_name_max_chars: int = 0
     state_path: str = ""
     retention_days: int = 0
     secrets_dir: str = ""
@@ -122,6 +124,7 @@ class ChatSettings:
             poll_interval_seconds=_float(env, "CHAT_POLL_INTERVAL_SECONDS"), wait_max_seconds=_float(env, "CHAT_WAIT_MAX_SECONDS"),
             room_queue_max=_int(env, "CHAT_ROOM_QUEUE_MAX"), busy_retry_seconds=busy, busy_retry_max_seconds=busy_max,
             replies_file=env.require("CHAT_REPLIES_FILE"), notes_file=env.optional("CHAT_NOTES_FILE"),
+            notes_members_max=_int(env, "CHAT_NOTES_MEMBERS_MAX"), notes_name_max_chars=_int(env, "CHAT_NOTES_NAME_MAX_CHARS"),
             state_path=env.require("CHAT_STATE_PATH"), retention_days=_int(env, "CHAT_RETENTION_DAYS"),
             secrets_dir=env.require("CHAT_SECRETS_DIR"),
         )

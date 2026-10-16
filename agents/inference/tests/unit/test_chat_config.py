@@ -22,7 +22,7 @@ GOOD = {
     "CHAT_HTTP_TIMEOUT_SECONDS": "15", "CHAT_CATCHUP_PAGE": "200", "CHAT_CATCHUP_MAX_AGE_SECONDS": "86400",
     "CHAT_POLL_INTERVAL_SECONDS": "0.5", "CHAT_WAIT_MAX_SECONDS": "420", "CHAT_ROOM_QUEUE_MAX": "5",
     "CHAT_BUSY_RETRY_SECONDS": "2", "CHAT_BUSY_RETRY_MAX_SECONDS": "120", "CHAT_REPLIES_FILE": "/config/prompts/chat_replies.yaml",
-    "CHAT_NOTES_FILE": "/config/prompts/chat_notes.md", "CHAT_STATE_PATH": "/var/lib/a4w/inference/chat.db", "CHAT_RETENTION_DAYS": "30",
+    "CHAT_NOTES_FILE": "/config/prompts/chat_notes.md", "CHAT_NOTES_MEMBERS_MAX": "50", "CHAT_NOTES_NAME_MAX_CHARS": "64", "CHAT_STATE_PATH": "/var/lib/a4w/inference/chat.db", "CHAT_RETENTION_DAYS": "30",
     "CHAT_SECRETS_DIR": "/config/secrets/chat",
 }
 REQUIRED = [k for k in GOOD if k not in ("CHAT_TLS_CA_FILE", "CHAT_WRITE_ALLOWED_USERS", "CHAT_NOTES_FILE")]
@@ -144,3 +144,12 @@ def test_C13_settings_are_immutable():
     s = ChatSettings.from_environ(GOOD)
     with pytest.raises(Exception):
         s.agent_id = "x"  # type: ignore[misc]
+
+
+def test_room_member_notes_limits_are_settings():
+    """Phase 5 설계 18.2·18.3: 참여자 목록 상한과 표시 이름 길이 상한."""
+    s = ChatSettings.from_environ(GOOD)
+    assert (s.notes_members_max, s.notes_name_max_chars) == (50, 64)
+    for key in ("CHAT_NOTES_MEMBERS_MAX", "CHAT_NOTES_NAME_MAX_CHARS"):
+        with pytest.raises(ConfigError):
+            ChatSettings.from_environ({**GOOD, key: "0"})

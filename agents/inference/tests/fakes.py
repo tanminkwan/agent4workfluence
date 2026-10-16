@@ -248,8 +248,10 @@ class Rig:
     def __init__(self, engine, llm, search, gateway, store, clock):
         self.engine, self.llm, self.search, self.gateway, self.store, self.clock = engine, llm, search, gateway, store, clock
 
-    async def run(self, text: str, *, conversation_id: str | None = None, requester: str = "svc-workfluence"):
-        return await self.engine.run(TurnRequest(agent_id=AGENT, text=text, requester=requester, conversation_id=conversation_id))
+    async def run(self, text: str, *, conversation_id: str | None = None, requester: str = "svc-workfluence", **extra):
+        """extra: TurnRequest의 선택 필드(allow_writes·channel_notes, Phase 5 S9). 주지 않으면 기본값(Phase 4 동작)."""
+        return await self.engine.run(TurnRequest(agent_id=AGENT, text=text, requester=requester, conversation_id=conversation_id,
+                                                 **extra))
 
     def request(self, i: int = 0) -> ChatRequest:
         return self.llm.requests[i]
