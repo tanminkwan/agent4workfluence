@@ -51,6 +51,7 @@ class ChatSettings:
     mention_name: str = ""
     write_allowed_users: tuple[str, ...] = ()
     answer_max_chars: int = 0
+    answer_hide_pattern: re.Pattern | None = None      # 답에서 뺄 식별자 모양 (설계 20절)
     max_message_chars: int = 0
     server_send_per_minute: int = 0
     send_per_minute: int = 0
@@ -108,11 +109,17 @@ class ChatSettings:
         busy, busy_max = _float(env, "CHAT_BUSY_RETRY_SECONDS"), _float(env, "CHAT_BUSY_RETRY_MAX_SECONDS")
         if busy > busy_max:
             raise ConfigError("CHAT_BUSY_RETRY_SECONDS는 CHAT_BUSY_RETRY_MAX_SECONDS 이하여야 한다")
+        hide = env.optional("CHAT_ANSWER_HIDE_PATTERN")
+        try:
+            hide_pattern = re.compile(hide) if hide else None
+        except re.error:
+            raise ConfigError("CHAT_ANSWER_HIDE_PATTERN이 정규식이 아니다") from None
         users = tuple(dict.fromkeys(u.strip() for u in (env.optional("CHAT_WRITE_ALLOWED_USERS") or "").split(",") if u.strip()))
         return cls(
             enabled=True, agent_id=env.require("CHAT_AGENT_ID"), target_id=env.require("CHAT_TARGET_ID"),
             api_adapter=env.require("CHAT_API_ADAPTER"), api_base_url=base, tls_ca_file=env.optional("CHAT_TLS_CA_FILE"),
-            mention_name=mention, write_allowed_users=users, answer_max_chars=answer, max_message_chars=max_message,
+            mention_name=mention, write_allowed_users=users, answer_max_chars=answer, answer_hide_pattern=hide_pattern,
+            max_message_chars=max_message,
             server_send_per_minute=server_rate, send_per_minute=rate, send_retry_max=_int(env, "CHAT_SEND_RETRY_MAX", minimum=0),
             send_retry_seconds=_float(env, "CHAT_SEND_RETRY_SECONDS", positive=False),
             send_retry_wait_max_seconds=_float(env, "CHAT_SEND_RETRY_WAIT_MAX_SECONDS"),
@@ -157,6 +164,7 @@ def load_chat_token(secrets_dir: Path | str, agent_id: str, target_id: str) -> s
 class ChatReplies:
     texts: ReplyTexts
     truncate_notice: str
+    hidden_ids_notice: str | None = None     # 답이 id뿐이라 다 빠졌을 때 보내는 문구 (설계 20절, 선택)
 
 
 def load_chat_replies(path: Path | str) -> ChatReplies:
@@ -179,7 +187,11 @@ def load_chat_replies(path: Path | str) -> ChatReplies:
             raise ConfigError(f"채팅 응답 문구가 없다: {key} ({path})")
     if not all(isinstance(k, str) and isinstance(v, str) for k, v in labels.items()):
         raise ConfigError(f"stop_labels의 이름과 문구는 글이어야 한다: {path}")
-    return ChatReplies(texts=ReplyTexts(texts, stop_labels=labels), truncate_notice=notice.strip())
+    hidden = data.get("hidden_ids_notice")
+    if hidden is not None and (not isinstance(hidden, str) or not hidden.strip()):
+        raise ConfigError(f"hidden_ids_notice는 비어 있지 않은 글이어야 한다: {path}")
+    return ChatReplies(texts=ReplyTexts(texts, stop_labels=labels), truncate_notice=notice.strip(),
+                       hidden_ids_notice=hidden.strip() if hidden else None)
 
 
 def load_chat_notes(path: Path | str | None) -> str | None:

@@ -14,7 +14,7 @@ from collections.abc import Awaitable, Callable
 from typing import Protocol
 
 from .ports import ChatApi, ChatApiError, ReplySender
-from .textfmt import fit_answer, to_plain_text
+from .textfmt import fit_answer, hide_identifiers, to_plain_text
 
 log = logging.getLogger(__name__)
 MAX_CLIENT_MSG_ID = 64
@@ -34,7 +34,8 @@ def _short_id(client_msg_id: str) -> str:
 
 class ChatSender(ReplySender):
     def __init__(self, api: ChatApi, *, limiter: Limiter, answer_max_chars: int, hard_max_chars: int, truncate_notice: str,
-                 retry_max: int, retry_seconds: float, retry_wait_max_seconds: float,
+                 retry_max: int, retry_seconds: float, retry_wait_max_seconds: float, hide_pattern: re.Pattern | None = None,
+                 hidden_notice: str | None = None,
                  sleep: Callable[[float], Awaitable[None]] = asyncio.sleep):
         fit_answer("", max_chars=answer_max_chars, hard_max_chars=hard_max_chars, notice=truncate_notice)   # 설정이 틀리면 바로 드러낸다
         if retry_max < 0 or retry_seconds < 0 or retry_wait_max_seconds <= 0:
@@ -42,9 +43,10 @@ class ChatSender(ReplySender):
         self._api, self._limiter, self._sleep = api, limiter, sleep
         self._answer_max, self._hard_max, self._notice = answer_max_chars, hard_max_chars, truncate_notice
         self._retry_max, self._retry_seconds, self._wait_max = retry_max, retry_seconds, retry_wait_max_seconds
+        self._hide, self._hidden_notice = hide_pattern, hidden_notice
 
     async def post(self, room_id: str, text: str, *, client_msg_id: str) -> bool:
-        plain = to_plain_text(text)
+        plain = hide_identifiers(to_plain_text(text), self._hide, fallback=self._hidden_notice)     # 답에 id를 드러내지 않는다 (설계 20절)
         if _MARKUP_ONLY.match(plain):
             log.warning("chat post skipped: empty text room=%s", room_id[:8])
             return False

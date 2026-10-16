@@ -100,3 +100,38 @@ def fit_answer(text: str, *, max_chars: int, hard_max_chars: int, notice: str) -
             cut = max((i for i, c in enumerate(window) if c.isspace()), default=0)
             body = window[:cut].rstrip() if cut > 0 else window
     return FitResult(f"{body}\n{notice}", True)
+
+
+_SENTENCE_END = re.compile(r"(?<=[.!?。])\s+")
+_SPACES = re.compile(r"[ \t]{2,}")
+_SPACE_BEFORE_PUNCT = re.compile(r"[ \t]+([.,!?。])")
+
+
+def hide_identifiers(text: str, pattern: re.Pattern | None, *, fallback: str | None = None) -> str:
+    """답에서 식별자(pattern)를 뺀다 (설계 20절). id가 든 괄호는 통째로, 그래도 id가 남은 문장은 뺀다.
+
+    줄 구조(목록 등)는 지킨다. 모든 문장을 빼게 되면 fallback 문구를, 없으면 문장 대신 식별자만 지운 글을 돌려준다.
+    """
+    if pattern is None or not pattern.search(text):
+        return text
+    bracket = re.compile(r"\s*[(\[（][^()\[\]（）\n]*?(?:" + pattern.pattern + r")[^()\[\]（）\n]*?[)\]）]")
+    stripped = bracket.sub("", text)
+    lines = []
+    for line in stripped.split("\n"):
+        if not pattern.search(line):
+            lines.append(line)
+            continue
+        kept = [s for s in _SENTENCE_END.split(line) if not pattern.search(s)]
+        if kept:
+            lines.append(" ".join(kept))
+    out = _tidy("\n".join(lines))
+    if out.strip():
+        return out
+    if fallback:
+        return fallback
+    return _tidy(re.sub("(?:" + pattern.pattern + r")[\w-]*", "", stripped))   # 식별자에 붙은 나머지 글자도 뺀다
+
+
+def _tidy(text: str) -> str:
+    lines = [_SPACE_BEFORE_PUNCT.sub(r"\1", _SPACES.sub(" ", line)).rstrip() for line in text.split("\n")]
+    return _MANY_BLANKS.sub("\n\n", "\n".join(lines)).strip()

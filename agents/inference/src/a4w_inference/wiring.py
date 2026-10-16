@@ -210,7 +210,8 @@ def build_chat_channel(environ: Mapping[str, str], *, runner: RequestRunner, age
     state = SqliteChatState(chat.state_path)
     sender = ChatSender(api, limiter=RateLimiter(max_per_window=chat.send_per_minute), answer_max_chars=chat.answer_max_chars,
                         hard_max_chars=chat.max_message_chars, truncate_notice=replies.truncate_notice, retry_max=chat.send_retry_max,
-                        retry_seconds=chat.send_retry_seconds, retry_wait_max_seconds=chat.send_retry_wait_max_seconds)
+                        retry_seconds=chat.send_retry_seconds, retry_wait_max_seconds=chat.send_retry_wait_max_seconds,
+                        hide_pattern=chat.answer_hide_pattern, hidden_notice=replies.hidden_ids_notice)
     worker = ChatWorkerPool(submitter=RunnerSubmitter(runner), sender=sender, state=state, replies=replies.texts, now_iso=utc_iso,
                             agent_id=chat.agent_id, poll_interval=chat.poll_interval_seconds, wait_max_seconds=chat.wait_max_seconds,
                             busy_retry_seconds=chat.busy_retry_seconds, busy_retry_max_seconds=chat.busy_retry_max_seconds,
