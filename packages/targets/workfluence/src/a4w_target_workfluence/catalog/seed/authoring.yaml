@@ -34,10 +34,11 @@ spaces.get:
 pages.tree:
   name: list_pages
   title: 기본 스페이스의 페이지 목록 보기
-  description: agent의 기본 스페이스에 있는 페이지를 본문 없이 제목·부모(parentId)와 함께 본다. 트리는 parentId로 그린다. 많으면 잘리고 truncated가 true다(total은 전체 수). 본문은 read_page로 읽는다.
+  description: 스페이스(지정하지 않으면 agent의 기본 스페이스)에 있는 페이지를 본문 없이 제목·부모(parentId)와 함께 본다. 트리는 parentId로 그린다. 많으면 잘리고 truncated가 true다(total은 전체 수). 본문은 read_page로 읽는다.
   inputs:
     createdBy: {description: "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"}
     updatedBy: {description: "마지막으로 고친 사람의 아이디(username) — 요청에 고친 사람이 있을 때만 넣는다"}
+    space: {description: "스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study에'). 비우면 agent의 기본 스페이스"}
     limit: {description: 돌려줄 최대 수, hide: true}
   responseFields: ["items[].id", "items[].title", "items[].parentId", "items[].createdByUsername", "items[].updatedByUsername", total, truncated]
   index:
@@ -58,9 +59,10 @@ pages.get:
 search.find:
   name: search_pages
   title: 페이지 검색
-  description: 기본 스페이스에서 제목과 본문으로 페이지를 찾는다. 검색어는 두 글자부터 된다. 결과의 pageId로 다른 tool을 부른다. 기본 20개까지 돌려준다.
+  description: 스페이스(지정하지 않으면 agent의 기본 스페이스)에서 제목과 본문으로 페이지를 찾는다. 검색어는 두 글자부터 된다. 결과의 pageId로 다른 tool을 부른다. 기본 20개까지 돌려준다.
   inputs:
     q: {description: "검색어 — 요청 글의 핵심 낱말. 두 글자 이상, 200자까지"}
+    space: {description: "스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study에'). 비우면 agent의 기본 스페이스"}
     createdBy: {description: "만든 사람의 아이디(username) — 요청에 만든 사람('네가·내가·○○가 만든')이 있을 때만 넣는다. 나는 내 아이디, 방 참여자는 참여자 목록의 username"}
     updatedBy: {description: "마지막으로 고친 사람의 아이디(username) — 요청에 고친 사람이 있을 때만 넣는다"}
   responseFields: ["items[].pageId", "items[].title", "items[].snippet", "items[].updatedAt", "items[].createdByName", "items[].updatedByName"]
@@ -276,14 +278,15 @@ notifications.readAll:
 pages.create:
   name: create_page
   title: 새 페이지 만들기
-  description: agent의 기본 스페이스 맨 위에 새 페이지를 만든다. 본문은 마크다운이고 원시 HTML·그림·허용 밖 링크는 400이다. 만들기는 실패해도 만들어졌을 수 있으니 다시 하기 전에 search_pages로 확인한다.
+  description: 스페이스(지정하지 않으면 agent의 기본 스페이스) 맨 위에 새 페이지를 만든다. 다른 스페이스에 만들려면 그 스페이스에 쓸 수 있어야 한다(list_spaces의 canWrite). 본문은 마크다운이고 원시 HTML·그림·허용 밖 링크는 400이다. 만들기는 실패해도 만들어졌을 수 있으니 다시 하기 전에 search_pages로 확인한다.
   inputs:
     title: {description: "페이지 제목 — 300자까지"}
     body: {description: "본문 (마크다운 글). 템플릿을 쓰면 list_templates 결과의 body"}
+    space: {description: "스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study에'). 비우면 agent의 기본 스페이스"}
   responseFields: [id, title, currentVersionNo]
   index:
-    summary: "기본 스페이스에 새 페이지(문서)를 제목과 본문으로 만든다"
-    examples: ["새 문서 하나 만들어줘", "오늘 회의 내용을 페이지로 써줘", "공지 페이지 작성해줘", "이 내용으로 위키 글 올려줘", "회의록 아래에 하위 페이지 만들어줘", "새 페이지 만들기", "Create a new page", "Write a wiki page about this"]
+    summary: "스페이스에 새 페이지(문서)를 제목과 본문으로 만든다. 스페이스를 말하지 않으면 기본 스페이스"
+    examples: ["새 문서 하나 만들어줘", "오늘 회의 내용을 페이지로 써줘", "공지 페이지 작성해줘", "이 내용으로 위키 글 올려줘", "스터디 스페이스에 공지 글 올려줘", "새 페이지 만들기", "Create a new page", "Write a wiki page about this"]
 
 pages.update:
   name: update_page

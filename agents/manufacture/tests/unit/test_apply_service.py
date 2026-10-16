@@ -98,8 +98,9 @@ def test_seed_served_definitions_use_context_and_hide_inputs(tmp_path):
     env = Env(tmp_path)
     first(env)
     search = env.served()["search_pages"]
-    assert list(search["inputSchema"]["properties"]) == ["q"]
-    assert {"in": "query", "name": "space", "context": "homeSpace"} in search["http"]["fixed"]
+    assert list(search["inputSchema"]["properties"]) == ["q", "space"]          # space는 선택 칸 (설계 26절)
+    assert search["inputSchema"]["required"] == ["q"]
+    assert {"input": "space", "in": "query", "name": "space", "contextDefault": "homeSpace"} in search["http"]["bindings"]
     assert search["http"]["omitted"] == ["limit"]
 
 

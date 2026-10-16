@@ -3,12 +3,18 @@
   "kind": "operation",
   "name": "create_page",
   "title": "새 페이지 만들기",
-  "description": "agent의 기본 스페이스 맨 위에 새 페이지를 만든다. 본문은 마크다운이고 원시 HTML·그림·허용 밖 링크는 400이다. 만들기는 실패해도 만들어졌을 수 있으니 다시 하기 전에 search_pages로 확인한다.",
+  "description": "스페이스(지정하지 않으면 agent의 기본 스페이스) 맨 위에 새 페이지를 만든다. 다른 스페이스에 만들려면 그 스페이스에 쓸 수 있어야 한다(list_spaces의 canWrite). 본문은 마크다운이고 원시 HTML·그림·허용 밖 링크는 400이다. 만들기는 실패해도 만들어졌을 수 있으니 다시 하기 전에 search_pages로 확인한다.",
   "inputSchema": {
     "type": "object",
     "properties": {
       "body": {
         "description": "본문 (마크다운 글). 템플릿을 쓰면 list_templates 결과의 body"
+      },
+      "space": {
+        "description": "스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study에'). 비우면 agent의 기본 스페이스",
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string"
       },
       "title": {
         "description": "페이지 제목 — 300자까지",
@@ -34,18 +40,18 @@
         "pointer": "/body"
       },
       {
+        "input": "space",
+        "in": "body",
+        "pointer": "/space",
+        "contextDefault": "homeSpace"
+      },
+      {
         "input": "title",
         "in": "body",
         "pointer": "/title"
       }
     ],
-    "fixed": [
-      {
-        "in": "body",
-        "pointer": "/space",
-        "context": "homeSpace"
-      }
-    ],
+    "fixed": [],
     "omitted": [
       "format",
       "body_format",
@@ -69,13 +75,13 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "기본 스페이스에 새 페이지(문서)를 제목과 본문으로 만든다",
+    "summary": "스페이스에 새 페이지(문서)를 제목과 본문으로 만든다. 스페이스를 말하지 않으면 기본 스페이스",
     "examples": [
       "새 문서 하나 만들어줘",
       "오늘 회의 내용을 페이지로 써줘",
       "공지 페이지 작성해줘",
       "이 내용으로 위키 글 올려줘",
-      "회의록 아래에 하위 페이지 만들어줘",
+      "스터디 스페이스에 공지 글 올려줘",
       "새 페이지 만들기",
       "Create a new page",
       "Write a wiki page about this"
@@ -90,5 +96,5 @@
     "structureSha256": "063729d3c019a955f262e98f409d7af26d0ea32e2c7388c5510a0507e68fad52"
   },
   "origin": "seed",
-  "revision": "r-0c70ed879cc5"
+  "revision": "r-223cf1e24756"
 }

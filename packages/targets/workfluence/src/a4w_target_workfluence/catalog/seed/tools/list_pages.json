@@ -3,10 +3,14 @@
   "kind": "operation",
   "name": "list_pages",
   "title": "기본 스페이스의 페이지 목록 보기",
-  "description": "agent의 기본 스페이스에 있는 페이지를 본문 없이 제목·부모(parentId)와 함께 본다. 트리는 parentId로 그린다. 많으면 잘리고 truncated가 true다(total은 전체 수). 본문은 read_page로 읽는다.",
+  "description": "스페이스(지정하지 않으면 agent의 기본 스페이스)에 있는 페이지를 본문 없이 제목·부모(parentId)와 함께 본다. 트리는 parentId로 그린다. 많으면 잘리고 truncated가 true다(total은 전체 수). 본문은 read_page로 읽는다.",
   "inputSchema": {
     "type": "object",
     "properties": {
+      "space": {
+        "type": "string",
+        "description": "스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study에'). 비우면 agent의 기본 스페이스"
+      },
       "createdBy": {
         "maxLength": 200,
         "minLength": 1,
@@ -28,6 +32,12 @@
     "path": "/pages",
     "bindings": [
       {
+        "input": "space",
+        "in": "query",
+        "name": "space",
+        "contextDefault": "homeSpace"
+      },
+      {
         "input": "createdBy",
         "in": "query",
         "name": "createdBy"
@@ -38,13 +48,7 @@
         "name": "updatedBy"
       }
     ],
-    "fixed": [
-      {
-        "in": "query",
-        "name": "space",
-        "context": "homeSpace"
-      }
-    ],
+    "fixed": [],
     "omitted": [
       "limit"
     ],
@@ -91,5 +95,5 @@
     "structureSha256": "4cad36aa3aed5b0d02ae5819151a2ba67dfa645a13a933f33f3876f27430a591"
   },
   "origin": "seed",
-  "revision": "r-44523b0c3f88"
+  "revision": "r-6a164baffe7f"
 }

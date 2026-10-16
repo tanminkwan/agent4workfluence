@@ -3,7 +3,7 @@
   "kind": "operation",
   "name": "search_pages",
   "title": "페이지 검색",
-  "description": "기본 스페이스에서 제목과 본문으로 페이지를 찾는다. 검색어는 두 글자부터 된다. 결과의 pageId로 다른 tool을 부른다. 기본 20개까지 돌려준다.",
+  "description": "스페이스(지정하지 않으면 agent의 기본 스페이스)에서 제목과 본문으로 페이지를 찾는다. 검색어는 두 글자부터 된다. 결과의 pageId로 다른 tool을 부른다. 기본 20개까지 돌려준다.",
   "inputSchema": {
     "type": "object",
     "properties": {
@@ -12,6 +12,12 @@
         "minLength": 1,
         "type": "string",
         "description": "검색어 — 요청 글의 핵심 낱말. 두 글자 이상, 200자까지"
+      },
+      "space": {
+        "maxLength": 200,
+        "minLength": 1,
+        "type": "string",
+        "description": "스페이스 이름이나 id — 요청에 스페이스가 있을 때만 넣는다(예: 'Crazy Study에'). 비우면 agent의 기본 스페이스"
       },
       "createdBy": {
         "maxLength": 200,
@@ -41,6 +47,12 @@
         "name": "q"
       },
       {
+        "input": "space",
+        "in": "query",
+        "name": "space",
+        "contextDefault": "homeSpace"
+      },
+      {
         "input": "createdBy",
         "in": "query",
         "name": "createdBy"
@@ -51,13 +63,7 @@
         "name": "updatedBy"
       }
     ],
-    "fixed": [
-      {
-        "in": "query",
-        "name": "space",
-        "context": "homeSpace"
-      }
-    ],
+    "fixed": [],
     "omitted": [
       "limit"
     ],
@@ -103,5 +109,5 @@
     "structureSha256": "5eb623c2d8fc99adcd34f5050ed4e3fc6d9fe2ce479690e146a1b6ec6d144390"
   },
   "origin": "seed",
-  "revision": "r-65c5e540ab9b"
+  "revision": "r-92db600d93d2"
 }

@@ -17,11 +17,16 @@ class InputField:
     schema: dict[str, Any]    # JSON Schema (명세 설명 포함)
     required: bool
     description: str          # 명세의 설명 (없으면 "")
+    context_default: str | None = None   # 비우면 실행하는 쪽이 넣는 맥락 키 (설계 26절)
 
     def binding(self) -> dict[str, Any]:
         if self.location == "body":
-            return {"input": self.name, "in": "body", "pointer": self.pointer}
-        return {"input": self.name, "in": self.location, "name": self.wire}
+            out = {"input": self.name, "in": "body", "pointer": self.pointer}
+        else:
+            out = {"input": self.name, "in": self.location, "name": self.wire}
+        if self.context_default:
+            out["contextDefault"] = self.context_default
+        return out
 
     def fixed(self, value: Any) -> dict[str, Any]:
         """고정값 항목. 값이 {"$context": 키}면 값 대신 맥락 키를 둔다 (실행하는 쪽이 채운다)."""

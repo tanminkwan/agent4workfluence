@@ -299,3 +299,13 @@ workf 배포(impl-phase21 87bc85b, 명세 3f0a9480 → 4283c9bf)를 반영했다
 
 - 댓글 거르기(`author`)는 시험 스택에 댓글 있는 페이지가 없어(workf 알림) 실호출로 보지 않았다. 검증 시나리오는 기존 그대로(댓글 거르기 없이) 통과했다.
 - 페이지 목록의 `createdBy`·`updatedBy` 거르기는 Inference 실호출로 시험하지 않았다(스페이스만, Phase 5 결과서 6.6).
+
+## 정정 (2026-10-16): 맥락 값을 바꿀 수 있게 (설계 26절)
+
+| 명령 | 결과 |
+|---|---|
+| `scripts/test.sh mcp --src -q packages/tools/tests` (red → green) | 맥락 기본값 시험 3건 실패 확인 → 88 passed |
+| `scripts/test.sh manufacture --src -q …` (red → green) | 변환·조립·선정 시험 4건 실패 확인 → 통과. 카탈로그 기대가 바뀐 기존 2건 고침 |
+| `scripts/build.sh {mcp,detection,manufacture,inference} test` 후 `scripts/test.sh <s>` | mcp 324, detection 411, manufacture **442**, inference 1163 passed |
+| seed 다시 만들기 (기준 명세 4283c9bf) | create_page·list_pages·search_pages에 `space` 선택 칸과 `contextDefault: homeSpace` |
+| 재기동 후 정리 반영 `ap-20261016T073216Z-4a7952` | `applied`, `tv-000007-2df77909`, updated 3, 검증 passed 3(시나리오는 space 없이 → 시험 스페이스로 채워짐), LLM 0 |

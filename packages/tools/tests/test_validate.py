@@ -136,3 +136,11 @@ def test_fixed_entry_needs_value_or_context_not_both(op_tool):
 def test_omitted_inputs_are_listed(op_tool):
     op_tool["http"]["omitted"] = ["parentId"]
     assert validate_tool(op_tool) == []
+
+
+def test_binding_may_name_a_context_default(op_tool):
+    op_tool["http"]["bindings"].append({"input": "space", "in": "query", "name": "space", "contextDefault": "homeSpace"})
+    op_tool["inputSchema"]["properties"]["space"] = {"type": "string"}
+    assert validate_tool(op_tool) == []
+    op_tool["http"]["bindings"][-1]["contextDefault"] = "bad key!"
+    assert validate_tool(op_tool) != []

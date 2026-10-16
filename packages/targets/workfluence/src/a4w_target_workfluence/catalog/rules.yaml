@@ -50,6 +50,7 @@ transform:                   # 명세만으로 알 수 없는 고정값 (FR-233)
 
 context:                     # agent가 늘 쓰는 맥락. 모델에게 묻지 않고 실행하는 쪽이 값을 넣는다 (설계 6.3.1)
   homeSpace:                 # agent의 기본 스페이스 (값: 타겟 설정 AGENT_CONTEXT, 검증 때는 시험 스페이스)
+    overridable: true        # 입력 칸(space)으로 남고, 모델이 비우면 이 값 (설계 26절: 다른 스페이스에 페이지 만들기·찾기)
     bind:
       - {in: query, name: space}      # search.find, pages.tree 등의 space
       - {in: body, pointer: /space}   # pages.create의 space

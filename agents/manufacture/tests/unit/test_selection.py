@@ -99,10 +99,10 @@ def test_unknown_group_in_settings_fails():
 
 
 def test_context_binds_become_fixed_context_values():
-    """agent가 늘 쓰는 스페이스는 맥락 키로 고정한다 (Phase 2 설계 6.3.1)."""
+    """agent가 늘 쓰는 스페이스는 맥락 키다 (Phase 2 설계 6.3.1). Workfluence 카탈로그는 바꿀 수 있게 둔다 (설계 26절)."""
     sel = Selector(rules(), enabled_groups=ALL_GROUPS, token_scopes=ALL_SCOPES)
-    assert sel.fixed_values(fragment("search.find")) == {"query": {"space": {"$context": "homeSpace"}},
-                                                         "body": {"space": {"$context": "homeSpace"}}}
+    ctx = {"$context": "homeSpace", "$overridable": True}
+    assert sel.fixed_values(fragment("search.find")) == {"query": {"space": ctx}, "body": {"space": ctx}}
     assert sel.fixed_values(fragment("attachments.download"))["query"]["format"] == "json"
 
 
@@ -114,3 +114,12 @@ def test_space_operations_are_tools_but_category_and_template_changes_stay_exclu
     structure = sorted(op for op, s in out.items() if s.reason == "STRUCTURE_CHANGE")
     assert structure == sorted(["categories.create", "categories.rename", "categories.delete",
                                 "templates.create", "templates.update", "templates.delete"])
+
+
+def test_context_marked_overridable_is_passed_as_an_overridable_value():
+    r = rules()
+    r["context"] = {"homeSpace": {"overridable": True, "bind": [{"in": "query", "name": "space"}]},
+                    "fixedOne": {"bind": [{"in": "query", "name": "lang"}]}}
+    out = Selector(r, enabled_groups=ALL_GROUPS, token_scopes=ALL_SCOPES).fixed_values(fragment("search.find"))
+    assert out["query"]["space"] == {"$context": "homeSpace", "$overridable": True}
+    assert out["query"]["lang"] == {"$context": "fixedOne"}

@@ -52,15 +52,20 @@ def build_request(
         else:
             body = _set_pointer(body, pointer, value)
 
+    def from_context(key: str) -> Any:
+        if not context or key not in context:
+            raise ToolFailure(ToolError(CONTEXT_MISSING, f"실행 맥락에 값이 없다: {key}",
+                                        hint="실행하는 쪽 설정(AGENT_CONTEXT)을 확인하라"))
+        return context[key]
+
     for b in http.get("bindings", []):
         if b["input"] in args:
             put(b["in"], b.get("name"), b.get("pointer"), args[b["input"]])
+        elif "contextDefault" in b:              # 입력이 없으면 맥락 값 (Phase 2 설계 26절)
+            put(b["in"], b.get("name"), b.get("pointer"), from_context(b["contextDefault"]))
     for f in http.get("fixed", []):
         if "context" in f:
-            if not context or f["context"] not in context:
-                raise ToolFailure(ToolError(CONTEXT_MISSING, f"실행 맥락에 값이 없다: {f['context']}",
-                                            hint="실행하는 쪽 설정(AGENT_CONTEXT)을 확인하라"))
-            put(f["in"], f.get("name"), f.get("pointer"), context[f["context"]])
+            put(f["in"], f.get("name"), f.get("pointer"), from_context(f["context"]))
         else:
             put(f["in"], f.get("name"), f.get("pointer"), f["value"])
 

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import copy
 from collections.abc import Iterable, Mapping
+from dataclasses import replace
 from typing import Any
 
 from .base import InputField, Skeleton, SpecTransformer
@@ -19,6 +20,7 @@ SKIP_HEADERS = frozenset({"authorization"})   # 인증은 실행기가 넣는다
 DROP_KEYS = frozenset({"example", "examples", "x-a4w-cycle"})
 JSON = "application/json"
 MAX_RESPONSE_DEPTH = 4
+_NONE = object()
 
 
 class OpenApi3Transformer(SpecTransformer):
@@ -50,8 +52,11 @@ class OpenApi3Transformer(SpecTransformer):
         kept: list[InputField] = []
         for inp in inputs:
             key = inp.wire if inp.location != "body" else inp.pointer.lstrip("/")
-            if key in fixed.get(inp.location, {}):
-                fixed_entries.append(inp.fixed(fixed[inp.location][key]))
+            value = fixed.get(inp.location, {}).get(key, _NONE)
+            if isinstance(value, dict) and value.get("$overridable"):     # 입력으로 남고 비우면 맥락 값 (설계 26절)
+                kept.append(replace(inp, required=False, context_default=value["$context"]))
+            elif value is not _NONE:
+                fixed_entries.append(inp.fixed(value))
             else:
                 kept.append(inp)
 

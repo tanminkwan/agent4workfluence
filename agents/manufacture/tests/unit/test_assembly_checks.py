@@ -213,3 +213,44 @@ def test_examples_below_the_configured_minimum_are_rejected_for_llm_output_and_s
     raw["index"]["examples"].append("페이지에 댓글 달기")
     assert c.check_authoring(skeleton(), raw, taken_names=set()) == []
     assert codes(c.check_seed(skeleton(), build(), taken_names=set())) == {"TEXT_LIMIT"}     # build()의 예시는 3개
+
+
+# ── 바꿀 수 있는 맥락 (설계 26절)
+
+def _pages_create(fixed):
+    from a4w_manufacture.transform.openapi3 import OpenApi3Transformer
+    from ..specs import fragment as spec_fragment
+    t = OpenApi3Transformer(content_types=["application/json"])
+    return t.skeleton(spec_fragment("pages.create"), fixed=fixed)
+
+
+OVER = {"body": {"space": {"$context": "homeSpace", "$overridable": True}}}
+SRC = {"operationId": "pages.create", "method": "POST", "path": "/pages", "specVersion": "v", "fragmentSha256": "a" * 64,
+       "structureSha256": "b" * 64}
+
+
+def _authoring(**space):
+    inputs = {"title": {"description": "제목"}, "body": {"description": "본문"}}
+    if space:
+        inputs["space"] = space
+    return {"name": "create_page", "title": "새 페이지", "description": "페이지를 만든다.", "inputs": inputs,
+            "index": {"summary": "페이지를 만든다", "examples": ["문서 만들어줘", "글 올려줘", "새 페이지"]}}
+
+
+def test_a_visible_overridable_input_is_optional_and_round_trips_through_a_seed():
+    sk = _pages_create(OVER)
+    d = assemble(sk, parse_authoring(_authoring(description="넣을 스페이스 — 요청에 있을 때만"), max_chars=4000),
+                 group="authoring", risk="write", origin="seed", source=SRC)
+    assert "space" in d["inputSchema"]["properties"] and "space" not in d["inputSchema"]["required"]
+    assert {"input": "space", "in": "body", "pointer": "/space", "contextDefault": "homeSpace"} in d["http"]["bindings"]
+    assert validate_tool(d) == []
+    assert DefinitionChecker(LIMITS, max_visible_inputs=MAX_VISIBLE).check_seed(sk, d, taken_names=set()) == []
+
+
+def test_a_hidden_overridable_input_falls_back_to_a_fixed_context_value():
+    sk = _pages_create(OVER)
+    d = assemble(sk, parse_authoring(_authoring(description="스페이스", hide=True), max_chars=4000),
+                 group="authoring", risk="write", origin="seed", source=SRC)
+    assert "space" not in d["inputSchema"]["properties"]
+    assert {"in": "body", "pointer": "/space", "context": "homeSpace"} in d["http"]["fixed"]
+    assert DefinitionChecker(LIMITS, max_visible_inputs=MAX_VISIBLE).check_seed(sk, d, taken_names=set()) == []

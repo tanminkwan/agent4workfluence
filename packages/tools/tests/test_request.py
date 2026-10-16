@@ -88,3 +88,34 @@ def test_missing_context_value(search_tool):
     with pytest.raises(ToolFailure) as e:
         build_request(search_tool, {"q": "a"}, context={})
     assert e.value.error.code == "CONTEXT_MISSING"
+
+
+# ── 맥락 기본값 (Phase 2 설계 26절): 입력이 있으면 그 값, 없으면 맥락 값
+
+def overridable(tool):
+    tool["http"]["bindings"].append({"input": "space", "in": "query", "name": "space", "contextDefault": "homeSpace"})
+    return tool
+
+
+def test_context_default_is_used_when_the_input_is_left_out(search_tool):
+    req = build_request(overridable(search_tool), {"q": "a"}, context={"homeSpace": "s-1"})
+    assert req.query["space"] == "s-1"
+
+
+def test_an_input_value_wins_over_the_context_default(search_tool):
+    req = build_request(overridable(search_tool), {"q": "a", "space": "Crazy Study"}, context={"homeSpace": "s-1"})
+    assert req.query["space"] == "Crazy Study"
+
+
+def test_context_default_into_a_body_pointer(op_tool):
+    op_tool["http"]["bindings"].append({"input": "space", "in": "body", "pointer": "/space", "contextDefault": "homeSpace"})
+    req = build_request(op_tool, {"pageId": "p-1", "body": "안녕"}, context={"homeSpace": "s-1"})
+    assert req.json_body["space"] == "s-1"
+
+
+def test_missing_context_default_value_is_an_error_only_when_the_input_is_left_out(search_tool):
+    tool = overridable(search_tool)
+    assert build_request(tool, {"q": "a", "space": "x"}, context={}).query["space"] == "x"
+    with pytest.raises(ToolFailure) as e:
+        build_request(tool, {"q": "a"}, context={})
+    assert e.value.error.code == "CONTEXT_MISSING"

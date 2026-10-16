@@ -90,7 +90,8 @@
         "input": {"type": "string", "minLength": 1},
         "in": {"$ref": "#/$defs/location"},
         "name": {"type": "string", "minLength": 1},
-        "pointer": {"type": "string"}
+        "pointer": {"type": "string"},
+        "contextDefault": {"type": "string", "pattern": "^[a-zA-Z][a-zA-Z0-9_]{0,63}$"}
       },
       "if": {"properties": {"in": {"const": "body"}}},
       "then": {"required": ["pointer"]},

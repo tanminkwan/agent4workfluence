@@ -88,6 +88,9 @@ def assemble(
     for inp in skeleton.inputs:
         ia = a.inputs.get(inp.name, InputAuthoring(description=inp.description))
         hide = effective_hide(inp, ia)
+        if hide and inp.context_default and ia.default is NO_DEFAULT:   # 숨긴 바꿀 수 있는 맥락 → 늘 맥락 값 (설계 26절)
+            fixed.append(inp.fixed({"$context": inp.context_default}))
+            continue
         if hide and ia.default is not NO_DEFAULT:
             fixed.append(inp.fixed(ia.default))
             continue
@@ -154,6 +157,9 @@ def extract_authoring(definition: Mapping[str, Any], skeleton: Skeleton) -> Auth
                                               hide=False if inp.machine_hidden else None, default=default)
             continue
         if inp.name in omitted:
+            inputs[inp.name] = InputAuthoring(description=inp.description, hide=True)
+            continue
+        if inp.context_default and any(_same_place(f, inp) and f.get("context") == inp.context_default for f in fixed):
             inputs[inp.name] = InputAuthoring(description=inp.description, hide=True)
             continue
         match = next((f for f in fixed if _same_place(f, inp) and "value" in f), None)

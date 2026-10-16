@@ -55,14 +55,16 @@ class Selector:
 
     def fixed_values(self, fragment: Mapping[str, Any]) -> dict[str, dict[str, Any]]:
         """고정값 {위치: {이름: 값}}. 카탈로그 context의 칸은 값 대신 {"$context": 키} (설계 6.3.1).
+        context에 overridable: true면 {"$context": 키, "$overridable": true} — 입력 칸으로 남고 비우면 맥락 값 (설계 26절).
 
         그 동작에 없는 칸은 기계 변환이 무시한다.
         """
         out: dict[str, dict[str, Any]] = {}
         for key, spec in sorted(self._context.items()):
+            value = {"$context": key, "$overridable": True} if spec.get("overridable") else {"$context": key}
             for bind in spec.get("bind", []):
                 name = bind["name"] if bind["in"] != "body" else bind["pointer"].lstrip("/")
-                out.setdefault(bind["in"], {})[name] = {"$context": key}
+                out.setdefault(bind["in"], {})[name] = dict(value)
         scopes = self._required_scopes(fragment)
         for rule in self._transform:
             if _matches(rule["match"], fragment, scopes):

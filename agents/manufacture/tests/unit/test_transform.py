@@ -95,3 +95,19 @@ def test_context_fixed_value_removes_input_and_keeps_key():
     pc = T.skeleton(fragment("pages.create"), fixed=ctx)
     assert "space" not in names(pc)
     assert {"in": "body", "pointer": "/space", "context": "homeSpace"} in pc.http["fixed"]
+
+
+# ── 바꿀 수 있는 맥락 (설계 26절): 입력 칸으로 남고, 비우면 실행하는 쪽이 맥락 값을 넣는다
+
+OVER = {"query": {"space": {"$context": "homeSpace", "$overridable": True}},
+        "body": {"space": {"$context": "homeSpace", "$overridable": True}}}
+
+
+def test_overridable_context_keeps_an_optional_input_with_a_context_default_binding():
+    pc = T.skeleton(fragment("pages.create"), fixed=OVER)
+    space = pc.input("space")
+    assert space is not None and space.required is False and space.context_default == "homeSpace"
+    assert {"input": "space", "in": "body", "pointer": "/space", "contextDefault": "homeSpace"} in pc.http["bindings"]
+    assert not [f for f in pc.http["fixed"] if f.get("pointer") == "/space"]
+    sf = T.skeleton(fragment("search.find"), fixed=OVER)
+    assert {"input": "space", "in": "query", "name": "space", "contextDefault": "homeSpace"} in sf.http["bindings"]

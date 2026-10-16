@@ -177,3 +177,35 @@ workf가 스페이스·페이지·댓글 목록에 만든 사람 칸과 거르�
 
 - 정답 확인: aiagent token으로 `GET /spaces?createdBy=aiagent` → 2개(같은 이름), `createdBy=tanminkwan` → 0개.
 - 첫 차례는 이 방의 앞 대화(6.3·6.5에서 "만든 스페이스는 없다"고 답한 기록)를 믿고 tool을 부르지 않았다. 검색·tool 문제가 아니라 모델이 이력의 틀린 답을 되풀이한 것이다. 고치지 않았다.
+
+## 7. 채팅 멘션 "@표시 이름" 대응 (2026-10-16, 설계 19.1절)
+
+workf F-024(impl-phase21 a7a93b3, 화면만 바뀜, 명세 해시 4283c9bf 그대로)에 맞췄다.
+
+| 명령 | 결과 |
+|---|---|
+| `scripts/test.sh inference --src -q …test_chat_mention_strip.py` (red → green) | `@` 함께 빼기 시험 실패 확인 → 통과 |
+| `scripts/test.sh inference --src -q …test_chat_policy.py …test_chat_mention_strip.py` (red → green) | 방에서 내 표시 이름으로 호명 판단·빼기 시험 4건 실패 확인 → 54 passed |
+| `scripts/test.sh inference --src -q packages/core packages/tools packages/clients agents/inference/tests` | 1163 passed, 9 skipped |
+| 재빌드·재기동 후 고정 여럿 방(peer) "@AI Agent 네가 만든 스페이스 목록 알려줘" | 답 "AI Agent 작업공간, Crazy Study". 수행 로직에 넘어간 글은 `네가 만든 스페이스 목록 알려줘`(`@`·이름 빠짐), `list_spaces(createdBy=aiagent)` |
+| 같은 방 "@tanminkwan 점심 뭐 먹을래?" | `skipped`(다른 사람 멘션, 답 없음) |
+
+확인하지 못한 것: 에이전트 표시 이름을 실제로 바꿔(설정 이름과 다르게) 시험하지는 않았다(단위 시험 P20만).
+
+## 8. 다른 스페이스에 페이지 만들기, "방" 혼동 (2026-10-16)
+
+사용자 방에서 "그 space에 … 글을 올려"에 "특정 스페이스에 페이지를 새로 만드는 기능을 사용할 수 없다"고 답했고, "이방에 사용자들 목록 알려줘"에 스페이스 이름을 되물었다.
+
+- 스페이스: tool이 기본 스페이스로 고정되어 있었다. `space`를 선택 입력으로 바꿨다(Phase 2 설계 26절, `tv-000007`).
+- "방" 혼동: 채팅 덧붙임(`chat_notes.md`, 예시 같음)에 "'방'·'이 방'·'채팅방'은 이 채팅 방이고 스페이스가 아니다. 참여자를 물으면 tool 없이 이 목록으로 답한다"를 더했다.
+
+실호출 (고정 여럿 방, peer, 재기동·`tv-000007` 받은 뒤):
+
+| 요청 | 답 | tool |
+|---|---|---|
+| "@AI Agent 이 방 참여자 목록 알려줘" | "AI Agent Peer (username=aiagent-peer)" — 이 방의 다른 참여자 1명, 맞음 | 없음 |
+| "@AI Agent Crazy Study 스페이스에 '채팅 시험 6c76d3' 제목으로 … 짧은 글 올려줘" | "'채팅 시험 6c76d3' 페이지를 Crazy Study 스페이스에 만들었습니다." | `create_page(space="Crazy Study")` |
+
+- 확인: 만든 페이지(`9208277f…`)의 스페이스가 Crazy Study, 본문 끝에 AI 작성 표시.
+- 시험이 만든 페이지 "채팅 시험 6c76d3"은 사용자 스페이스(Crazy Study)에 남겨 두었다(지우지 않음).
+- 확인하지 못한 것: 쓰기 권한이 없는 스페이스에 만들기(403) 실호출, `list_pages`·`search_pages`의 `space` 실호출.
