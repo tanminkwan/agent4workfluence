@@ -52,11 +52,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "페이지에 붙은 라벨(태그)을 뗀다",
+    "summary": "페이지에 붙은 라벨(태그) 하나를 뗀다",
     "examples": [
-      "이 문서에서 긴급 라벨 떼줘",
-      "태그 지워줘",
-      "페이지 라벨 하나 빼줘"
+      "긴급 태그 떼줘",
+      "이 문서 라벨 하나 빼",
+      "잘못 붙인 태그 없애줘",
+      "검토중 라벨 지워줘",
+      "페이지 태그 제거",
+      "페이지에서 라벨 떼기",
+      "Remove the label from this page",
+      "Untag this page"
     ]
   },
   "source": {
@@ -68,5 +73,5 @@
     "structureSha256": "06cc82f977372dfadc6b5c55e54dbcb6dd2123598aeb7615ea20668b9e2f84f3"
   },
   "origin": "seed",
-  "revision": "r-a3125227eb2e"
+  "revision": "r-d24a50117c1b"
 }

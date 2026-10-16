@@ -42,11 +42,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "페이지의 첨부 파일을 지운다",
+    "summary": "페이지의 첨부 파일 하나를 지운다",
     "examples": [
-      "그 첨부 파일 지워줘",
-      "잘못 올린 파일 삭제해줘",
-      "첨부 없애줘"
+      "그 첨부 지워줘",
+      "잘못 올린 파일 삭제",
+      "첨부 하나 없애줘",
+      "오래된 파일 지워",
+      "첨부 정리해줘",
+      "첨부 지우기",
+      "Delete the attachment",
+      "Remove that file"
     ]
   },
   "source": {
@@ -58,5 +63,5 @@
     "structureSha256": "3e94a43528142e00d5d9fff220d17c32fba4e87ad4c81898ab09f0aebdbf85b2"
   },
   "origin": "seed",
-  "revision": "r-d6b197dc8edf"
+  "revision": "r-daed4beaba3d"
 }

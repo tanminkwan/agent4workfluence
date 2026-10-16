@@ -6,6 +6,7 @@ import copy
 
 import pytest
 
+from a4w_core.errors import ConfigError
 from a4w_manufacture.assembly import assemble, extract_authoring, parse_authoring, revision_of
 from a4w_manufacture.checks import DefinitionChecker, TextLimits
 from a4w_manufacture.transform.openapi3 import OpenApi3Transformer
@@ -187,3 +188,28 @@ def test_seed_round_trip_keeps_omitted():
     again = assemble(skeleton(), extract_authoring(d, skeleton()), group="communication", risk="write", origin="llm",
                      source=SOURCE)
     assert again == d
+
+
+# ---- 색인 예시 수 하한 (설계 24.1) ----
+
+def test_text_limits_parse_min_examples_and_default_to_three():
+    assert TextLimits.parse("description=600,summary=120,example=60,min_examples=6").min_examples == 6
+    assert TextLimits.parse("description=600,summary=120,example=60").min_examples == 3
+
+
+@pytest.mark.parametrize("text", ["description=600,summary=120,example=60,min_examples=x",
+                                  "description=600,summary=120,example=60,min_examples=0"])
+def test_text_limits_reject_bad_min_examples(text):
+    with pytest.raises(ConfigError):
+        TextLimits.parse(text)
+
+
+def test_examples_below_the_configured_minimum_are_rejected_for_llm_output_and_seed():
+    six = TextLimits(description=600, summary=120, example=60, min_examples=6)
+    raw = llm_output()
+    raw["index"]["examples"] = ["회의록에 댓글 달아줘", "답글 남겨줘", "의견 적어줘", "코멘트 남겨", "leave a comment"]
+    c = DefinitionChecker(six, max_visible_inputs=MAX_VISIBLE)
+    assert codes(c.check_authoring(skeleton(), raw, taken_names=set())) == {"TEXT_LIMIT"}
+    raw["index"]["examples"].append("페이지에 댓글 달기")
+    assert c.check_authoring(skeleton(), raw, taken_names=set()) == []
+    assert codes(c.check_seed(skeleton(), build(), taken_names=set())) == {"TEXT_LIMIT"}     # build()의 예시는 3개

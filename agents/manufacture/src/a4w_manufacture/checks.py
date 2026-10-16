@@ -24,7 +24,7 @@ NAME = re.compile(r"^[a-z][a-z0-9_]{2,63}$")
 # (한글은 단어 문자라 \b를 쓰지 않고 앞뒤 글자로 자른다)
 ID_LIKE = re.compile(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"
                      r"|(?<![0-9a-f])[0-9a-f]{12,}(?![0-9a-f])|(?<!\d)\d{6,}(?!\d)", re.IGNORECASE)
-MIN_EXAMPLES = 3
+MIN_EXAMPLES = 3                         # TOOL_TEXT_LIMITS에 min_examples가 없을 때 (이전 설정과 호환)
 
 # LLM 출력 스키마 (create·update). 개수 하한은 TEXT_LIMIT으로 따로 본다
 AUTHORING_SCHEMA: dict[str, Any] = {
@@ -61,14 +61,19 @@ class TextLimits:
     description: int
     summary: int
     example: int
+    min_examples: int = MIN_EXAMPLES       # 색인 예시 질의 수 하한 (설계 24.1)
 
     @classmethod
     def parse(cls, text: str) -> "TextLimits":
         try:
             values = {k.strip(): int(v) for k, v in (p.split("=", 1) for p in text.split(",") if p.strip())}
-            return cls(description=values["description"], summary=values["summary"], example=values["example"])
+            limits = cls(description=values["description"], summary=values["summary"], example=values["example"],
+                         min_examples=values.get("min_examples", MIN_EXAMPLES))
         except (KeyError, ValueError):
-            raise ConfigError("TOOL_TEXT_LIMITS는 description=N,summary=N,example=N 꼴이어야 한다") from None
+            raise ConfigError("TOOL_TEXT_LIMITS는 description=N,summary=N,example=N[,min_examples=N] 꼴이어야 한다") from None
+        if limits.min_examples < 1:
+            raise ConfigError("TOOL_TEXT_LIMITS의 min_examples는 1 이상이어야 한다")
+        return limits
 
 
 class DefinitionChecker:
@@ -147,8 +152,8 @@ class DefinitionChecker:
                 out.append(Problem("EXAMPLE_HAS_ID", f"index.examples[{i}]", "예시 질의에 id 같은 값을 쓰지 않는다"))
             if len(ex) > self._limits.example:
                 out.append(Problem("TEXT_LIMIT", f"index.examples[{i}]", f"{self._limits.example}자를 넘었다"))
-        if len(examples) < MIN_EXAMPLES:
-            out.append(Problem("TEXT_LIMIT", "index.examples", f"예시 질의는 {MIN_EXAMPLES}개 이상이어야 한다"))
+        if len(examples) < self._limits.min_examples:
+            out.append(Problem("TEXT_LIMIT", "index.examples", f"예시 질의는 {self._limits.min_examples}개 이상이어야 한다"))
         if len(raw["description"]) > self._limits.description:
             out.append(Problem("TEXT_LIMIT", "description", f"{self._limits.description}자를 넘었다"))
         if len(raw["index"]["summary"]) > self._limits.summary:

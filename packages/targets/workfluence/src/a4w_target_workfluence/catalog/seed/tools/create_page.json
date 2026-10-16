@@ -69,11 +69,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "위키에 새 페이지(문서)를 만든다",
+    "summary": "기본 스페이스에 새 페이지(문서)를 제목과 본문으로 만든다",
     "examples": [
-      "회의록 페이지 새로 만들어줘",
-      "오늘 작업 내용을 문서로 올려줘",
-      "새 위키 페이지 작성해줘"
+      "새 문서 하나 만들어줘",
+      "오늘 회의 내용을 페이지로 써줘",
+      "공지 페이지 작성해줘",
+      "이 내용으로 위키 글 올려줘",
+      "회의록 아래에 하위 페이지 만들어줘",
+      "새 페이지 만들기",
+      "Create a new page",
+      "Write a wiki page about this"
     ]
   },
   "source": {
@@ -85,5 +90,5 @@
     "structureSha256": "5a3a89924c4c7eedcf542ef275bd8c2ea3e95c191031cd9c61f14be74d1d9509"
   },
   "origin": "seed",
-  "revision": "r-0a931dae757f"
+  "revision": "r-c5f49a7baca1"
 }

@@ -31,11 +31,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "안 읽은 알림이 몇 개인지 본다",
+    "summary": "알림 내용 없이 안 읽은 알림 개수만 센다",
     "examples": [
-      "안 읽은 알림 몇 개야?",
-      "새 알림 수 알려줘",
-      "확인 안 한 알림 있어?"
+      "안 읽은 알림 몇 개?",
+      "새 알림 있나 숫자만 알려줘",
+      "확인 안 한 알림 수",
+      "알림 쌓인 거 몇 개야?",
+      "읽지 않은 알림 개수 확인",
+      "안 읽은 알림 수 세기",
+      "How many unread notifications?",
+      "Unread notification count"
     ]
   },
   "source": {
@@ -47,5 +52,5 @@
     "structureSha256": "0859ccaba7804393a7ab9420fc07190d8cbb38b266a1c80552dda5e7f358a352"
   },
   "origin": "seed",
-  "revision": "r-28480f5f0e36"
+  "revision": "r-cdee699562db"
 }

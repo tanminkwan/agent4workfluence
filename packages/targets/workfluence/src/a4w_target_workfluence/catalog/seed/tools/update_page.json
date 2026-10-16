@@ -83,11 +83,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "위키 페이지의 제목이나 본문을 고친다",
+    "summary": "이미 있는 페이지의 제목이나 본문을 고친다. 새로 만들지 않는다",
     "examples": [
-      "이 문서 내용 고쳐줘",
-      "회의록에 결정 사항 추가해줘",
-      "페이지 제목 바꿔줘"
+      "이 문서 내용 수정해줘",
+      "페이지 제목 바꿔줘",
+      "본문에 결정 사항 덧붙여줘",
+      "오래된 내용 고쳐줘",
+      "문서 마지막에 한 줄 추가",
+      "페이지 본문 고치기",
+      "Update this page",
+      "Change the page title"
     ]
   },
   "source": {
@@ -99,5 +104,5 @@
     "structureSha256": "63efcea300f736dc093c8877cbe344b765e8a300d527e64d6995cb16e5adfd26"
   },
   "origin": "seed",
-  "revision": "r-50bea004f164"
+  "revision": "r-b395f6af1b5d"
 }

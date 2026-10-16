@@ -53,11 +53,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "위키 페이지 하나의 본문을 읽는다",
+    "summary": "이미 고른 페이지 하나(id를 앎)의 본문 전체를 읽는다. 제목만 알 때는 제목으로 찾아 읽기를 쓴다",
     "examples": [
-      "이 페이지 내용 보여줘",
-      "회의록 본문 읽어줘",
-      "문서 열어서 읽어줘"
+      "방금 찾은 페이지 본문 읽어줘",
+      "그 문서 전체 내용 보여줘",
+      "목록에서 고른 페이지 열어줘",
+      "이 페이지 내용 요약해줘",
+      "이 글 무슨 내용이야?",
+      "페이지 본문 읽기",
+      "Read the page content",
+      "Open that page and summarize it"
     ]
   },
   "source": {
@@ -69,5 +74,5 @@
     "structureSha256": "e0272aabfb60929038d37c5acc9175df39e97fdd66edca9889dafd279d5e0437"
   },
   "origin": "seed",
-  "revision": "r-da869d631ce5"
+  "revision": "r-1de18e95dabd"
 }

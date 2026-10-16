@@ -45,11 +45,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "페이지 하나에 붙은 라벨(태그)을 본다",
+    "summary": "페이지 하나에 지금 붙어 있는 라벨(태그)만 본다. 위키 전체 라벨 종류가 아니다",
     "examples": [
-      "이 문서에 어떤 태그가 붙었어?",
-      "페이지 라벨 확인해줘",
-      "이 글의 분류 라벨 알려줘"
+      "이 페이지에 무슨 태그 있어?",
+      "그 문서 라벨 보여줘",
+      "이 글에 긴급 라벨 붙어 있어?",
+      "페이지 태그 확인해줘",
+      "문서에 달린 라벨 알려줘",
+      "페이지 하나의 라벨 보기",
+      "What labels are on this page?",
+      "Show tags of this document"
     ]
   },
   "source": {
@@ -61,5 +66,5 @@
     "structureSha256": "47ac48b15e5c1165ce277c96218b75eaeb8cf9ff30cf2e97ce5a036b4194b067"
   },
   "origin": "seed",
-  "revision": "r-f05a2ca42e4a"
+  "revision": "r-5dd21fa59338"
 }

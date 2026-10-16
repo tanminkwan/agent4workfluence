@@ -42,11 +42,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "위키 페이지를 휴지통으로 지운다",
+    "summary": "페이지를 휴지통으로 지운다",
     "examples": [
-      "이 페이지 지워줘",
-      "필요 없는 초안 삭제해줘",
-      "문서 휴지통에 버려줘"
+      "이 문서 지워줘",
+      "필요 없는 페이지 삭제",
+      "초안 페이지 휴지통으로",
+      "그 글 없애줘",
+      "중복 문서 정리해서 지워",
+      "페이지 지우기",
+      "Delete this page",
+      "Move the page to trash"
     ]
   },
   "source": {
@@ -58,5 +63,5 @@
     "structureSha256": "37d061152a588a250a52edd76ee7d16286cece191d627eb9e7e751f6ca557d95"
   },
   "origin": "seed",
-  "revision": "r-b0bb13320e06"
+  "revision": "r-34fc3c12a923"
 }

@@ -173,7 +173,7 @@ class ApplyService:
             })
 
         items = [p.item() for p in plans + comp_plans
-                 if p.outcome in REPORTED or (p.key is not None and p.key in touched)]
+                 if p.outcome in REPORTED or p.reason == "SEED_INVALID" or (p.key is not None and p.key in touched)]
         new_reviews = self._commit(target_id, apply_id, plans + comp_plans, ops, state, spec_version, changeset,
                                    version, items)
         if version and self._store.current(target_id) != version:
@@ -215,6 +215,26 @@ class ApplyService:
         return rt
 
     # ──────────────────────────────────────────────────────────── 동작 하나
+    def _seed_refresh(self, rt, rec, selector, sel, cur, head_tools, assigned, p: Plan) -> bool:
+        """명세 조각이 그대로인 서빙 tool에 대해, catalog의 seed가 같은 조각인데 글이 바뀌었으면 True (설계 24.2).
+
+        비교는 source(명세 판)를 뺀 정의로 한다. 바뀐 seed가 검사에 걸리면 서빙 tool을 그대로 두고 이유를 남긴다.
+        """
+        seed = rt.catalog.seed_for(rec.operation_id)
+        if seed is None or rt.catalog.seed_match(rec.operation_id, rec.fragment_sha256, rec.structure_sha256) != "same":
+            return False
+        sk = rt.transformer.skeleton(rec.fragment, fixed=selector.fixed_values(rec.fragment))
+        d = assemble(sk, extract_authoring(seed, sk), group=sel.group, risk=sel.risk, origin="seed", source=cur["source"])
+        if d["revision"] == cur["revision"]:
+            return False
+        taken = (set(head_tools) | assigned) - {cur["name"]}
+        problems = self._checker.check_seed(sk, seed, taken_names=taken)
+        if problems:
+            p.reason, p.error = "SEED_INVALID", [x.to_dict() for x in problems]
+            log.warning("changed seed is invalid, served tool kept: op=%s", rec.operation_id)
+            return False
+        return True
+
     def _plan(self, rt, key, rec, selector, head_tools, by_status, touched, changeset, assistant, assigned) -> Plan:
         cur = head_tools.get(rec.tool_name) if rec.tool_name else None
         p = Plan(key=key, rec=rec, current=cur, tool_name=rec.tool_name if cur else None, touched=touched.get(key))
@@ -255,9 +275,12 @@ class ApplyService:
             p.outcome, p.origin, p.verify = ("updated" if cur else "added"), d["origin"], approved.get("verify")
             assigned.add(d["name"])
             return p
+        from_seed = False
         if cur is not None and cur["source"]["fragmentSha256"] == fsha and rec.state != "failed":
-            p.outcome = "unchanged"
-            return p
+            if not self._seed_refresh(rt, rec, selector, sel, cur, head_tools, assigned, p):
+                p.outcome = "unchanged"
+                return p
+            from_seed = True                       # seed 글만 바뀌었다: seed로 다시 만든다 (설계 24.2)
         if rejected is not None and rejected.get("fragmentSha256") == fsha:
             p.outcome = "rejected"
             return p
@@ -274,7 +297,7 @@ class ApplyService:
                   "specVersion": rec.spec_version, "fragmentSha256": fsha, "structureSha256": rec.structure_sha256}
         taken = (set(head_tools) | assigned) - ({cur["name"]} if cur else set())
         task, previous = None, cur
-        if cur is not None:
+        if cur is not None and not from_seed:
             task = "redescribe" if cur["source"]["structureSha256"] == rec.structure_sha256 else "update"
         else:
             match = rt.catalog.seed_match(rec.operation_id, fsha, rec.structure_sha256)

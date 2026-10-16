@@ -65,11 +65,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "스페이스를 중지하거나 다시 쓸 수 있게 한다",
+    "summary": "스페이스를 중지하거나 다시 쓸 수 있게 상태를 바꾼다",
     "examples": [
-      "이 스페이스 잠시 중지해줘",
-      "공간 다시 쓸 수 있게 열어줘",
-      "스페이스 동결해줘"
+      "스페이스 잠시 멈춰줘",
+      "공간 다시 열어줘",
+      "스페이스 동결",
+      "중지된 공간 활성화",
+      "스페이스 상태 바꿔줘",
+      "스페이스 중지·다시 쓰기",
+      "Suspend this space",
+      "Reactivate the space"
     ]
   },
   "source": {
@@ -81,5 +86,5 @@
     "structureSha256": "2294db567090409a94392fb9630c589cf01f6abc2a5fcc84034b46a15bebc65d"
   },
   "origin": "seed",
-  "revision": "r-a1f8c95bd098"
+  "revision": "r-dde5cf166039"
 }

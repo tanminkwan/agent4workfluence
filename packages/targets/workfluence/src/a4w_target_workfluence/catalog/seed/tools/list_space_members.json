@@ -47,11 +47,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "스페이스에 누가 멤버(Crew)로 있는지 본다",
+    "summary": "스페이스에 누가 Crew(멤버)로 들어 있는지와 각자의 역할을 본다",
     "examples": [
-      "이 스페이스 멤버 누구야?",
-      "공간에 들어 있는 사람 보여줘",
-      "스페이스 Crew 역할 알려줘"
+      "이 스페이스에 누가 있어?",
+      "공간 멤버 목록 보여줘",
+      "민수가 이 스페이스에 들어 있어?",
+      "Crew 역할 확인해줘",
+      "스페이스 편집자가 누구야?",
+      "스페이스 멤버 목록 보기",
+      "Who is in this space?",
+      "List space members"
     ]
   },
   "source": {
@@ -63,5 +68,5 @@
     "structureSha256": "61f9d6bb29129f199388e66b30a1ec70cd2a6e58f5c6619831cfe96b935e4b1f"
   },
   "origin": "seed",
-  "revision": "r-38acc6b15a67"
+  "revision": "r-637c7fc53e94"
 }

@@ -61,11 +61,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "위키 페이지에 댓글을 남긴다",
+    "summary": "이미 고른 페이지(id를 앎)에 댓글이나 답글을 새로 단다",
     "examples": [
-      "이 문서에 확인했다고 댓글 달아줘",
-      "회의록에 의견 남겨줘",
-      "페이지에 질문 댓글 써줘"
+      "이 페이지에 댓글 남겨줘",
+      "좋아요라고 댓글 써줘",
+      "그 댓글에 답글 달아줘",
+      "질문을 댓글로 올려줘",
+      "문서에 피드백 남겨",
+      "페이지에 댓글 달기",
+      "Add a comment to this page",
+      "Reply to that comment"
     ]
   },
   "source": {
@@ -77,5 +82,5 @@
     "structureSha256": "c626f7a78808577465711d103559677abf08fff2e8cb3b708a960dc0eaee1730"
   },
   "origin": "seed",
-  "revision": "r-26de2be39ca7"
+  "revision": "r-002c6a5868a4"
 }

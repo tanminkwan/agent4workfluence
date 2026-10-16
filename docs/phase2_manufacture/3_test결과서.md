@@ -251,3 +251,33 @@ Detection 검증 token과 agent token이 둘 다 `aiagent` 계정의 같은 toke
 - `delete_space`·`set_space_status`는 danger 묶음이 꺼져 있어 실호출 검증을 하지 않았다. 단위 시험의 선정·seed·시나리오 형식만 확인했다. 정리 순서의 "중지면 active로 되돌림"은 가짜 서버로만 시험했다.
 - 스페이스 이름 없이 "Crew 목록 알려줘"라고 하면 모델이 스페이스를 되물었다(tool 호출 없음). 되묻기 규칙대로의 동작이다.
 - 쓰기 tool(`create_space`·`add_space_member` 등)을 Inference가 실제로 부르는 시험은 Phase 5 "열심공부" 시나리오로 한다(workf의 username 배포 뒤).
+
+## 정정 (2026-10-16): 색인 문서 보강 (설계 24절)
+
+Phase 5 채팅 시험의 검색 오답("스페이스 목록 tool이 없다", Phase 5 결과서 6절)에 이어 사용자 지시로 색인 글을 보강했다. 지금 서빙하는 36개는 모두 seed이고, 색인 글은 개발 세션이 `authoring.yaml`에 쓴 것이다. GLM(`zai-org/GLM-5.2`)은 seed가 없거나 명세가 바뀐 동작만 쓴다.
+
+### 바꾼 것
+
+- seed 45개(단순 42, 상위 3)의 `index.summary`·`index.examples`: 요약에 비슷한 tool과 다른 점, 예시 3개 → 8개(한국어 요청 5, "대상 + 동작" 1, 영어 2). `queries.yaml`(평가 질의)과 같은 문장은 쓰지 않았다(겹친 1건을 고침). `content` 길이 135~260자(상한 600).
+- `TextLimits.min_examples`(`.env` `TOOL_TEXT_LIMITS`에 `min_examples=6`, 없으면 3).
+- GLM 프롬프트 `_common.v2.md`(`PROMPT_VERSIONS` `common=v2`): 같은 색인 글 규칙.
+- 반영 규칙: 명세 조각이 그대로여도 seed 글이 바뀌면 seed로 다시 만든다(설계 24.2). 첫 정리 반영에서 상위 3개만 바뀐 것을 보고 더했다.
+
+### 실행한 명령과 결과
+
+| 명령 | 결과 |
+|---|---|
+| `scripts/test.sh manufacture --src -q …test_assembly_checks.py` (red → green) | min_examples 시험 3건 실패 확인 → 29 passed |
+| `scripts/test.sh manufacture --src -q …test_apply_service.py` (red → green) | seed 다시 만들기 시험 3건 실패 확인 → 22 passed |
+| `a4w-seedtool build --spec tests/fixtures/workfluence/openapi-75ops.yaml --limits …,min_examples=6` | tools 42, composites 3, queries 70. 명세 조각 지문은 그대로, revision만 바뀜 |
+| `scripts/build.sh {manufacture,detection,mcp} test` 후 `scripts/test.sh <s>` | manufacture **431 passed**, detection 406 passed, mcp 319 passed |
+| 정리 반영 1 (`ap-20261016T050905Z-5294d1`, 규칙 보강 전) | `tv-000004`, updated 3(상위 tool만), 검증 passed 3 |
+| 정리 반영 2 (`ap-20261016T051630Z-553858`, 규칙 보강 뒤) | `applied`, `tv-000005-abd11aa1`, updated 33, 검증 passed 33, 색인 upserted 33, LLM 호출 0. Inference MCP가 36개로 갱신 |
+| `python -m a4w_manufacture.evaluate_index --target workfluence` (원래 질의, 상위 5) | 바꾸기 전 60/61·상위 1 42 → 바꾼 뒤 **60/61·상위 1 48** |
+
+색인 평가(원래 질의) 질의별 변화: 올라감 13, 내려감 6(가장 큰 것 "위키에 공간이 몇 개나 있는지 궁금해" list_spaces 1→4, 나머지는 한 칸), 놓침 1건은 그대로("1판이랑 3판 차이 알려줘" compare_page_versions 상위 5 밖). 평가 질의를 보고 예시를 더 고치지 않았다(평가가 부풀려진다).
+
+### 확인하지 못한 것
+
+- GLM이 `_common.v2`로 쓰는 경우(새 동작·명세 변경)는 이번에 생기지 않아 실제 출력을 보지 않았다. live LLM 시험(`test_live_llm`)도 돌리지 않았다.
+- `seedtool`은 저장소 기준 명세(8c83f9c6)로 만들었다. 시험 스택 명세(3f0a9480)와는 채팅 동작만 다르다(Detection 변경 식별 cs-b33a5a88714e6ed0385e77d3).

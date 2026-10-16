@@ -52,11 +52,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "페이지에 달린 댓글과 답글을 본다",
+    "summary": "페이지 하나에 달린 댓글과 답글을 읽는다. 댓글을 쓰지는 않는다",
     "examples": [
-      "이 문서에 달린 댓글 보여줘",
-      "사람들이 무슨 의견 남겼어?",
-      "회의록 댓글 읽어줘"
+      "이 페이지 댓글 보여줘",
+      "누가 무슨 의견 달았어?",
+      "답글까지 다 읽어줘",
+      "댓글 몇 개 달렸어?",
+      "문서에 달린 피드백 정리해줘",
+      "페이지 댓글 목록 보기",
+      "Show comments on this page",
+      "What did people comment?"
     ]
   },
   "source": {
@@ -68,5 +73,5 @@
     "structureSha256": "0e9c538a13903002b97703d3c2ec8fb919d681850d84319b396281a5e07b8c63"
   },
   "origin": "seed",
-  "revision": "r-1c87a078842d"
+  "revision": "r-4a738bd794d3"
 }

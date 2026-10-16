@@ -46,11 +46,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "휴지통에서 지운 페이지를 되살린다",
+    "summary": "휴지통에 있는 지운 페이지를 되살린다",
     "examples": [
-      "지운 문서 되살려줘",
-      "휴지통에서 페이지 복구해줘",
-      "실수로 지운 페이지 살려줘"
+      "지운 문서 살려줘",
+      "삭제 취소하고 문서 돌려놔",
+      "삭제한 페이지 복구",
+      "실수로 지운 글 되돌려",
+      "휴지통 페이지 원래대로",
+      "지운 페이지 되살리기",
+      "Restore the deleted page",
+      "Undelete this page"
     ]
   },
   "source": {
@@ -62,5 +67,5 @@
     "structureSha256": "bc61d3a9482bffe240a1bf1eba4cf13e49738362a382a77f684497a907d8b76c"
   },
   "origin": "seed",
-  "revision": "r-aa679ab227f7"
+  "revision": "r-3e9d52102b5d"
 }

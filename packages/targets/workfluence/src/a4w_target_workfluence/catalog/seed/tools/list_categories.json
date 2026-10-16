@@ -32,11 +32,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "스페이스를 묶는 분류 목록을 본다",
+    "summary": "스페이스를 묶는 분류(카테고리) 목록을 본다. 페이지에 붙이는 라벨(태그)과는 다르다",
     "examples": [
-      "스페이스 분류 뭐 있어?",
-      "카테고리 목록 보여줘",
-      "공간 분류 알려줘"
+      "스페이스 카테고리 종류 알려줘",
+      "공간을 어떤 분류로 나눠?",
+      "분류 목록 줘",
+      "스페이스 만들 때 고를 분류 보여줘",
+      "카테고리 뭐 있어?",
+      "스페이스 분류 목록 보기",
+      "List space categories",
+      "What categories are there?"
     ]
   },
   "source": {
@@ -48,5 +53,5 @@
     "structureSha256": "04083995148dd643f80a3ad5a342aa01691b62a7aed9a569a1ec4ed2141c9f11"
   },
   "origin": "seed",
-  "revision": "r-c82108b2ba2c"
+  "revision": "r-2189b1d44908"
 }

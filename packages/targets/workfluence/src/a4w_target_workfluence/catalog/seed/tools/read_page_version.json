@@ -64,11 +64,16 @@
   ],
   "group": "history",
   "index": {
-    "summary": "페이지의 예전 버전 본문을 읽는다",
+    "summary": "버전 번호로 페이지의 예전 버전 하나의 본문을 읽는다. 지금 본문이 아니다",
     "examples": [
-      "이 문서 예전 버전 보여줘",
-      "첫 번째 버전 내용 읽어줘",
-      "고치기 전 내용 알려줘"
+      "예전 버전 내용 보여줘",
+      "예전 판에서는 뭐라고 했었는지 보여줘",
+      "수정 전 글 보여줘",
+      "옛날 버전에 뭐라고 써 있었어?",
+      "지난 버전 열어줘",
+      "옛 버전 본문 읽기",
+      "Show an older version",
+      "Read version two of the page"
     ]
   },
   "source": {
@@ -80,5 +85,5 @@
     "structureSha256": "bc11eb5a7a2d432a2682e1a5af829f84df88d4a5c18ba032b2e00987e4df706d"
   },
   "origin": "seed",
-  "revision": "r-68816622a480"
+  "revision": "r-abcd050ba41b"
 }

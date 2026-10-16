@@ -58,11 +58,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "제목·본문으로 위키 페이지를 검색한다",
+    "summary": "제목을 모를 때 단어로 여러 스페이스의 페이지 제목·본문을 검색해 관련 글을 찾는다",
     "examples": [
-      "보안 정책 문서 찾아줘",
-      "지난주 회의록 검색해줘",
-      "배포 절차가 적힌 페이지 있어?"
+      "휴가 규정이 나온 글 찾아줘",
+      "온콜이라는 말이 들어간 문서 검색",
+      "OKR 관련 페이지 있는지 찾아봐",
+      "신입 교육 자료 어디 있어?",
+      "어떤 문서에 API 키 얘기가 있었지?",
+      "단어로 페이지 검색하기",
+      "Search pages about deployment",
+      "Find documents mentioning vacation policy"
     ]
   },
   "source": {
@@ -74,5 +79,5 @@
     "structureSha256": "4e74a6d9bb5ece7930fcec5503ed19997c9d264e436cef13077f8e5663bf5367"
   },
   "origin": "seed",
-  "revision": "r-feb86a5c02ec"
+  "revision": "r-ad8adc998f58"
 }

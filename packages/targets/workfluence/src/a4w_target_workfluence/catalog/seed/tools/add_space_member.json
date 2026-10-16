@@ -73,11 +73,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "스페이스에 사람을 멤버(Crew)로 넣는다",
+    "summary": "사람(username)을 스페이스 Crew로 넣는다. 편집자나 읽기 전용 역할을 줄 수 있다",
     "examples": [
       "이 사람 스페이스에 넣어줘",
-      "민지를 공간 멤버로 추가해줘",
-      "스페이스에 팀원 초대해줘"
+      "방 사람들 다 스페이스에 추가해",
+      "팀원을 읽기 전용으로 추가해줘",
+      "공간 멤버 추가",
+      "새 팀원 스페이스에 들여보내줘",
+      "스페이스에 사람 넣기",
+      "Add him to the space",
+      "Invite members to this space"
     ]
   },
   "source": {
@@ -89,5 +94,5 @@
     "structureSha256": "d7c9c9127ecbeabe67418e04d9cfc0d5b71d9010f1c8399626d9c667ae14e3f0"
   },
   "origin": "seed",
-  "revision": "r-30b6973623e5"
+  "revision": "r-6b59830d7408"
 }

@@ -88,11 +88,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "스페이스 이름이나 설명을 고친다",
+    "summary": "이미 있는 스페이스의 이름·설명·분류를 고친다. 만들거나 지우지 않는다",
     "examples": [
       "스페이스 이름 바꿔줘",
-      "공간 설명 수정해줘",
-      "스페이스 분류 바꿔줘"
+      "공간 설명 새로 써줘",
+      "스페이스 분류 변경",
+      "이 공간 소개 문구 고쳐줘",
+      "스페이스 이름을 설계팀으로 수정",
+      "스페이스 이름·설명 고치기",
+      "Rename this space",
+      "Update the space description"
     ]
   },
   "source": {
@@ -104,5 +109,5 @@
     "structureSha256": "f1d59d3db8639fd200f56e59ae031ff78146b03cd9e6fd8de8dacc62358fca15"
   },
   "origin": "seed",
-  "revision": "r-fd1816be2c9b"
+  "revision": "r-2f5f2f29dc03"
 }

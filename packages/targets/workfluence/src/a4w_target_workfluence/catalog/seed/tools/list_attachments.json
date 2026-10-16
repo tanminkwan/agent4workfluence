@@ -48,11 +48,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "페이지에 붙은 첨부 파일 목록을 본다",
+    "summary": "페이지 하나에 붙은 첨부 파일 목록(이름·크기)을 본다. 파일 내용을 읽지는 않는다",
     "examples": [
-      "이 페이지에 첨부된 파일 뭐야?",
-      "첨부 목록 보여줘",
-      "회의록에 올린 파일 알려줘"
+      "이 문서에 첨부 뭐 있어?",
+      "페이지에 올라간 파일 목록",
+      "회의록 첨부파일 이름 알려줘",
+      "그 글에 파일 붙어 있어?",
+      "첨부 목록 확인해줘",
+      "페이지 첨부 목록 보기",
+      "List attachments on this page",
+      "What files are attached?"
     ]
   },
   "source": {
@@ -64,5 +69,5 @@
     "structureSha256": "dda1f0daba1fa783894cb211b0ffeb51e7c277e90dcb1c02a9e5c1a156d695fb"
   },
   "origin": "seed",
-  "revision": "r-f81978e8dff8"
+  "revision": "r-fbaa4f114103"
 }

@@ -36,11 +36,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "새 페이지를 만들 때 쓸 템플릿을 본다",
+    "summary": "새 페이지를 만들 때 쓸 수 있는 페이지 템플릿(양식) 목록을 본다",
     "examples": [
+      "쓸 수 있는 문서 템플릿 보여줘",
       "회의록 템플릿 있어?",
-      "문서 양식 보여줘",
-      "페이지 만들 틀 목록 알려줘"
+      "보고서 틀 있나 봐줘",
+      "새 문서 시작할 양식 골라줘",
+      "템플릿 뭐 있는지 알려줘",
+      "템플릿 목록을 보고 양식 고르기",
+      "Show page templates",
+      "Is there a meeting notes template?"
     ]
   },
   "source": {
@@ -52,5 +57,5 @@
     "structureSha256": "c9c7771ef827bf30dd76b54f8927152ab58da55d8535785eb5dea42e87812590"
   },
   "origin": "seed",
-  "revision": "r-15412a907978"
+  "revision": "r-e4dcfc0e173a"
 }

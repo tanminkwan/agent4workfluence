@@ -39,11 +39,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "나에게 온 알림(멘션·댓글)을 본다",
+    "summary": "나에게 온 알림(멘션·댓글)을 내용과 함께 본다",
     "examples": [
-      "나한테 온 알림 있어?",
-      "누가 나를 멘션했어?",
-      "새 알림 보여줘"
+      "나한테 온 알림 보여줘",
+      "누가 나 멘션했어?",
+      "새 소식 있어?",
+      "최근 알림 확인해줘",
+      "내 글에 답 달렸어?",
+      "내 알림 목록 보기",
+      "Show my notifications",
+      "Did anyone mention me?"
     ]
   },
   "source": {
@@ -55,5 +60,5 @@
     "structureSha256": "a5545596b8d49534a80da7df69acc7e9879805a073916e417d58b5464c462222"
   },
   "origin": "seed",
-  "revision": "r-212f13119053"
+  "revision": "r-b1eabc52ac08"
 }

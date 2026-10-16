@@ -59,11 +59,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "페이지에 라벨(태그)을 붙인다",
+    "summary": "이미 고른 페이지(id를 앎)에 라벨(태그)을 붙인다",
     "examples": [
-      "이 문서에 긴급 라벨 붙여줘",
-      "회의록 태그 달아줘",
-      "페이지에 보안 라벨 추가해줘"
+      "이 문서에 긴급 태그 붙여",
+      "페이지에 보안 라벨 달아줘",
+      "검토중 라벨 추가해줘",
+      "그 글 태그 달아줘",
+      "문서를 라벨로 분류해줘",
+      "페이지에 라벨 붙이기",
+      "Add a label to this page",
+      "Tag this page as urgent"
     ]
   },
   "source": {
@@ -75,5 +80,5 @@
     "structureSha256": "f60c82a6cc9e9265e5155d19e80d64ce76c554c1b1bb0c62375783da431990af"
   },
   "origin": "seed",
-  "revision": "r-2801387e53d5"
+  "revision": "r-c95dcb8719ef"
 }

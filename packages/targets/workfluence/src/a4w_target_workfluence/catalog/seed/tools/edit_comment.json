@@ -60,11 +60,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "내가 쓴 댓글 내용을 고친다",
+    "summary": "내가 이미 단 댓글의 내용을 고친다. 새로 달지 않는다",
     "examples": [
-      "내 댓글 내용 고쳐줘",
-      "아까 단 댓글 수정해줘",
-      "댓글 오타 고쳐줘"
+      "내 댓글 고쳐줘",
+      "방금 단 댓글 문구 바꿔줘",
+      "댓글에 오타 수정",
+      "댓글 내용 다시 써줘",
+      "아까 남긴 의견 고쳐",
+      "내 댓글 수정하기",
+      "Edit my comment",
+      "Fix the typo in my comment"
     ]
   },
   "source": {
@@ -76,5 +81,5 @@
     "structureSha256": "ee3789dcd23c41933aa03afa80cec3ac774636dc1b73c8b458edd74dcc44ea22"
   },
   "origin": "seed",
-  "revision": "r-9da7c25dc0e9"
+  "revision": "r-ba017380acdf"
 }

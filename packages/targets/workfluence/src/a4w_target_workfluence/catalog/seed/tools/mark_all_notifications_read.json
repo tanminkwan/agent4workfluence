@@ -31,11 +31,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "내 알림을 모두 읽음으로 표시한다",
+    "summary": "내 알림을 하나씩이 아니라 한꺼번에 모두 읽음으로 표시한다",
     "examples": [
-      "알림 다 읽음으로 해줘",
-      "알림 모두 확인 처리",
-      "쌓인 알림 정리해줘"
+      "알림 전부 읽음 처리해줘",
+      "쌓인 알림 다 확인으로",
+      "모든 알림 읽은 걸로 바꿔줘",
+      "알림 한꺼번에 정리해줘",
+      "알림 싹 비워줘",
+      "알림 모두 읽음 표시하기",
+      "Mark all notifications as read",
+      "Clear all my notifications"
     ]
   },
   "source": {
@@ -47,5 +52,5 @@
     "structureSha256": "cca4d0ba0ef0030475fdc0aa302b726adbc2e3777d0fb8b85ddb3166d7d35b2f"
   },
   "origin": "seed",
-  "revision": "r-e98a1696b303"
+  "revision": "r-16111df7a1ff"
 }

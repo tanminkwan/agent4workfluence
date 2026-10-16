@@ -42,11 +42,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "페이지의 댓글을 지운다",
+    "summary": "페이지의 댓글 하나를 지운다",
     "examples": [
       "내 댓글 지워줘",
-      "잘못 단 댓글 삭제해줘",
-      "그 댓글 없애줘"
+      "잘못 단 댓글 삭제",
+      "그 답글 없애줘",
+      "방금 쓴 댓글 취소해줘",
+      "필요 없는 댓글 삭제해줘",
+      "댓글 지우기",
+      "Delete my comment",
+      "Remove that comment"
     ]
   },
   "source": {
@@ -58,5 +63,5 @@
     "structureSha256": "6a70d17be64dd40d19e9292729f9a679edd8f8523559e5f1cbb5aa184f43a4b5"
   },
   "origin": "seed",
-  "revision": "r-8da5580e101f"
+  "revision": "r-d67f0590600c"
 }

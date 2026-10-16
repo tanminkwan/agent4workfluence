@@ -30,6 +30,12 @@ class Env:
         self.db = SqliteManufactureDb(tmp_path / "store" / "manufacture.db")
         self.rag = FakeRag()
         self.ticks = 0
+        self.groups = groups
+        self.deploy()
+
+    def deploy(self):
+        """서비스를 (다시) 띄운다. catalog는 띄울 때 읽는다(이미지에 들어 있다)."""
+        groups = self.groups
         rt = TargetRuntime(target_id="wf", catalog=FileCatalog(self.catalog_dir), enabled_groups=tuple(groups),
                            transformer=OpenApi3Transformer(content_types=["application/json"]), max_chars=4000,
                            no_scenario="pending",
@@ -328,3 +334,54 @@ def test_unverified_pending_is_reverified_when_scenario_appears(tmp_path):
     assert "search_pages" in env.served() and "comment_on_page_by_title" in env.served()
     assert env.db.review(r1["pendingReview"][0]["reviewId"])["status"] == "superseded"
     assert r2["pendingReview"] == []
+
+
+# ── 설계 24.2: seed 글만 바뀌면 서빙 중인 seed tool을 seed로 다시 만든다 (LLM 없음)
+
+def edit_seed(env, name, **index):
+    import json
+
+    from a4w_manufacture.assembly import revision_of
+    path = env.catalog_dir / "seed" / "tools" / f"{name}.json"
+    d = json.loads(path.read_text(encoding="utf-8"))
+    d["index"].update(index)
+    d["revision"] = revision_of(d)
+    path.write_text(json.dumps(d, ensure_ascii=False), encoding="utf-8")
+    env.deploy()                                       # 바뀐 seed는 새 이미지로 배포되어야 읽힌다
+    return d
+
+
+def test_changed_seed_text_refreshes_the_served_tool_without_llm(tmp_path):
+    env = Env(tmp_path)
+    first(env)
+    before = env.served()["read_page"]["revision"]
+    examples = ["문서 본문 읽어줘", "그 글 열어줘", "Read the page"]
+    edit_seed(env, "read_page", examples=examples)
+    r = env.apply(None, "ap-2")
+    assert r["status"] == "applied"
+    o = outcome(r, "pages.get")
+    assert o["outcome"] == "updated" and o["origin"] == "seed"
+    served = env.served()["read_page"]
+    assert served["index"]["examples"] == examples and served["revision"] != before
+    assert all(i.get("operationId") != "comments.create" for i in r["items"])     # 그대로인 것은 목록에 없다
+    assert env.assistant.calls == []
+
+
+def test_unchanged_seed_leaves_the_served_tool_unchanged(tmp_path):
+    env = Env(tmp_path)
+    first(env)
+    before = env.served()
+    r = env.apply(None, "ap-2")
+    assert not any(i["outcome"] in ("updated", "added") for i in r["items"])
+    assert env.served() == before
+
+
+def test_an_invalid_changed_seed_keeps_the_served_tool_and_says_why(tmp_path):
+    env = Env(tmp_path)
+    first(env)
+    before = env.served()["read_page"]
+    edit_seed(env, "read_page", examples=["하나"])                    # 하한(3) 미만
+    r = env.apply(None, "ap-2")
+    o = outcome(r, "pages.get")
+    assert o["outcome"] == "unchanged" and o["reason"] == "SEED_INVALID"
+    assert env.served()["read_page"] == before

@@ -4,10 +4,15 @@
   "index": {
     "examples": [
       "회의록 페이지에 확인했다고 댓글 달아줘",
-      "보안 정책 문서에 질문 남겨줘",
-      "배포 가이드에 의견 댓글 써줘"
+      "배포 가이드에 질문 남겨줘",
+      "온보딩 문서에 의견 써줘",
+      "제목이 주간보고인 글에 댓글",
+      "보안 정책 페이지에 피드백 달아",
+      "제목으로 페이지 찾아 댓글 달기",
+      "Comment on the page titled Release Notes",
+      "Leave a comment on the onboarding page"
     ],
-    "summary": "제목으로 찾은 위키 페이지에 댓글을 남긴다"
+    "summary": "페이지 id 없이 제목으로 페이지를 찾아 댓글을 단다"
   },
   "inputSchema": {
     "additionalProperties": false,
@@ -33,7 +38,7 @@
   "output": {
     "$step": "comment"
   },
-  "revision": "r-bb32b2396017",
+  "revision": "r-4b72eba00cb8",
   "risk": "write",
   "schema": "a4w.tool/v1",
   "scopes": [

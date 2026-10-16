@@ -42,11 +42,16 @@
   ],
   "group": "communication",
   "index": {
-    "summary": "알림 하나를 읽음으로 표시한다",
+    "summary": "알림 하나를 골라 읽음으로 표시한다",
     "examples": [
-      "그 알림 읽음으로 해줘",
-      "이 알림 확인 처리해줘",
-      "알림 하나 읽은 걸로 바꿔줘"
+      "그 알림 읽음 처리해줘",
+      "이 멘션 알림 확인으로 바꿔",
+      "방금 본 알림 읽음 표시",
+      "그 댓글 알림 확인 처리",
+      "이 알림 다 봤다고 표시해",
+      "알림 하나 읽음 표시하기",
+      "Mark this notification as read",
+      "Mark that alert read"
     ]
   },
   "source": {
@@ -58,5 +63,5 @@
     "structureSha256": "46974fc29bd823b1caae2d0a9a185fbd309dd2b529bb71c5152fc30e8cf196d3"
   },
   "origin": "seed",
-  "revision": "r-4f4a1466884b"
+  "revision": "r-819f81927744"
 }

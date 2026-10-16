@@ -57,11 +57,16 @@
   ],
   "group": "authoring",
   "index": {
-    "summary": "스페이스 멤버(Crew)에서 사람을 뺀다",
+    "summary": "스페이스 Crew에서 사람을 뺀다",
     "examples": [
       "이 사람 스페이스에서 빼줘",
-      "공간 멤버에서 제외해줘",
-      "스페이스 Crew 정리해줘"
+      "퇴사자 공간에서 내보내",
+      "멤버 한 명 제외해줘",
+      "Crew에서 지워줘",
+      "스페이스 접근 권한 회수해줘",
+      "스페이스에서 사람 빼기",
+      "Remove him from the space",
+      "Kick this member out of the space"
     ]
   },
   "source": {
@@ -73,5 +78,5 @@
     "structureSha256": "71aaf8e34dca75a878d1459fb3b1c53ababd53e9f871ca483527dc778a865d20"
   },
   "origin": "seed",
-  "revision": "r-3a01bb3ff516"
+  "revision": "r-1b5b2bae3314"
 }

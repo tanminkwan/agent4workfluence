@@ -15,8 +15,8 @@ spaces.list:
     limit: {description: 돌려줄 최대 수, hide: true}
   responseFields: ["items[].id", "items[].name", "items[].description", "items[].canWrite", truncated]
   index:
-    summary: 위키의 스페이스(공간) 목록을 보여 준다
-    examples: ["어떤 스페이스들이 있어?", "개발팀 스페이스 찾아줘", "내가 쓸 수 있는 공간 목록 보여줘"]
+    summary: "만들거나 고치지 않고 내가 볼 수 있는 스페이스 목록과 이름·설명을 본다. 이름으로 찾거나 있는지 확인할 때 쓴다"
+    examples: ["스페이스 뭐뭐 있는지 알려줘", "스터디 스페이스가 있는지 확인해줘", "이름에 개발이 들어간 공간 찾아줘", "내가 글 쓸 수 있는 스페이스만 골라줘", "아까 그 스페이스 이름 다시 알려줘", "스페이스 목록을 보고 이름으로 찾기", "Show me all spaces", "Is there a space named Design Team?"]
 
 spaces.get:
   name: get_space
@@ -26,8 +26,8 @@ spaces.get:
     id: {description: "스페이스 id — list_spaces 결과의 items[].id"}
   responseFields: [id, name, description, status, myRole, canWrite]
   index:
-    summary: 스페이스 하나의 정보와 내 권한을 본다
-    examples: ["이 스페이스 설명 알려줘", "내가 이 공간에 글을 쓸 수 있어?", "스페이스 상태 확인해줘"]
+    summary: "목록이 아니라 스페이스 한 곳의 상세 정보(설명·상태)와 그곳에서 내 역할·쓰기 가능 여부를 본다"
+    examples: ["그 공간은 무슨 용도야?", "이 스페이스에서 나는 무슨 역할이야?", "그 스페이스가 중지된 상태인지 봐줘", "내가 이 공간에 페이지 만들 수 있어?", "스페이스 상세 정보 보여줘", "스페이스 하나의 정보와 내 권한 보기", "What is my role in this space?", "Show details of this space"]
 
 pages.tree:
   name: list_pages
@@ -37,8 +37,8 @@ pages.tree:
     limit: {description: 돌려줄 최대 수, hide: true}
   responseFields: ["items[].id", "items[].title", "items[].parentId", total, truncated]
   index:
-    summary: 기본 스페이스의 페이지 목록(트리)을 보여 준다
-    examples: ["우리 위키에 어떤 페이지가 있어?", "페이지 목록 보여줘", "문서 구조 알려줘"]
+    summary: "기본 스페이스의 페이지를 본문 없이 제목과 상하 관계(트리)로 훑어본다. 단어로 찾는 검색이 아니다"
+    examples: ["위키에 어떤 문서들이 있는지 훑어봐줘", "페이지 트리 구조 보여줘", "하위 페이지가 뭐가 있는지 알려줘", "전체 문서 제목 목록 줘", "새 페이지 둘 위치를 정하게 구조 먼저 보자", "페이지 목록을 보고 구조 확인", "List all pages in the wiki", "Show me the page tree"]
 
 pages.get:
   name: read_page
@@ -48,8 +48,8 @@ pages.get:
     id: {description: "페이지 id — search_pages 결과의 items[].pageId나 list_pages 결과의 items[].id"}
   responseFields: [id, title, body, currentVersionNo, "ancestors[].title", updatedAt]
   index:
-    summary: 위키 페이지 하나의 본문을 읽는다
-    examples: ["이 페이지 내용 보여줘", "회의록 본문 읽어줘", "문서 열어서 읽어줘"]
+    summary: "이미 고른 페이지 하나(id를 앎)의 본문 전체를 읽는다. 제목만 알 때는 제목으로 찾아 읽기를 쓴다"
+    examples: ["방금 찾은 페이지 본문 읽어줘", "그 문서 전체 내용 보여줘", "목록에서 고른 페이지 열어줘", "이 페이지 내용 요약해줘", "이 글 무슨 내용이야?", "페이지 본문 읽기", "Read the page content", "Open that page and summarize it"]
 
 search.find:
   name: search_pages
@@ -59,8 +59,8 @@ search.find:
     q: {description: "검색어 — 요청 글의 핵심 낱말. 두 글자 이상, 200자까지"}
   responseFields: ["items[].pageId", "items[].title", "items[].snippet", "items[].updatedAt"]
   index:
-    summary: 제목·본문으로 위키 페이지를 검색한다
-    examples: ["보안 정책 문서 찾아줘", "지난주 회의록 검색해줘", "배포 절차가 적힌 페이지 있어?"]
+    summary: "제목을 모를 때 단어로 여러 스페이스의 페이지 제목·본문을 검색해 관련 글을 찾는다"
+    examples: ["휴가 규정이 나온 글 찾아줘", "온콜이라는 말이 들어간 문서 검색", "OKR 관련 페이지 있는지 찾아봐", "신입 교육 자료 어디 있어?", "어떤 문서에 API 키 얘기가 있었지?", "단어로 페이지 검색하기", "Search pages about deployment", "Find documents mentioning vacation policy"]
 
 labels.list:
   name: list_labels
@@ -68,8 +68,8 @@ labels.list:
   description: 위키에서 쓰이는 라벨(태그) 이름 목록을 본다. 기본 100개까지 돌려준다.
   responseFields: ["[].name"]
   index:
-    summary: 위키에 쓰이는 라벨(태그) 목록을 본다
-    examples: ["어떤 라벨들이 있어?", "태그 목록 보여줘", "쓰이는 분류 라벨 알려줘"]
+    summary: "특정 페이지가 아니라 위키 전체에서 쓰이는 라벨(태그) 이름의 종류를 본다"
+    examples: ["위키에 있는 태그 종류 알려줘", "라벨 이름 전부 보여줘", "붙일 수 있는 라벨이 뭔지 봐줘", "긴급 라벨이 있긴 해?", "많이 쓰는 태그 뭐야?", "전체 라벨 목록 보기", "What labels exist?", "List all tags"]
 
 labels.pages:
   name: list_pages_by_label
@@ -79,8 +79,8 @@ labels.pages:
     name: {description: "라벨 이름 — 요청 글에 있는 라벨이나 list_labels 결과의 name"}
   responseFields: ["items[].pageId", "items[].title", "items[].spaceName", "items[].updatedAt"]
   index:
-    summary: 특정 라벨(태그)이 붙은 페이지를 찾는다
-    examples: ["긴급 라벨 붙은 문서 보여줘", "회의록 태그 달린 페이지 목록", "보안 라벨 페이지들 찾아줘"]
+    summary: "라벨(태그) 이름 하나로 그 라벨이 붙은 페이지들을 모아 본다"
+    examples: ["긴급 태그 달린 글 다 보여줘", "회의록 라벨 페이지 모아줘", "보안 라벨 붙은 문서 있어?", "라벨로 문서 찾아줘", "검토중 라벨 붙은 것들 보여줘", "라벨이 붙은 페이지 목록 보기", "Show pages tagged urgent", "Find documents with the security label"]
 
 labels.forPage:
   name: list_page_labels
@@ -90,8 +90,8 @@ labels.forPage:
     pageId: {description: "페이지 id — search_pages 결과의 items[].pageId"}
   responseFields: ["[].name"]
   index:
-    summary: 페이지 하나에 붙은 라벨(태그)을 본다
-    examples: ["이 문서에 어떤 태그가 붙었어?", "페이지 라벨 확인해줘", "이 글의 분류 라벨 알려줘"]
+    summary: "페이지 하나에 지금 붙어 있는 라벨(태그)만 본다. 위키 전체 라벨 종류가 아니다"
+    examples: ["이 페이지에 무슨 태그 있어?", "그 문서 라벨 보여줘", "이 글에 긴급 라벨 붙어 있어?", "페이지 태그 확인해줘", "문서에 달린 라벨 알려줘", "페이지 하나의 라벨 보기", "What labels are on this page?", "Show tags of this document"]
 
 categories.list:
   name: list_categories
@@ -99,8 +99,8 @@ categories.list:
   description: 스페이스를 묶는 분류의 목록을 본다.
   responseFields: ["[].id", "[].name"]
   index:
-    summary: 스페이스를 묶는 분류 목록을 본다
-    examples: ["스페이스 분류 뭐 있어?", "카테고리 목록 보여줘", "공간 분류 알려줘"]
+    summary: "스페이스를 묶는 분류(카테고리) 목록을 본다. 페이지에 붙이는 라벨(태그)과는 다르다"
+    examples: ["스페이스 카테고리 종류 알려줘", "공간을 어떤 분류로 나눠?", "분류 목록 줘", "스페이스 만들 때 고를 분류 보여줘", "카테고리 뭐 있어?", "스페이스 분류 목록 보기", "List space categories", "What categories are there?"]
 
 templates.list:
   name: list_templates
@@ -108,8 +108,8 @@ templates.list:
   description: 새 페이지의 본문으로 쓸 틀(템플릿)을 본다. 고른 템플릿의 body를 create_page의 body로 보내면 된다.
   responseFields: ["items[].name", "items[].description", "items[].body"]
   index:
-    summary: 새 페이지를 만들 때 쓸 템플릿을 본다
-    examples: ["회의록 템플릿 있어?", "문서 양식 보여줘", "페이지 만들 틀 목록 알려줘"]
+    summary: "새 페이지를 만들 때 쓸 수 있는 페이지 템플릿(양식) 목록을 본다"
+    examples: ["쓸 수 있는 문서 템플릿 보여줘", "회의록 템플릿 있어?", "보고서 틀 있나 봐줘", "새 문서 시작할 양식 골라줘", "템플릿 뭐 있는지 알려줘", "템플릿 목록을 보고 양식 고르기", "Show page templates", "Is there a meeting notes template?"]
 
 attachments.list:
   name: list_attachments
@@ -119,8 +119,8 @@ attachments.list:
     pageId: {description: "페이지 id — search_pages 결과의 items[].pageId"}
   responseFields: ["items[].id", "items[].filename", "items[].size", "items[].href"]
   index:
-    summary: 페이지에 붙은 첨부 파일 목록을 본다
-    examples: ["이 페이지에 첨부된 파일 뭐야?", "첨부 목록 보여줘", "회의록에 올린 파일 알려줘"]
+    summary: "페이지 하나에 붙은 첨부 파일 목록(이름·크기)을 본다. 파일 내용을 읽지는 않는다"
+    examples: ["이 문서에 첨부 뭐 있어?", "페이지에 올라간 파일 목록", "회의록 첨부파일 이름 알려줘", "그 글에 파일 붙어 있어?", "첨부 목록 확인해줘", "페이지 첨부 목록 보기", "List attachments on this page", "What files are attached?"]
 
 attachments.download:
   name: download_attachment
@@ -129,8 +129,8 @@ attachments.download:
   inputs:
     id: {description: "첨부 id — list_attachments 결과의 items[].id"}
   index:
-    summary: 첨부 파일의 내용을 받아 읽는다
-    examples: ["첨부된 문서 내용 읽어줘", "그 파일 열어봐줘", "첨부 파일 내용 보여줘"]
+    summary: "첨부 파일 하나의 내용을 받아 읽는다. 목록이 아니라 파일 안의 글이다"
+    examples: ["첨부 파일 내용 읽어줘", "그 첨부 열어서 요약해줘", "붙은 텍스트 파일 내용 알려줘", "첨부된 회의 메모 보여줘", "파일 안에 뭐라고 써 있어?", "첨부 파일 내용 받기", "Read the attached file", "Open the attachment"]
 
 spaces.members:
   name: list_space_members
@@ -140,8 +140,8 @@ spaces.members:
     id: {description: "스페이스 id — list_spaces 결과의 items[].id 또는 create_space 결과의 id"}
   responseFields: ["[].username", "[].displayName", "[].role"]
   index:
-    summary: 스페이스에 누가 멤버(Crew)로 있는지 본다
-    examples: ["이 스페이스 멤버 누구야?", "공간에 들어 있는 사람 보여줘", "스페이스 Crew 역할 알려줘"]
+    summary: "스페이스에 누가 Crew(멤버)로 들어 있는지와 각자의 역할을 본다"
+    examples: ["이 스페이스에 누가 있어?", "공간 멤버 목록 보여줘", "민수가 이 스페이스에 들어 있어?", "Crew 역할 확인해줘", "스페이스 편집자가 누구야?", "스페이스 멤버 목록 보기", "Who is in this space?", "List space members"]
 
 # ── 이력 (history)
 pages.versions:
@@ -152,8 +152,8 @@ pages.versions:
     id: {description: "페이지 id — search_pages 결과의 items[].pageId"}
   responseFields: ["[].versionNo", "[].title", "[].createdByName", "[].createdAt"]
   index:
-    summary: 페이지가 언제 누가 고쳤는지 버전 이력을 본다
-    examples: ["이 문서 누가 언제 고쳤어?", "페이지 수정 이력 보여줘", "버전 기록 알려줘"]
+    summary: "페이지가 언제 누가 고쳤는지 버전 이력(번호·작성자·시각)을 본다"
+    examples: ["이 페이지 수정 기록 보여줘", "마지막으로 고친 사람 누구야?", "버전이 몇 개야?", "언제 바뀌었는지 이력 알려줘", "문서 변경 이력", "페이지 버전 이력 보기", "Show page history", "Who edited this page last?"]
 
 pages.version:
   name: read_page_version
@@ -164,8 +164,8 @@ pages.version:
     "no": {description: "버전 번호 — list_page_versions 결과의 versionNo"}
   responseFields: [versionNo, title, body, createdByName, createdAt]
   index:
-    summary: 페이지의 예전 버전 본문을 읽는다
-    examples: ["이 문서 예전 버전 보여줘", "첫 번째 버전 내용 읽어줘", "고치기 전 내용 알려줘"]
+    summary: "버전 번호로 페이지의 예전 버전 하나의 본문을 읽는다. 지금 본문이 아니다"
+    examples: ["예전 버전 내용 보여줘", "예전 판에서는 뭐라고 했었는지 보여줘", "수정 전 글 보여줘", "옛날 버전에 뭐라고 써 있었어?", "지난 버전 열어줘", "옛 버전 본문 읽기", "Show an older version", "Read version two of the page"]
 
 pages.diff:
   name: compare_page_versions
@@ -177,8 +177,8 @@ pages.diff:
     b: {description: "뒤 버전 번호 — list_page_versions 결과의 versionNo"}
   responseFields: [titleChanged, diff.added, diff.removed, diff.modified, diff.blocks]
   index:
-    summary: 페이지의 두 버전 사이에 바뀐 내용을 비교한다
-    examples: ["이전 버전이랑 뭐가 달라졌어?", "두 버전 차이 비교해줘", "최근 수정에서 바뀐 부분 알려줘"]
+    summary: "페이지의 두 버전 사이에 바뀐 부분(차이)을 비교한다"
+    examples: ["두 버전 뭐가 달라?", "지난번과 바뀐 부분 비교해줘", "최근 수정 차이 보여줘", "버전 간 변경 내용 알려줘", "어디가 고쳐졌는지 비교", "두 버전 차이 비교하기", "Compare two versions", "What changed between versions?"]
 
 # ── 소통 (communication)
 comments.list:
@@ -189,8 +189,8 @@ comments.list:
     pageId: {description: "페이지 id — search_pages 결과의 items[].pageId"}
   responseFields: ["items[].id", "items[].author", "items[].body", "items[].parentId", "items[].createdAt"]
   index:
-    summary: 페이지에 달린 댓글과 답글을 본다
-    examples: ["이 문서에 달린 댓글 보여줘", "사람들이 무슨 의견 남겼어?", "회의록 댓글 읽어줘"]
+    summary: "페이지 하나에 달린 댓글과 답글을 읽는다. 댓글을 쓰지는 않는다"
+    examples: ["이 페이지 댓글 보여줘", "누가 무슨 의견 달았어?", "답글까지 다 읽어줘", "댓글 몇 개 달렸어?", "문서에 달린 피드백 정리해줘", "페이지 댓글 목록 보기", "Show comments on this page", "What did people comment?"]
 
 comments.create:
   name: add_comment
@@ -201,8 +201,8 @@ comments.create:
     body: {description: "댓글 본문 (마크다운 글)"}
   responseFields: [id, createdAt]
   index:
-    summary: 위키 페이지에 댓글을 남긴다
-    examples: ["이 문서에 확인했다고 댓글 달아줘", "회의록에 의견 남겨줘", "페이지에 질문 댓글 써줘"]
+    summary: "이미 고른 페이지(id를 앎)에 댓글이나 답글을 새로 단다"
+    examples: ["이 페이지에 댓글 남겨줘", "좋아요라고 댓글 써줘", "그 댓글에 답글 달아줘", "질문을 댓글로 올려줘", "문서에 피드백 남겨", "페이지에 댓글 달기", "Add a comment to this page", "Reply to that comment"]
 
 comments.update:
   name: edit_comment
@@ -213,8 +213,8 @@ comments.update:
     body: {description: "새 댓글 본문 (마크다운 글)"}
   responseFields: [id, updatedAt]
   index:
-    summary: 내가 쓴 댓글 내용을 고친다
-    examples: ["내 댓글 내용 고쳐줘", "아까 단 댓글 수정해줘", "댓글 오타 고쳐줘"]
+    summary: "내가 이미 단 댓글의 내용을 고친다. 새로 달지 않는다"
+    examples: ["내 댓글 고쳐줘", "방금 단 댓글 문구 바꿔줘", "댓글에 오타 수정", "댓글 내용 다시 써줘", "아까 남긴 의견 고쳐", "내 댓글 수정하기", "Edit my comment", "Fix the typo in my comment"]
 
 comments.delete:
   name: delete_comment
@@ -223,8 +223,8 @@ comments.delete:
   inputs:
     id: {description: "지울 댓글 id — list_comments 결과의 items[].id"}
   index:
-    summary: 페이지의 댓글을 지운다
-    examples: ["내 댓글 지워줘", "잘못 단 댓글 삭제해줘", "그 댓글 없애줘"]
+    summary: "페이지의 댓글 하나를 지운다"
+    examples: ["내 댓글 지워줘", "잘못 단 댓글 삭제", "그 답글 없애줘", "방금 쓴 댓글 취소해줘", "필요 없는 댓글 삭제해줘", "댓글 지우기", "Delete my comment", "Remove that comment"]
 
 notifications.list:
   name: list_notifications
@@ -232,8 +232,8 @@ notifications.list:
   description: agent 자신에게 온 알림(멘션·댓글 등)을 본다. 남의 알림은 볼 수 없다. 기본 100개까지 돌려준다.
   responseFields: ["items[].id", "items[].kind", "items[].pageTitle", "items[].actorName", "items[].createdAt", "items[].readAt"]
   index:
-    summary: 나에게 온 알림(멘션·댓글)을 본다
-    examples: ["나한테 온 알림 있어?", "누가 나를 멘션했어?", "새 알림 보여줘"]
+    summary: "나에게 온 알림(멘션·댓글)을 내용과 함께 본다"
+    examples: ["나한테 온 알림 보여줘", "누가 나 멘션했어?", "새 소식 있어?", "최근 알림 확인해줘", "내 글에 답 달렸어?", "내 알림 목록 보기", "Show my notifications", "Did anyone mention me?"]
 
 notifications.unreadCount:
   name: count_unread_notifications
@@ -241,8 +241,8 @@ notifications.unreadCount:
   description: agent 자신의 안 읽은 알림 수를 본다.
   responseFields: [count]
   index:
-    summary: 안 읽은 알림이 몇 개인지 본다
-    examples: ["안 읽은 알림 몇 개야?", "새 알림 수 알려줘", "확인 안 한 알림 있어?"]
+    summary: "알림 내용 없이 안 읽은 알림 개수만 센다"
+    examples: ["안 읽은 알림 몇 개?", "새 알림 있나 숫자만 알려줘", "확인 안 한 알림 수", "알림 쌓인 거 몇 개야?", "읽지 않은 알림 개수 확인", "안 읽은 알림 수 세기", "How many unread notifications?", "Unread notification count"]
 
 notifications.read:
   name: mark_notification_read
@@ -251,8 +251,8 @@ notifications.read:
   inputs:
     id: {description: "알림 id — list_notifications 결과의 items[].id"}
   index:
-    summary: 알림 하나를 읽음으로 표시한다
-    examples: ["그 알림 읽음으로 해줘", "이 알림 확인 처리해줘", "알림 하나 읽은 걸로 바꿔줘"]
+    summary: "알림 하나를 골라 읽음으로 표시한다"
+    examples: ["그 알림 읽음 처리해줘", "이 멘션 알림 확인으로 바꿔", "방금 본 알림 읽음 표시", "그 댓글 알림 확인 처리", "이 알림 다 봤다고 표시해", "알림 하나 읽음 표시하기", "Mark this notification as read", "Mark that alert read"]
 
 notifications.readAll:
   name: mark_all_notifications_read
@@ -260,8 +260,8 @@ notifications.readAll:
   description: agent 자신의 알림을 모두 읽음으로 표시하고 바뀐 수를 돌려준다.
   responseFields: [count]
   index:
-    summary: 내 알림을 모두 읽음으로 표시한다
-    examples: ["알림 다 읽음으로 해줘", "알림 모두 확인 처리", "쌓인 알림 정리해줘"]
+    summary: "내 알림을 하나씩이 아니라 한꺼번에 모두 읽음으로 표시한다"
+    examples: ["알림 전부 읽음 처리해줘", "쌓인 알림 다 확인으로", "모든 알림 읽은 걸로 바꿔줘", "알림 한꺼번에 정리해줘", "알림 싹 비워줘", "알림 모두 읽음 표시하기", "Mark all notifications as read", "Clear all my notifications"]
 
 # ── 작성 (authoring)
 pages.create:
@@ -273,8 +273,8 @@ pages.create:
     body: {description: "본문 (마크다운 글). 템플릿을 쓰면 list_templates 결과의 body"}
   responseFields: [id, title, currentVersionNo]
   index:
-    summary: 위키에 새 페이지(문서)를 만든다
-    examples: ["회의록 페이지 새로 만들어줘", "오늘 작업 내용을 문서로 올려줘", "새 위키 페이지 작성해줘"]
+    summary: "기본 스페이스에 새 페이지(문서)를 제목과 본문으로 만든다"
+    examples: ["새 문서 하나 만들어줘", "오늘 회의 내용을 페이지로 써줘", "공지 페이지 작성해줘", "이 내용으로 위키 글 올려줘", "회의록 아래에 하위 페이지 만들어줘", "새 페이지 만들기", "Create a new page", "Write a wiki page about this"]
 
 pages.update:
   name: update_page
@@ -287,8 +287,8 @@ pages.update:
     title: {description: "새 제목. 고치지 않으면 비운다"}
   responseFields: [id, title, currentVersionNo]
   index:
-    summary: 위키 페이지의 제목이나 본문을 고친다
-    examples: ["이 문서 내용 고쳐줘", "회의록에 결정 사항 추가해줘", "페이지 제목 바꿔줘"]
+    summary: "이미 있는 페이지의 제목이나 본문을 고친다. 새로 만들지 않는다"
+    examples: ["이 문서 내용 수정해줘", "페이지 제목 바꿔줘", "본문에 결정 사항 덧붙여줘", "오래된 내용 고쳐줘", "문서 마지막에 한 줄 추가", "페이지 본문 고치기", "Update this page", "Change the page title"]
 
 labels.attach:
   name: add_page_label
@@ -299,8 +299,8 @@ labels.attach:
     name: {description: "라벨 이름 — 40자까지"}
   responseFields: [id, name]
   index:
-    summary: 페이지에 라벨(태그)을 붙인다
-    examples: ["이 문서에 긴급 라벨 붙여줘", "회의록 태그 달아줘", "페이지에 보안 라벨 추가해줘"]
+    summary: "이미 고른 페이지(id를 앎)에 라벨(태그)을 붙인다"
+    examples: ["이 문서에 긴급 태그 붙여", "페이지에 보안 라벨 달아줘", "검토중 라벨 추가해줘", "그 글 태그 달아줘", "문서를 라벨로 분류해줘", "페이지에 라벨 붙이기", "Add a label to this page", "Tag this page as urgent"]
 
 labels.detach:
   name: remove_page_label
@@ -310,8 +310,8 @@ labels.detach:
     pageId: {description: "페이지 id — search_pages 결과의 items[].pageId"}
     ref: {description: "뗄 라벨의 이름 — list_page_labels 결과의 name"}
   index:
-    summary: 페이지에 붙은 라벨(태그)을 뗀다
-    examples: ["이 문서에서 긴급 라벨 떼줘", "태그 지워줘", "페이지 라벨 하나 빼줘"]
+    summary: "페이지에 붙은 라벨(태그) 하나를 뗀다"
+    examples: ["긴급 태그 떼줘", "이 문서 라벨 하나 빼", "잘못 붙인 태그 없애줘", "검토중 라벨 지워줘", "페이지 태그 제거", "페이지에서 라벨 떼기", "Remove the label from this page", "Untag this page"]
 
 spaces.create:
   name: create_space
@@ -323,8 +323,8 @@ spaces.create:
     category: {description: "넣을 분류의 이름 — list_categories 결과의 name. 요청에 분류가 있을 때만 넣는다", hide: false}
   responseFields: [id, name, description, status, myRole]
   index:
-    summary: 위키에 새 스페이스(공간)를 만든다
-    examples: ["새 스페이스 만들어줘", "스터디용 공간 하나 만들어줘", "팀 스페이스 새로 열어줘"]
+    summary: "위키에 새 스페이스(공간)를 만든다. 만든 사람이 owner가 된다"
+    examples: ["새 스페이스 하나 열어줘", "프로젝트용 공간 만들어줘", "스터디 스페이스 새로 만들어", "팀 위키 공간 생성해줘", "디자인팀 스페이스 만들어줘", "새 스페이스 만들기", "Create a new space", "Make a space for our study group"]
 
 spaces.update:
   name: update_space
@@ -337,8 +337,8 @@ spaces.update:
     category: {description: "새 분류의 이름 — list_categories 결과의 name. 바꿀 때만"}
   responseFields: [id, name, description, status]
   index:
-    summary: 스페이스 이름이나 설명을 고친다
-    examples: ["스페이스 이름 바꿔줘", "공간 설명 수정해줘", "스페이스 분류 바꿔줘"]
+    summary: "이미 있는 스페이스의 이름·설명·분류를 고친다. 만들거나 지우지 않는다"
+    examples: ["스페이스 이름 바꿔줘", "공간 설명 새로 써줘", "스페이스 분류 변경", "이 공간 소개 문구 고쳐줘", "스페이스 이름을 설계팀으로 수정", "스페이스 이름·설명 고치기", "Rename this space", "Update the space description"]
 
 spaces.addMember:
   name: add_space_member
@@ -350,8 +350,8 @@ spaces.addMember:
     role: {description: "editor 또는 viewer — 요청에 역할이 있을 때만", hide: false}
   responseFields: ["[].username", "[].displayName", "[].role"]
   index:
-    summary: 스페이스에 사람을 멤버(Crew)로 넣는다
-    examples: ["이 사람 스페이스에 넣어줘", "민지를 공간 멤버로 추가해줘", "스페이스에 팀원 초대해줘"]
+    summary: "사람(username)을 스페이스 Crew로 넣는다. 편집자나 읽기 전용 역할을 줄 수 있다"
+    examples: ["이 사람 스페이스에 넣어줘", "방 사람들 다 스페이스에 추가해", "팀원을 읽기 전용으로 추가해줘", "공간 멤버 추가", "새 팀원 스페이스에 들여보내줘", "스페이스에 사람 넣기", "Add him to the space", "Invite members to this space"]
 
 spaces.removeMember:
   name: remove_space_member
@@ -362,8 +362,8 @@ spaces.removeMember:
     ref: {description: "뺄 사람의 아이디(username) — list_space_members 결과의 username"}
   responseFields: ["[].username", "[].displayName", "[].role"]
   index:
-    summary: 스페이스 멤버(Crew)에서 사람을 뺀다
-    examples: ["이 사람 스페이스에서 빼줘", "공간 멤버에서 제외해줘", "스페이스 Crew 정리해줘"]
+    summary: "스페이스 Crew에서 사람을 뺀다"
+    examples: ["이 사람 스페이스에서 빼줘", "퇴사자 공간에서 내보내", "멤버 한 명 제외해줘", "Crew에서 지워줘", "스페이스 접근 권한 회수해줘", "스페이스에서 사람 빼기", "Remove him from the space", "Kick this member out of the space"]
 
 spaces.setMemberRole:
   name: set_space_member_role
@@ -375,8 +375,8 @@ spaces.setMemberRole:
     role: {description: "editor 또는 viewer"}
   responseFields: ["[].username", "[].displayName", "[].role"]
   index:
-    summary: 스페이스 멤버의 권한(편집·읽기)을 바꾼다
-    examples: ["이 사람 읽기 전용으로 바꿔줘", "멤버 권한을 편집자로 올려줘", "Crew 역할 변경해줘"]
+    summary: "스페이스 Crew의 역할(편집자·읽기 전용)을 바꾼다. 사람을 넣거나 빼지 않는다"
+    examples: ["이 사람 편집 권한 줘", "뷰어로 바꿔줘", "멤버 역할 편집자로 올려", "Crew 권한 조정해줘", "역할을 viewer로 변경", "Crew 역할 바꾸기", "Make her an editor", "Change member role to viewer"]
 
 # ── 위험 동작 (danger, 기본 꺼짐. 켜도 추가는 사람 확인)
 pages.delete:
@@ -386,8 +386,8 @@ pages.delete:
   inputs:
     id: {description: "지울 페이지 id — search_pages 결과의 items[].pageId"}
   index:
-    summary: 위키 페이지를 휴지통으로 지운다
-    examples: ["이 페이지 지워줘", "필요 없는 초안 삭제해줘", "문서 휴지통에 버려줘"]
+    summary: "페이지를 휴지통으로 지운다"
+    examples: ["이 문서 지워줘", "필요 없는 페이지 삭제", "초안 페이지 휴지통으로", "그 글 없애줘", "중복 문서 정리해서 지워", "페이지 지우기", "Delete this page", "Move the page to trash"]
 
 pages.move:
   name: move_page
@@ -398,8 +398,8 @@ pages.move:
     parentId: {description: "새 부모 페이지 id — search_pages 결과의 pageId. 맨 위로 옮기려면 null"}
   responseFields: [id, parentId, title]
   index:
-    summary: 페이지를 다른 페이지 아래로 옮긴다
-    examples: ["이 문서를 회의록 아래로 옮겨줘", "페이지 위치 바꿔줘", "맨 위로 옮겨줘"]
+    summary: "페이지를 다른 부모 아래나 다른 순서로 옮긴다"
+    examples: ["이 문서를 회의록 아래로 옮겨", "페이지 위치 바꿔줘", "하위 페이지로 이동해줘", "맨 위로 올려줘", "문서 순서 정리해줘", "페이지 옮기기", "Move this page under another", "Reorder the pages"]
 
 pages.restoreVersion:
   name: restore_page_version
@@ -410,8 +410,8 @@ pages.restoreVersion:
     "no": {description: "되돌릴 버전 번호 — list_page_versions 결과의 versionNo"}
   responseFields: [id, currentVersionNo]
   index:
-    summary: 페이지를 예전 버전 내용으로 되돌린다
-    examples: ["어제 버전으로 되돌려줘", "고치기 전으로 복원해줘", "첫 버전 내용으로 돌려줘"]
+    summary: "페이지 본문을 예전 버전 내용으로 되돌린다(새 버전으로 저장된다)"
+    examples: ["어제 버전으로 돌려줘", "수정 전으로 복원해", "잘못 고친 거 되돌려", "두 번째 판 내용으로 롤백", "예전 내용으로 복구해줘", "옛 버전으로 되돌리기", "Revert to the previous version", "Restore an older version"]
 
 attachments.upload:
   name: upload_attachment
@@ -423,8 +423,8 @@ attachments.upload:
     content: {description: "파일 내용 (글)"}
   responseFields: [id, filename, href]
   index:
-    summary: 페이지에 파일을 첨부로 올린다
-    examples: ["이 내용을 파일로 첨부해줘", "회의록에 메모 파일 올려줘", "문서에 텍스트 파일 붙여줘"]
+    summary: "페이지에 파일을 첨부로 올린다"
+    examples: ["이 내용을 파일로 첨부해줘", "회의록에 메모 파일 올려", "텍스트 파일 붙여줘", "첨부로 정리본 올려줘", "문서에 파일 업로드", "페이지에 첨부 올리기", "Attach a file to this page", "Upload a note as an attachment"]
 
 attachments.delete:
   name: delete_attachment
@@ -433,8 +433,8 @@ attachments.delete:
   inputs:
     id: {description: "지울 첨부 id — list_attachments 결과의 items[].id"}
   index:
-    summary: 페이지의 첨부 파일을 지운다
-    examples: ["그 첨부 파일 지워줘", "잘못 올린 파일 삭제해줘", "첨부 없애줘"]
+    summary: "페이지의 첨부 파일 하나를 지운다"
+    examples: ["그 첨부 지워줘", "잘못 올린 파일 삭제", "첨부 하나 없애줘", "오래된 파일 지워", "첨부 정리해줘", "첨부 지우기", "Delete the attachment", "Remove that file"]
 
 trash.pages:
   name: list_trashed_pages
@@ -442,8 +442,8 @@ trash.pages:
   description: 내가 되살릴 수 있는, 휴지통에 있는 페이지를 본다. 기본 100개까지 돌려준다.
   responseFields: ["items[].id", "items[].title", "items[].spaceName", "items[].deletedAt"]
   index:
-    summary: 휴지통에 있는 지운 페이지를 본다
-    examples: ["휴지통에 뭐 있어?", "지운 문서 목록 보여줘", "삭제된 페이지 찾아줘"]
+    summary: "휴지통에 있는 지운 페이지 목록을 본다"
+    examples: ["휴지통 보여줘", "지운 페이지 뭐 있어?", "삭제한 문서 목록", "휴지통에 그 글 있어?", "버린 페이지 확인", "휴지통 페이지 목록 보기", "Show the trash", "List deleted pages"]
 
 trash.restorePage:
   name: restore_trashed_page
@@ -453,8 +453,8 @@ trash.restorePage:
     id: {description: "되살릴 페이지 id — list_trashed_pages 결과의 items[].id"}
   responseFields: [ok, movedToRoot]
   index:
-    summary: 휴지통에서 지운 페이지를 되살린다
-    examples: ["지운 문서 되살려줘", "휴지통에서 페이지 복구해줘", "실수로 지운 페이지 살려줘"]
+    summary: "휴지통에 있는 지운 페이지를 되살린다"
+    examples: ["지운 문서 살려줘", "삭제 취소하고 문서 돌려놔", "삭제한 페이지 복구", "실수로 지운 글 되돌려", "휴지통 페이지 원래대로", "지운 페이지 되살리기", "Restore the deleted page", "Undelete this page"]
 
 spaces.delete:
   name: delete_space
@@ -464,8 +464,8 @@ spaces.delete:
     id: {description: "지울 스페이스 id — list_spaces 결과의 items[].id"}
   responseFields: [ok]
   index:
-    summary: 스페이스(공간)를 통째로 휴지통으로 지운다
-    examples: ["이 스페이스 지워줘", "필요 없는 공간 삭제해줘", "스페이스 없애줘"]
+    summary: "스페이스를 통째로 휴지통으로 지운다"
+    examples: ["이 스페이스 지워줘", "안 쓰는 공간 삭제", "스페이스 통째로 없애", "테스트 공간 정리해서 지워", "그 스페이스 휴지통으로", "스페이스 지우기", "Delete this space", "Remove the whole space"]
 
 spaces.setStatus:
   name: set_space_status
@@ -477,5 +477,5 @@ spaces.setStatus:
     takeover: {description: 관리자 전용, hide: true}
   responseFields: [id, name, status]
   index:
-    summary: 스페이스를 중지하거나 다시 쓸 수 있게 한다
-    examples: ["이 스페이스 잠시 중지해줘", "공간 다시 쓸 수 있게 열어줘", "스페이스 동결해줘"]
+    summary: "스페이스를 중지하거나 다시 쓸 수 있게 상태를 바꾼다"
+    examples: ["스페이스 잠시 멈춰줘", "공간 다시 열어줘", "스페이스 동결", "중지된 공간 활성화", "스페이스 상태 바꿔줘", "스페이스 중지·다시 쓰기", "Suspend this space", "Reactivate the space"]

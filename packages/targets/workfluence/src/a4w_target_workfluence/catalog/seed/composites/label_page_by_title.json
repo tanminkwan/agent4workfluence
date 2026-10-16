@@ -4,10 +4,15 @@
   "index": {
     "examples": [
       "회의록 페이지에 긴급 라벨 붙여줘",
-      "보안 정책 문서에 검토중 태그 달아줘",
-      "배포 가이드에 운영 라벨 추가해줘"
+      "보안 정책 문서에 검토중 태그",
+      "배포 가이드에 운영 라벨 추가",
+      "제목이 주간보고인 글에 태그 달아",
+      "온보딩 문서를 신입 라벨로 분류",
+      "제목으로 페이지 찾아 라벨 붙이기",
+      "Tag the page titled Roadmap",
+      "Add a label to the onboarding page"
     ],
-    "summary": "제목으로 찾은 위키 페이지에 라벨(태그)을 붙인다"
+    "summary": "페이지 id 없이 제목으로 페이지를 찾아 라벨(태그)을 붙인다"
   },
   "inputSchema": {
     "additionalProperties": false,
@@ -33,7 +38,7 @@
   "output": {
     "$step": "label"
   },
-  "revision": "r-6d79df0d9a1b",
+  "revision": "r-feed3dbc4e04",
   "risk": "write",
   "schema": "a4w.tool/v1",
   "scopes": [

@@ -73,11 +73,16 @@
   ],
   "group": "history",
   "index": {
-    "summary": "페이지의 두 버전 사이에 바뀐 내용을 비교한다",
+    "summary": "페이지의 두 버전 사이에 바뀐 부분(차이)을 비교한다",
     "examples": [
-      "이전 버전이랑 뭐가 달라졌어?",
-      "두 버전 차이 비교해줘",
-      "최근 수정에서 바뀐 부분 알려줘"
+      "두 버전 뭐가 달라?",
+      "지난번과 바뀐 부분 비교해줘",
+      "최근 수정 차이 보여줘",
+      "버전 간 변경 내용 알려줘",
+      "어디가 고쳐졌는지 비교",
+      "두 버전 차이 비교하기",
+      "Compare two versions",
+      "What changed between versions?"
     ]
   },
   "source": {
@@ -89,5 +94,5 @@
     "structureSha256": "cfe0e920bb4f8986f2a112a1680a23d16d6b3e228a588cbc4bbcd69c7df3427f"
   },
   "origin": "seed",
-  "revision": "r-92d000b2774d"
+  "revision": "r-f7a8424f34c5"
 }

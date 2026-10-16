@@ -70,11 +70,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "페이지를 다른 페이지 아래로 옮긴다",
+    "summary": "페이지를 다른 부모 아래나 다른 순서로 옮긴다",
     "examples": [
-      "이 문서를 회의록 아래로 옮겨줘",
+      "이 문서를 회의록 아래로 옮겨",
       "페이지 위치 바꿔줘",
-      "맨 위로 옮겨줘"
+      "하위 페이지로 이동해줘",
+      "맨 위로 올려줘",
+      "문서 순서 정리해줘",
+      "페이지 옮기기",
+      "Move this page under another",
+      "Reorder the pages"
     ]
   },
   "source": {
@@ -86,5 +91,5 @@
     "structureSha256": "0b2b221f9b5abea7802e133e78a6cd781ce15de2b86055d24741de36b42d6d49"
   },
   "origin": "seed",
-  "revision": "r-d0ae413ac299"
+  "revision": "r-1bc4a103aa9a"
 }

@@ -61,11 +61,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "페이지를 예전 버전 내용으로 되돌린다",
+    "summary": "페이지 본문을 예전 버전 내용으로 되돌린다(새 버전으로 저장된다)",
     "examples": [
-      "어제 버전으로 되돌려줘",
-      "고치기 전으로 복원해줘",
-      "첫 버전 내용으로 돌려줘"
+      "어제 버전으로 돌려줘",
+      "수정 전으로 복원해",
+      "잘못 고친 거 되돌려",
+      "두 번째 판 내용으로 롤백",
+      "예전 내용으로 복구해줘",
+      "옛 버전으로 되돌리기",
+      "Revert to the previous version",
+      "Restore an older version"
     ]
   },
   "source": {
@@ -77,5 +82,5 @@
     "structureSha256": "0a0fc103140b53baf62c71bae9a0530762bca2597e7ad16372b91555e3f5ab17"
   },
   "origin": "seed",
-  "revision": "r-505beb68e97b"
+  "revision": "r-5b674e33a33a"
 }

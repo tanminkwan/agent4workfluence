@@ -37,11 +37,16 @@
   ],
   "group": "danger",
   "index": {
-    "summary": "휴지통에 있는 지운 페이지를 본다",
+    "summary": "휴지통에 있는 지운 페이지 목록을 본다",
     "examples": [
-      "휴지통에 뭐 있어?",
-      "지운 문서 목록 보여줘",
-      "삭제된 페이지 찾아줘"
+      "휴지통 보여줘",
+      "지운 페이지 뭐 있어?",
+      "삭제한 문서 목록",
+      "휴지통에 그 글 있어?",
+      "버린 페이지 확인",
+      "휴지통 페이지 목록 보기",
+      "Show the trash",
+      "List deleted pages"
     ]
   },
   "source": {
@@ -53,5 +58,5 @@
     "structureSha256": "3588e08d061c7b812c4089e85eee0fed575a93200672df2717134525368115ee"
   },
   "origin": "seed",
-  "revision": "r-948455a0f445"
+  "revision": "r-ab69af5a1542"
 }

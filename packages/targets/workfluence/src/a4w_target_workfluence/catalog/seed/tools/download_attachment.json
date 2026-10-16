@@ -48,11 +48,16 @@
   ],
   "group": "read",
   "index": {
-    "summary": "첨부 파일의 내용을 받아 읽는다",
+    "summary": "첨부 파일 하나의 내용을 받아 읽는다. 목록이 아니라 파일 안의 글이다",
     "examples": [
-      "첨부된 문서 내용 읽어줘",
-      "그 파일 열어봐줘",
-      "첨부 파일 내용 보여줘"
+      "첨부 파일 내용 읽어줘",
+      "그 첨부 열어서 요약해줘",
+      "붙은 텍스트 파일 내용 알려줘",
+      "첨부된 회의 메모 보여줘",
+      "파일 안에 뭐라고 써 있어?",
+      "첨부 파일 내용 받기",
+      "Read the attached file",
+      "Open the attachment"
     ]
   },
   "source": {
@@ -64,5 +69,5 @@
     "structureSha256": "f18e68b858597852294c64158155994327c0427d4a7a928bc86db783a496830f"
   },
   "origin": "seed",
-  "revision": "r-eff57077b367"
+  "revision": "r-b3ada00e07dd"
 }
